@@ -308,15 +308,16 @@ testResultPageContent = """
 <head>
     <style>
         body {font-family:arial,sans-serif; text-align:center}
-        #title {font-family:"Times New Roman","Times Roman",TimesNR,times,serif; font-size:28px; font-weight:bold; text-align:center}
-        #version {font-size:87%; text-align:center;}
+        #title {font-family:"Times New Roman","Times Roman",TimesNR,times,serif; font-size:18px; font-weight:bold; text-align:center}
+        #version {font-size:47%; text-align:center;}
         #weblink {font-style:italic; text-align:center; padding-top:7px; padding-bottom:20px}
         #results {margin:0pt auto; text-align:center; font-weight:bold}
-        #testindicator {width:950px; height:16px; border-style:solid; border-width:2px 1px 1px 2px; background-color:#f8f8f8;}
-        #footerarea {text-align:center; font-size:83%; padding-top:25px}
+        #testindicator {width:450px; height:16px; border-style:solid; border-width:2px 1px 1px 2px; background-color:#f8f8f8;}
+        #footerarea {text-align:center; font-size:53%; padding-top:25px}
         #errorarea {padding-top:25px}
-        .error {border-color: #c3d9ff; border-style: solid; border-width: 2px 1px 2px 1px; width:945px; padding:1px; margin:0pt auto; text-align:left}
+        .error {border-color: #c3d9ff; border-style: solid; border-width: 2px 1px 2px 1px; width:445px; padding:1px; margin:0pt auto; text-align:left;font-size:93%;}
         .errtitle {background-color:#c3d9ff; font-weight:bold}
+        .errdetail {width:450px;display:block;}
     </style>
     <script language="javascript" type="text/javascript">
         /* Create a new XMLHttpRequest object to talk to the Web server */
