@@ -191,17 +191,18 @@ class GAEUnitTestRunner(webapp.RequestHandler):
 
         if not package_name and not test_name:
             module_names = [mf[0:-3] for mf in os.listdir(_DEFAULT_TEST_DIR) if mf.endswith(".py")]
-            logging.info(module_names)
             for module_name in module_names:
-                suite.addTest(loader.loadTestsFromName(module_name))
+                module = reload(__import__(module_name))
+                suite.addTest(loader.loadTestsFromModule(module))
         elif test_name:
             try:
-                suite.addTest(loader.loadTestsFromName(test_name))
+                module = reload(__import__(test_name))
+                suite.addTest(loader.loadTestsFromModule(module))
             except:
                 pass
         elif package_name:
             try:
-                package = __import__(package_name)
+                package = reload(__import__(package_name))
                 module_names = package.__all__
                 for module_name in module_names:
                     suite.addTest(loader.loadTestsFromName('%s.%s' % (package_name, module_name)))
@@ -233,9 +234,9 @@ class GAEUnitTestRunner(webapp.RequestHandler):
         """Run the test suite.
 
         Preserve the current development apiproxy, create a new apiproxy and
-        temporary datastore that will be used for this test suite, run the
-        test suite, and restore the development apiproxy.  This isolates the
-        test and development datastores from each other.
+        replace the datastore with a temporary one that will be used for this
+        test suite, run the test suite, and restore the development apiproxy.
+        This isolates the test datastores from the development datastore.
 
         """        
         original_apiproxy = apiproxy_stub_map.apiproxy
@@ -243,7 +244,10 @@ class GAEUnitTestRunner(webapp.RequestHandler):
            apiproxy_stub_map.apiproxy = apiproxy_stub_map.APIProxyStubMap() 
            temp_stub = datastore_file_stub.DatastoreFileStub(
                'GAEUnitDataStore', None, None)  
-           apiproxy_stub_map.apiproxy.RegisterStub('datastore_v3', temp_stub)
+           apiproxy_stub_map.apiproxy.RegisterStub('datastore', temp_stub)
+           # Preserve the other services.
+           for name in ['user', 'urlfetch', 'mail', 'memcache', 'images']: 
+               apiproxy_stub_map.apiproxy.RegisterStub(name, original_apiproxy.GetStub(name))
            runner.run(suite)
         finally:
            apiproxy_stub_map.apiproxy = original_apiproxy
@@ -386,7 +390,7 @@ testResultPageContent = """
         }
 
         // Update page every 5 seconds
-        var timer = setInterval(callServer, 3000);
+        var timer = setInterval(callServer, 500);
     </script>
     <title>GAEUnit: Google App Engine Unit Test Framework</title>
 </head>
