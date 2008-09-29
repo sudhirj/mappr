@@ -24,6 +24,12 @@ class BasicModelTests(unittest.TestCase):
         self.assertRaises(db.BadValueError,models.Point,lat=34.445)
         self.assertRaises(db.BadValueError,models.Point,lon=36.345)
         self.assertTrue(models.Point(lat=34.45,lon=32.466))
+        self.assertTrue(models.Point(lat=-34.45,lon=32.466))
+        self.assertRaises(ValueError,models.Point,lat=float(3462.344),lon=float(45.67))
+        self.assertRaises(ValueError,models.Point,lat=float(34.344),lon=float(-2345.67))
+        
+        
+        
         
     
     
