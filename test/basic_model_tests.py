@@ -18,6 +18,13 @@ class BasicModelTests(unittest.TestCase):
         self.assertTrue(new_customer)
         self.assertTrue(new_customer.put())
         logging.info(new_customer.put())
+        
+        try:
+            new_customer.url = None
+        except ValueError, e:
+            pass
+        else:
+            self.fail('Was supposed to stop the url being set to None')
     
     def test_point_validations(self):
         self.assertRaises(db.BadValueError,models.Point,None)
@@ -27,6 +34,15 @@ class BasicModelTests(unittest.TestCase):
         self.assertTrue(models.Point(lat=-34.45,lon=32.466))
         self.assertRaises(ValueError,models.Point,lat=float(3462.344),lon=float(45.67))
         self.assertRaises(ValueError,models.Point,lat=float(34.344),lon=float(-2345.67))
+        
+        point = models.Point(lat=34.5,lon=36.23)
+        try:
+            point.lat = 45666.456
+        except ValueError:
+            pass
+        else:
+            self.fail('Was supposed to prevent setting lat to invalid value')
+        
         
         
         
