@@ -12,8 +12,8 @@ class Customer(db.Model):
 
 class Point(db.Model):
     """Store the map points"""
-    lat = db.FloatProperty()
-    lon = db.FloatProperty()
+    lat = db.FloatProperty(required=True)
+    lon = db.FloatProperty(required=True)
     title = db.StringProperty()
     text = db.TextProperty()
     

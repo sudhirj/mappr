@@ -19,6 +19,13 @@ class BasicModelTests(unittest.TestCase):
         self.assertTrue(new_customer.put())
         logging.info(new_customer.put())
     
+    def test_point_validations(self):
+        self.assertRaises(db.BadValueError,models.Point,None)
+        self.assertRaises(db.BadValueError,models.Point,lat=34.445)
+        self.assertRaises(db.BadValueError,models.Point,lon=36.345)
+        self.assertTrue(models.Point(lat=34.45,lon=32.466))
+        
+    
     
         
 
