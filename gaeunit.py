@@ -251,6 +251,8 @@ class GAEUnitTestRunner(webapp.RequestHandler):
            runner.run(suite)
         finally:
            apiproxy_stub_map.apiproxy = original_apiproxy
+        
+        # runner.run(suite)
 
                 
 class ResultSender(webapp.RequestHandler):

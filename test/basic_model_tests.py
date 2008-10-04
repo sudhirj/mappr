@@ -3,12 +3,11 @@ import logging
 import models
 from google.appengine.ext import db
 from google.appengine.api import users
+import test.helpers
 
 
-class BasicModelTests(unittest.TestCase):
-    def setUp(self):
-        self.sudhir_gmail = users.User('sudhir.j@gmail.com')
-    
+class BasicModelTests(test.helpers.TestFixture):
+        
     def test_customer_validations(self):
         self.assertRaises(ValueError,models.Customer,None)
         self.assertRaises(ValueError,models.Customer,user = self.sudhir_gmail)
@@ -16,12 +15,10 @@ class BasicModelTests(unittest.TestCase):
         new_customer = models.Customer(url='check',user = self.sudhir_gmail)
         self.assertTrue(new_customer)
         self.assertTrue(new_customer.put())
-        logging.info(new_customer.put())
         
         try:
             new_customer.url = None
         except ValueError,e:
-            logging.info(e)
             pass
         else:
             self.fail('Was supposed to stop the url being set to None')

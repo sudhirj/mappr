@@ -7,5 +7,5 @@ handlers:
 - url: /test.*
   script: gaeunit.py    
 
-- url: .*
+- url: /.*
   script: main.py

@@ -27,10 +27,6 @@ class Point(db.Model):
     title = db.StringProperty()
     owner = db.ReferenceProperty(Customer,collection_name='points',required=True)
     
-
-
-        
-        
     def __eq__(self, other):
         if isinstance(other,Point):
             if self.lat == other.lat and self.lon == other.lon and self.owner == other.owner:
@@ -38,16 +34,18 @@ class Point(db.Model):
             else:
                 return False
             return False
-            
-    def put(self):
-        self.owner.point_count += 1
-        self.owner.put()
-        return db.Model.put(self)
-        
+    
     def delete(self):
-        self.owner.point_count -= 1
+        self.owner.point_count -=1
         self.owner.put()
         return db.Model.delete(self)
-        
-        
     
+    def put(self):
+        if self.is_saved():
+            return db.Model.put(self)
+        else:
+            self.parent = self.owner
+            self.owner.point_count +=1
+            self.owner.put()
+            return db.Model.put(self)
+
