@@ -15,21 +15,20 @@ class Customer(db.Model):
     def __eq__(self, other):
         if isinstance(other,Customer):
             if self.user == other.user and self.url == other.url:
-                return True 
+                return True
         else:
             return False
         return False
 
 class Point(db.Model):
     """Store the map points"""
-    lat = db.FloatProperty(required=True,validator=validators.check_point)
-    lon = db.FloatProperty(required=True,validator=validators.check_point)
-    title = db.StringProperty()
+    point = db.GeoPtProperty(required = True)
+    title = db.StringProperty(required = False)
     owner = db.ReferenceProperty(Customer,collection_name='points',required=True)
     
     def __eq__(self, other):
         if isinstance(other,Point):
-            if self.lat == other.lat and self.lon == other.lon and self.owner == other.owner:
+            if self.point == other.point and self.owner == other.owner and self.title == other.title:
                 return True
             else:
                 return False

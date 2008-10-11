@@ -45,27 +45,8 @@ class BasicModelTests(test.helpers.TestFixture):
     def test_point_validations(self):
         sudhir = models.Customer(user=self.sudhir_gmail,url='df').put()
         self.assertRaises(db.BadValueError,models.Point,None)
-        self.assertRaises(db.BadValueError,models.Point,lat=34.445)
-        self.assertRaises(db.BadValueError,models.Point,lon=36.345)
-        self.assertRaises(db.BadValueError,models.Point,lat=34.45,lon=32.466)
-        self.assertRaises(db.BadValueError,models.Point,lat=-34.45,lon=32.466)
-        self.assertRaises(ValueError,models.Point,lat=float(3462.344),lon=float(45.67),owner=sudhir)
-        self.assertRaises(ValueError,models.Point,lat=float(34.344),lon=float(-2345.67),owner=sudhir)
         
-        point = models.Point(lat=34.5,lon=36.23,owner=sudhir)
-        try:
-            point.lat = 45666.456
-        except ValueError:
-            pass
-        else:
-            self.fail('Was supposed to prevent setting lat to invalid value')
-        
-        try:
-            point.lon = -34667.34
-        except ValueError:
-            pass    
-        else:
-            self.fail('was supposed to prevent lon being set to an invalid value')
+        point = models.Point(point = db.GeoPt(34.5,36.23),owner=sudhir)
         
         try:
             point.owner = None
@@ -73,4 +54,4 @@ class BasicModelTests(test.helpers.TestFixture):
             pass
         else:
             self.fail('was supposed to prevent owner being set to none')
-        
+
