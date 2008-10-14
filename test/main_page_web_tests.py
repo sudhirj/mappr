@@ -12,5 +12,8 @@ class MainPageTest(test.helpers.WebTestFixture):
         self.assertEqual('200 OK', app.get('/thisoughttoworkforanyurl').status)
 
         sudhirpage = app.get('/sudhirurl')
+        
+    def test_setting_points(self):
+        app = TestApp(self.application)
 
      

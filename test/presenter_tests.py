@@ -18,4 +18,5 @@ class PresenterTests (test.helpers.TestFixture):
         result = presenter.get_points_for('momurl')
         self.assertEqual(result.__len__(),1)
         self.assertEqual(result.count(dict(lat=34.678,lon=-44.3456,title=None)),1) 
+
         
