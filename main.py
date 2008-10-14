@@ -20,3 +20,5 @@ if __name__ == '__main__':
 def createMainApplication():
     return webapp.WSGIApplication([(r'/(.*)', MainHandler)],
                                         debug=True)
+                                        
+stupid changes
