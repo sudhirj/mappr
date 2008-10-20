@@ -1,4 +1,4 @@
-import wsgiref.handlers,logging, presenter, os
+import wsgiref.handlers,logging, gateway, os
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import template
 from helpers import utils
@@ -7,10 +7,11 @@ from google.appengine.api import users
 
 class MainHandler(webapp.RequestHandler):
     def get(self,url=None):
-        pointset = presenter.get_points_for(url)
+        pointset = gateway.get_points_for(url)
         template_values = {'points':pointset}
         self.response.out.write(users.create_login_url("/"))
         self.response.out.write(template.render(utils.path('templates/index.html'),template_values ))
+        
         
     def post(self, url=None):
         pass
@@ -19,8 +20,7 @@ class MainHandler(webapp.RequestHandler):
         
 
 ROUTES =    [
-            (r'/(.*)', MainHandler),
-            (r'/(.*)/setpoint', MainHandler)
+            (r'/(.*)', MainHandler)
             ]
 
 

@@ -19,6 +19,7 @@ class Customer(db.Model):
         else:
             return False
         return False
+    
 
 class Point(db.Model):
     """Store the map points"""
