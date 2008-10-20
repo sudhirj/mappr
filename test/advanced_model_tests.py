@@ -18,7 +18,7 @@ class AdvancedModelTests(test.helpers.TestFixture):
         self.assertFalse(sudhir2==self.home)
         self.assertFalse(self.sudhir == models.Customer(user=self.sudhir_gmail, url='url2'))
         
-        home2 = models.Point(point = db.GeoPt(34.6467,46.36), owner=self.sudhir)
+        home2 = models.Point(point = db.GeoPt(34.6467,46.36), owner=self.sudhir, title="sudhir_home")
         self.assertEqual(self.home,home2)
         self.assertFalse(home2 == self.office)
 

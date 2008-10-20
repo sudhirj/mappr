@@ -1,10 +1,8 @@
-import models
+import models, unittest, main
 from google.appengine.ext import db
 from google.appengine.api import users
-import unittest
 from  webtest import TestApp
 from google.appengine.ext import webapp
-import main
 
 class TestFixture (unittest.TestCase):
     def setUp(self):
@@ -16,13 +14,14 @@ class TestFixture (unittest.TestCase):
         self.amrita = models.Customer(user=self.amrita_gmail, url='amritaurl')
         self.amrita.put()
         
-        self.homedict = dict(lat = 34.6467, lon = 46.36, owner = self.sudhir)
-        self.home = models.Point(point = db.GeoPt(34.6467, 46.36),owner=self.sudhir)
+        self.homedict = dict(lat = 34.6467, lon = 46.36, owner = self.sudhir, title="sudhir_home")
+        self.home = models.Point(point = db.GeoPt(34.6467, 46.36),owner=self.sudhir, title="sudhir_home")
         self.home.put()
        
-        self.office = models.Point(point = db.GeoPt(23.46,4.7),owner=self.sudhir)
+        self.officedict = dict(lat=23.46,lon=4.7,owner=self.sudhir, title = "sudhir_office")
+        self.office = models.Point(point = db.GeoPt(23.46,4.7),owner=self.sudhir, title = "sudhir_office")
         self.office.put()
-        self.o2 = models.Point(point = db.GeoPt(24.234456,-85.34556),owner = self.amrita,parent = self.sudhir)
+        self.o2 = models.Point(point = db.GeoPt(24.234456,-85.34556),owner = self.amrita,parent = self.amrita)
         self.o2.put()
             
     def tearDown(self):
@@ -34,5 +33,6 @@ class TestFixture (unittest.TestCase):
 class WebTestFixture(TestFixture):
     def setUp(self):
         TestFixture.setUp(self)
-        self.application = main.createMainApplication()
+        self.app = TestApp(main.createMainApplication(),extra_environ=dict(REMOTE_USER='bob'))
+        
     
