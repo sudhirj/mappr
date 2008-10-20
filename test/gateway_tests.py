@@ -22,27 +22,10 @@ class GatewayTests (test.helpers.TestFixture):
         new = gateway.create_customer(url = 'test', user=users.User('test@gmail.com'))
         self.assertTrue(new)
         self.assertEqual(gateway.get_points_for('test').__len__(),0)
-        self.assertTrue(gateway.set_point(new,lat=63.345, lon=-4.23))
+        self.assertTrue(gateway.set_point(new,lat = 63.345, lon = -4.23))
         self.assertEqual(gateway.get_points_for('test').__len__(),1)
         
-        try:
-            gateway.create_customer(url = 'test', user=users.User('someoneelse@gmail.com'))
-        except Exception:
-            pass
-        else:
-            self.fail('Allowed a duplicate url to be created.')
-        
-        try:
-            gateway.create_customer(url= 'somethingelse', user = users.User('test@gmail.com'))
-        except Exception:
-            pass
-        else:
-            self.fail('Allowed a duplicate account into the system.')    
-        
-        try:
-            gateway.create_customer(url = 'TeSt', user=users.User('someoneelse@gmail.com'))
-        except Exception,e:
-            pass
-        else:
-            self.fail('Allowed a duplicate url to be created.')
-        
+        self.assertRaises(Exception,gateway.create_customer,url='test',user=users.User('someone@gmail.com'))
+        self.assertRaises(Exception,gateway.create_customer,url='somethingelse',user=users.User('test@gmail.com'))
+        self.assertRaises(Exception,gateway.create_customer,url='TeSt',user=users.User('someoneelse@gmail.com'))
+    

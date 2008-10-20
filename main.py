@@ -10,19 +10,11 @@ class MainHandler(webapp.RequestHandler):
         pointset = gateway.get_points_for(url)
         template_values = {'points':pointset}
         self.response.out.write(users.create_login_url("/"))
-        self.response.out.write(template.render(utils.path('templates/index.html'),template_values ))
-        
-        
-    def post(self, url=None):
-        pass
+        self.response.out.write(template.render(utils.path('templates/index.html'),template_values))
     
-
-        
-
 ROUTES =    [
             (r'/(.*)', MainHandler)
             ]
-
 
 def createMainApplication():
     return webapp.WSGIApplication(ROUTES,debug=True)
