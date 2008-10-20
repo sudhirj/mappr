@@ -12,14 +12,12 @@ Usage:
 
 2. Write your own test cases by extending unittest.TestCase.
 
-3. Launch the development web server.  Point your browser to:
+3. Launch the development web server.  To run all tests, point your browser to:
 
-     http://localhost:8080/test?name=my_test_module
-
-   Replace 'my_test_module' with the module that contains your test cases,
-   and modify the port if necessary.
+   http://localhost:8080/test     (Modify the port if necessary.)
    
-   For plain text output add '&format=plain' to the URL.
+   For plain text output add '?format=plain' to the above URL.
+   See README.TXT for information on how to run specific tests.
 
 4. The results are displayed as the tests are run.
 
@@ -67,341 +65,369 @@ import StringIO
 import time
 import re
 import logging
-import wsgiref.handlers
 from google.appengine.ext import webapp
 from google.appengine.api import apiproxy_stub_map  
 from google.appengine.api import datastore_file_stub
+from google.appengine.ext.webapp.util import run_wsgi_app
 
-_DEFAULT_TEST_DIR = '/Users/sudhirj/mappr/test'
+_DEFAULT_TEST_DIR = 'test'
+
 
 ##############################################################################
-# Web Test Runner
+# Main request handler
 ##############################################################################
-class _WebTestResult(unittest.TestResult):
+
+
+class MainTestPageHandler(webapp.RequestHandler):
+    def get(self):
+        unknown_args = [arg for arg in self.request.arguments()
+                        if arg not in ("format", "package", "name")]
+        if len(unknown_args) > 0:
+            errors = []
+            for arg in unknown_args:
+                errors.append(_log_error("The request parameter '%s' is not valid." % arg))
+            self.error(404)
+            self.response.out.write(" ".join(errors))
+            return
+
+        format = self.request.get("format", "html")
+        if format == "html":
+            self._render_html()
+        elif format == "plain":
+            self._render_plain()
+        else:
+            error = _log_error("The format '%s' is not valid." % format)
+            self.error(404)
+            self.response.out.write(error)
+            
+    def _render_html(self):
+        suite, error = _create_suite(self.request)
+        if not error:
+            self.response.out.write(_MAIN_PAGE_CONTENT % _test_suite_to_json(suite))
+        else:
+            self.error(404)
+            self.response.out.write(error)
+        
+    def _render_plain(self):
+        self.response.headers["Content-Type"] = "text/plain"
+        runner = unittest.TextTestRunner(self.response.out)
+        suite, error = _create_suite(self.request)
+        if not error:
+            self.response.out.write("====================\n" \
+                                    "GAEUnit Test Results\n" \
+                                    "====================\n\n")
+            _run_test_suite(runner, suite)
+        else:
+            self.error(404)
+            self.response.out.write(error)
+
+
+##############################################################################
+# JSON test classes
+##############################################################################
+
+
+class JsonTestResult(unittest.TestResult):
     def __init__(self):
         unittest.TestResult.__init__(self)
         self.testNumber = 0
 
-    def getDescription(self, test):
-        return test.shortDescription() or str(test)
-
-    def printErrors(self):
-        stream = StringIO.StringIO()
+    def render_to(self, stream):
         stream.write('{')
-        self.printErrorList('ERROR', self.errors, stream)
-        stream.write(',')
-        self.printErrorList('FAIL', self.failures, stream)
+        stream.write('"runs":"%d", "total":"%d", "errors":"%d", "failures":"%d",' % \
+                    (self.testsRun, self.testNumber,
+                     len(self.errors), len(self.failures)))
+        stream.write('"details":')
+        self._render_errors(stream)
         stream.write('}')
-        return stream.getvalue()
 
-    def printErrorList(self, flavour, errors, stream):
+    def _render_errors(self, stream):
+        stream.write('{')
+        self._render_error_list('errors', self.errors, stream)
+        stream.write(',')
+        self._render_error_list('failures', self.failures, stream)
+        stream.write('}')
+
+    def _render_error_list(self, flavour, errors, stream):
         stream.write('"%s":[' % flavour)
         for test, err in errors:
             stream.write('{"desc":"%s", "detail":"%s"},' %
-                         (self.getDescription(test), self.escape(err)))
+                         (self._description(test), self._escape(err)))
         if len(errors):
             stream.seek(-1, 2)
         stream.write("]")
 
-    def escape(self, s):
+    def _description(self, test):
+        return test.shortDescription() or str(test)
+
+    def _escape(self, s):
         newstr = re.sub('"', '&quot;', s)
         newstr = re.sub('\n', '<br/>', newstr)
         return newstr
-        
 
-class WebTestRunner:
+
+class JsonTestRunner:
     def run(self, test):
-        "Run the given test case or test suite."
-        result = getTestResult(True)
-        result.testNumber = test.countTestCases()
+        self.result = JsonTestResult()
+        self.result.testNumber = test.countTestCases()
         startTime = time.time()
-        test(result)
+        test(self.result)
         stopTime = time.time()
         timeTaken = stopTime - startTime
-        return result
+        return self.result
 
-#############################################################
-# Http request handler
-#############################################################
 
-class GAEUnitTestRunner(webapp.RequestHandler):
-    def __init__(self):
-        self.package = "test"
-        
-    def get(self):
-        """Execute a test suite in response to an HTTP GET request.
-
-        The request URL supports the following formats:
-        
-          http://localhost:8080/test?package=test_package
-          http://localhost:8080/test?name=test
-        
-        Parameters 'package' and 'name' should not be used together.  If both
-        are specified, 'name' is selected and 'package' is ignored.
-        
-        When 'package' is set, GAEUnit will run all TestCase classes from
-        all modules in the package.
-        
-        When 'name' is set, GAEUnit will assume it is either a module (possibly
-        preceded by its package); a module and test class; or a module,
-        test class, and test method.  For example,
-        
-          http://localhost:8080/test?name=test_package.test_module.TestClass.test_method
-        
-        runs only test_method() whereas,
-        
-          http://localhost:8080/test?name=test_package.test_module.TestClass
-        
-        runs all test methods in TestClass, and
-        
-          http://localhost:8080/test?name=test_package.test_module
-         
-        runs all test methods in all test classes in test_module.
-        
-        If the default URL is requested:
-        
-          http://localhost:8080/test
-        
-        it is equivalent to 
-        
-          http://localhost:8080/test?package=test 
-
-        """
-        svcErr = getServiceErrorStream()
-
-        format = self.request.get("format")
-        if not format or format not in ["html", "plain"]:
-            format = "html"
-
-        unknownArgs = [arg for arg in self.request.arguments() if arg not in ("package", "name", "format")]
-        if len(unknownArgs) > 0:
-            for arg in unknownArgs:
-                _logError("The parameter '%s' is unrecognizable, please check it out." % arg)
-        
-        package_name = self.request.get("package")
+class JsonTestRunHandler(webapp.RequestHandler):
+    def get(self):    
         test_name = self.request.get("name")
-
-        loader = unittest.defaultTestLoader
-        suite = unittest.TestSuite()
-
-        # As a special case for running tests under the 'test' directory without
-        # needing an "__init__.py" file:
-        if not _DEFAULT_TEST_DIR in sys.path:
-            sys.path.append(_DEFAULT_TEST_DIR)
-
-        if not package_name and not test_name:
-            module_names = [mf[0:-3] for mf in os.listdir(_DEFAULT_TEST_DIR) if mf.endswith(".py")]
-            for module_name in module_names:
-                module = reload(__import__(module_name))
-                suite.addTest(loader.loadTestsFromModule(module))
-        elif test_name:
-            try:
-                module = reload(__import__(test_name))
-                suite.addTest(loader.loadTestsFromModule(module))
-            except:
-                pass
-        elif package_name:
-            try:
-                package = reload(__import__(package_name))
-                module_names = package.__all__
-                for module_name in module_names:
-                    suite.addTest(loader.loadTestsFromName('%s.%s' % (package_name, module_name)))
-            except:
-                pass
-        
-        if suite.countTestCases() > 0:
-            runner = None
-            if format == "html":
-                runner = WebTestRunner()
-                self.response.out.write(testResultPageContent)
-            else:
-                self.response.headers["Content-Type"] = "text/plain"
-                if svcErr.getvalue() != "":
-                    self.response.out.write(svcErr.getvalue())
-                else:
-                    self.response.out.write("====================\n" \
-                                            "GAEUnit Test Results\n" \
-                                            "====================\n\n")
-                    runner = unittest.TextTestRunner(self.response.out)
-            if runner:
-                self._runTestSuite(runner, suite)
-        else:
-            _logError("'%s' is not found or does not contain any tests." % \
-                      (test_name or package_name))
+        _load_default_test_modules()
+        suite = unittest.defaultTestLoader.loadTestsFromName(test_name)
+        runner = JsonTestRunner()
+        _run_test_suite(runner, suite)
+        runner.result.render_to(self.response.out)
 
 
-    def _runTestSuite(self, runner, suite):
-        """Run the test suite.
-
-        Preserve the current development apiproxy, create a new apiproxy and
-        replace the datastore with a temporary one that will be used for this
-        test suite, run the test suite, and restore the development apiproxy.
-        This isolates the test datastores from the development datastore.
-
-        """        
-        original_apiproxy = apiproxy_stub_map.apiproxy
-        try:
-           apiproxy_stub_map.apiproxy = apiproxy_stub_map.APIProxyStubMap() 
-           temp_stub = datastore_file_stub.DatastoreFileStub(
-               'GAEUnitDataStore', None, None)  
-           apiproxy_stub_map.apiproxy.RegisterStub('datastore', temp_stub)
-           # Preserve the other services.
-           for name in ['user', 'urlfetch', 'mail', 'memcache', 'images']: 
-               apiproxy_stub_map.apiproxy.RegisterStub(name, original_apiproxy.GetStub(name))
-           runner.run(suite)
-        finally:
-           apiproxy_stub_map.apiproxy = original_apiproxy
-        
-        # runner.run(suite)
-
-                
-class ResultSender(webapp.RequestHandler):
+# This is not used by the HTML page, but it may be useful for other client test runners.
+class JsonTestListHandler(webapp.RequestHandler):
     def get(self):
-        cache = StringIO.StringIO()
-        result = getTestResult()
-        if svcErr.getvalue() != "":
-            cache.write('{"svcerr":%d, "svcinfo":"%s",' %
-                        (1, svcErr.getvalue()))
+        suite, error = _create_suite(self.request)
+        if not error:
+            self.response.out.write(_test_suite_to_json(suite))
         else:
-            cache.write('{"svcerr":%d, "svcinfo":"%s",' % (0, ""))
-            cache.write(('"runs":"%d", "total":"%d", ' \
-                         '"errors":"%d", "failures":"%d",') %
-                        (result.testsRun, result.testNumber,
-                         len(result.errors), len(result.failures)))
-            cache.write('"details":%s' % result.printErrors())
-        cache.write('}')
-        self.response.out.write(cache.getvalue())
+            self.error(404)
+            self.response.out.write(error)
 
 
-svcErr = StringIO.StringIO()
-testResult = None
+##############################################################################
+# Module helper functions
+##############################################################################
 
-def getServiceErrorStream():
-    global svcErr
-    if svcErr:
-        svcErr.truncate(0)
+
+def _create_suite(request):
+    package_name = request.get("package")
+    test_name = request.get("name")
+
+    loader = unittest.defaultTestLoader
+    suite = unittest.TestSuite()
+
+    if not package_name and not test_name:
+        modules = _load_default_test_modules()
+        for module in modules:
+            suite.addTest(loader.loadTestsFromModule(module))
+    elif test_name:
+        try:
+            _load_default_test_modules()
+            suite.addTest(loader.loadTestsFromName(test_name))
+        except:
+            pass
+    elif package_name:
+        try:
+            package = reload(__import__(package_name))
+            module_names = package.__all__
+            for module_name in module_names:
+                suite.addTest(loader.loadTestsFromName('%s.%s' % (package_name, module_name)))
+        except:
+            pass
+    if suite.countTestCases() == 0:
+        error = _log_error("'%s' is not found or does not contain any tests." %  \
+                          (test_name or package_name))
     else:
-        svcErr = StringIO.StringIO()
-    return svcErr
-
-def _logError(s):
-    # TODO: When using 'plain' format, the error is not returned to
-    #       the HTTP client.  To fix this, svcErr must have been previously set
-    #       to self.response.out for the plain format.  Also, a non-200 error
-    #       code would help 'curl' and other automated clients to determine
-    #       the success/fail status of the test suite.
-    logging.warn(s)
-    svcErr.write(s)
-    
-def getTestResult(createNewObject=False):
-    global testResult
-    if createNewObject or not testResult:
-        testResult = _WebTestResult()
-    return testResult
+        error = None
+    return (suite, error)
 
 
+def _load_default_test_modules():
+    if not _DEFAULT_TEST_DIR in sys.path:
+        sys.path.append(_DEFAULT_TEST_DIR)
+    module_names = [mf[0:-3] for mf in os.listdir(_DEFAULT_TEST_DIR) if mf.endswith(".py")]
+    return [reload(__import__(name)) for name in module_names]
 
+
+def _get_tests_from_suite(suite, tests):
+    for test in suite:
+        if isinstance(test, unittest.TestSuite):
+            _get_tests_from_suite(test, tests)
+        else:
+            tests.append(test)
+
+
+def _test_suite_to_json(suite):
+    tests = []
+    _get_tests_from_suite(suite, tests)
+    test_tuples = [(type(test).__module__, type(test).__name__, test._testMethodName) \
+                   for test in tests]
+    test_dict = {}
+    for test_tuple in test_tuples:
+        module_name, class_name, method_name = test_tuple
+        if module_name not in test_dict:
+            mod_dict = {}
+            method_list = []
+            method_list.append(method_name)
+            mod_dict[class_name] = method_list
+            test_dict[module_name] = mod_dict
+        else:
+            mod_dict = test_dict[module_name]
+            if class_name not in mod_dict:
+                method_list = []
+                method_list.append(method_name)
+                mod_dict[class_name] = method_list
+            else:
+                method_list = mod_dict[class_name]
+                method_list.append(method_name)
+                
+    # Python's dictionary and list string representations happen to match JSON formatting.
+    return str(test_dict)
+
+
+def _run_test_suite(runner, suite):
+    """Run the test suite.
+
+    Preserve the current development apiproxy, create a new apiproxy and
+    replace the datastore with a temporary one that will be used for this
+    test suite, run the test suite, and restore the development apiproxy.
+    This isolates the test datastore from the development datastore.
+
+    """        
+    original_apiproxy = apiproxy_stub_map.apiproxy
+    try:
+       apiproxy_stub_map.apiproxy = apiproxy_stub_map.APIProxyStubMap() 
+       temp_stub = datastore_file_stub.DatastoreFileStub('GAEUnitDataStore', None, None)  
+       apiproxy_stub_map.apiproxy.RegisterStub('datastore', temp_stub)
+       # Allow the other services to be used as-is for tests.
+       for name in ['user', 'urlfetch', 'mail', 'memcache', 'images']: 
+           apiproxy_stub_map.apiproxy.RegisterStub(name, original_apiproxy.GetStub(name))
+       runner.run(suite)
+    finally:
+       apiproxy_stub_map.apiproxy = original_apiproxy
+
+
+def _log_error(s):
+   logging.warn(s)
+   return s
+
+           
 ################################################
-# Browser codes
+# Browser HTML, CSS, and Javascript
 ################################################
 
-testResultPageContent = """
+
+# This string uses Python string formatting, so be sure to escape percents as %%.
+_MAIN_PAGE_CONTENT = """
 <html>
 <head>
     <style>
         body {font-family:arial,sans-serif; text-align:center}
-        #title {font-family:"Times New Roman","Times Roman",TimesNR,times,serif; font-size:18px; font-weight:bold; text-align:center}
-        #version {font-size:47%; text-align:center;}
-        #weblink {font-style:italic; text-align:center; padding-top:7px; padding-bottom:20px}
-        #results {margin:0pt auto; text-align:center; font-weight:bold}
-        #testindicator {width:450px; height:16px; border-style:solid; border-width:2px 1px 1px 2px; background-color:#f8f8f8;}
-        #footerarea {text-align:center; font-size:53%; padding-top:25px}
+        #title {font-family:"Times New Roman","Times Roman",TimesNR,times,serif; font-size:28px; font-weight:bold; text-align:center}
+        #version {font-size:87%%; text-align:center;}
+        #weblink {font-style:italic; text-align:center; padding-top:7px; padding-bottom:7px}
+        #results {padding-top:20px; margin:0pt auto; text-align:center; font-weight:bold}
+        #testindicator {width:600px; height:16px; border-style:solid; border-width:2px 1px 1px 2px; background-color:#f8f8f8;}
+        #footerarea {text-align:center; font-size:83%%; padding-top:25px}
         #errorarea {padding-top:25px}
-        .error {border-color: #c3d9ff; border-style: solid; border-width: 2px 1px 2px 1px; width:445px; padding:1px; margin:0pt auto; text-align:left;font-size:93%;}
+        .error {border-color: #c3d9ff; border-style: solid; border-width: 2px 1px 2px 1px; width:600px; padding:1px; margin:0pt auto; text-align:left}
         .errtitle {background-color:#c3d9ff; font-weight:bold}
-        .errdetail {width:450px;display:block;}
     </style>
     <script language="javascript" type="text/javascript">
-        /* Create a new XMLHttpRequest object to talk to the Web server */
-        var xmlHttp = false;
-        /*@cc_on @*/
-        /*@if (@_jscript_version >= 5)
-        try {
-          xmlHttp = new ActiveXObject("Msxml2.XMLHTTP");
-        } catch (e) {
-          try {
-            xmlHttp = new ActiveXObject("Microsoft.XMLHTTP");
-          } catch (e2) {
-            xmlHttp = false;
-          }
-        }
-        @end @*/
-        if (!xmlHttp && typeof XMLHttpRequest != 'undefined') {
-          xmlHttp = new XMLHttpRequest();
-        }
+        var testsToRun = eval("(" + "%s" + ")"); // JSON-formatted (see _test_suite_to_json)
+        var totalRuns = 0;
+        var totalErrors = 0;
+        var totalFailures = 0;
 
-        function callServer() {
-          var url = "/testresult";
-          xmlHttp.open("GET", url, true);
-          xmlHttp.onreadystatechange = updatePage;
-          xmlHttp.send(null);
+        function newXmlHttp() {
+          try { return new XMLHttpRequest(); } catch(e) {}
+          try { return new ActiveXObject("Msxml2.XMLHTTP"); } catch (e) {}
+          try { return new ActiveXObject("Microsoft.XMLHTTP"); } catch (e) {}
+          alert("XMLHttpRequest not supported");
+          return null;
         }
-
-        function updatePage() {
-          if (xmlHttp.readyState == 4) {
-            var response = xmlHttp.responseText;
-            var result = eval('(' + response + ')');
-            if (result.svcerr) {
-                document.getElementById("errorarea").innerHTML = result.svcinfo;
-                testFailed();
-            } else {                
-                setResult(result.runs, result.total, result.errors, result.failures);
-                var errors = result.details.ERROR;
-                var failures = result.details.FAIL;
-                var details = "";
-                for(var i=0; i<errors.length; i++) {
-                    details += '<p><div class="error"><div class="errtitle">ERROR '+errors[i].desc+'</div><div class="errdetail"><pre>'+errors[i].detail+'</pre></div></div></p>';
-                }
-                for(var i=0; i<failures.length; i++) {
-                    details += '<p><div class="error"><div class="errtitle">FAILURE '+failures[i].desc+'</div><div class="errdetail"><pre>'+failures[i].detail+'</pre></div></div></p>';
-                }
-                document.getElementById("errorarea").innerHTML = details;
+        
+        function requestTestRun(moduleName, className, methodName) {
+            var methodSuffix = "";
+            if (methodName) {
+                methodSuffix = "." + methodName;
             }
-          }
+            var xmlHttp = newXmlHttp();
+            xmlHttp.open("GET", "/testrun?name=" + moduleName + "." + className + methodSuffix, true);
+            xmlHttp.onreadystatechange = function() {
+                if (xmlHttp.readyState != 4) {
+                    return;
+                }
+                if (xmlHttp.status == 200) {
+                    var result = eval("(" + xmlHttp.responseText + ")");
+                    totalRuns += parseInt(result.runs);
+                    totalErrors += parseInt(result.errors);
+                    totalFailures += parseInt(result.failures);
+                    document.getElementById("testran").innerHTML = totalRuns;
+                    document.getElementById("testerror").innerHTML = totalErrors;
+                    document.getElementById("testfailure").innerHTML = totalFailures;
+                    if (totalErrors == 0 && totalFailures == 0) {
+                        testSucceed();
+                    } else {
+                        testFailed();
+                    }
+                    var errors = result.details.errors;
+                    var failures = result.details.failures;
+                    var details = "";
+                    for(var i=0; i<errors.length; i++) {
+                        details += '<p><div class="error"><div class="errtitle">ERROR ' +
+                                   errors[i].desc +
+                                   '</div><div class="errdetail"><pre>'+errors[i].detail +
+                                   '</pre></div></div></p>';
+                    }
+                    for(var i=0; i<failures.length; i++) {
+                        details += '<p><div class="error"><div class="errtitle">FAILURE ' +
+                                    failures[i].desc +
+                                    '</div><div class="errdetail"><pre>' +
+                                    failures[i].detail +
+                                    '</pre></div></div></p>';
+                    }
+                    var errorArea = document.getElementById("errorarea");
+                    errorArea.innerHTML += details;
+                } else {
+                    document.getElementById("errorarea").innerHTML = xmlHttp.responseText;
+                    testFailed();
+                }
+            };
+            xmlHttp.send(null);            
         }
 
         function testFailed() {
             document.getElementById("testindicator").style.backgroundColor="red";
-            clearInterval(timer);
         }
         
         function testSucceed() {
             document.getElementById("testindicator").style.backgroundColor="green";
-            clearInterval(timer);
         }
-
-        function setResult(runs, total, errors, failures) {
-            document.getElementById("testran").innerHTML = runs;
-            document.getElementById("testtotal").innerHTML = total;
-            document.getElementById("testerror").innerHTML = errors;
-            document.getElementById("testfailure").innerHTML = failures;
-            if (errors==0 && failures==0) {
-                testSucceed();
-            } else {
-                testFailed();
+        
+        function runTests() {
+            // Run each test asynchronously (concurrently).
+            var totalTests = 0;
+            for (var moduleName in testsToRun) {
+                var classes = testsToRun[moduleName];
+                for (var className in classes) {
+                    // TODO: Optimize for the case where tests are run by class so we don't
+                    //       have to always execute each method separately.  This should be
+                    //       possible when we have a UI that allows the user to select tests
+                    //       by module, class, and method.
+                    //requestTestRun(moduleName, className);
+                    methods = classes[className];
+                    for (var i = 0; i < methods.length; i++) {
+                        totalTests += 1;
+                        var methodName = methods[i];
+                        requestTestRun(moduleName, className, methodName);
+                    }
+                }
             }
+            document.getElementById("testtotal").innerHTML = totalTests;
         }
 
-        // Update page every 5 seconds
-        var timer = setInterval(callServer, 500);
     </script>
     <title>GAEUnit: Google App Engine Unit Test Framework</title>
 </head>
-<body>
+<body onload="runTests()">
     <div id="headerarea">
         <div id="title">GAEUnit: Google App Engine Unit Test Framework</div>
-        <div id="version">version 1.2.2</div>
-        <div id="weblink">Please check <a href="http://code.google.com/p/gaeunit">http://code.google.com/p/gaeunit</a> for the latest version</div>
+        <div id="version">Version 1.2.4</div>
     </div>
     <div id="resultarea">
         <table id="results"><tbody>
@@ -413,21 +439,36 @@ testResultPageContent = """
             </tr>
         </tbody></table>
     </div>
-    <div id="errorarea">The test is running, please wait...</div>
+    <div id="errorarea"></div>
     <div id="footerarea">
-        Please write to the <a href="mailto:George.Z.Lei@Gmail.com">author</a> to report problems<br/>
-        Copyright 2008 George Lei and Steven R. Farley
+        <div id="weblink">
+        <p>
+            Please visit the <a href="http://code.google.com/p/gaeunit">project home page</a>
+            for the latest version or to report problems.
+        </p>
+        <p>
+            Copyright 2008 <a href="mailto:George.Z.Lei@Gmail.com">George Lei</a>
+            and <a href="mailto:srfarley@gmail.com>Steven R. Farley</a>
+        </p>
+        </div>
     </div>
 </body>
 </html>
 """
 
-application = webapp.WSGIApplication([('/test', GAEUnitTestRunner),
-                                      ('/testresult', ResultSender)],
+
+##############################################################################
+# Script setup and execution
+##############################################################################
+
+
+application = webapp.WSGIApplication([('/test', MainTestPageHandler),
+                                      ('/testrun', JsonTestRunHandler),
+                                      ('/testlist', JsonTestListHandler)],
                                       debug=True)
 
 def main():
-    wsgiref.handlers.CGIHandler().run(application)
+    run_wsgi_app(application)                                    
 
 if __name__ == '__main__':
     main()
