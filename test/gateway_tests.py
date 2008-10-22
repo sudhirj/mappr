@@ -5,9 +5,9 @@ from google.appengine.api import users
 class GatewayTests (test.helpers.TestFixture):
     def test_getting_points_for_user(self):
         result = gateway.get_points_for('sudhirurl')
-        self.assertEqual(result.__len__(),2)
+        self.assertEqual(len(result),2)
         result2 = gateway.get_points_for('somerubbish')
-        self.assertEqual(result2.__len__(),0)
+        self.assertEqual(len(result2),0)
     
     def test_setting_points_for_user(self):
         mom = models.Customer(user=users.User('mom@gmail.com'),url='momurl')
@@ -15,7 +15,7 @@ class GatewayTests (test.helpers.TestFixture):
         confirmation = gateway.set_point(mom,lat=34.678,lon=-44.3456)
         self.assertTrue(confirmation)
         result = gateway.get_points_for('momurl')
-        self.assertEqual(result.__len__(),1)
+        self.assertEqual(len(result),1)
         self.assertEqual(result.count(dict(lat=34.678,lon=-44.3456,title=None)),1) 
     
     def test_user_creation(self):

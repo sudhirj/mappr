@@ -12,9 +12,9 @@ class MainHandler(webapp.RequestHandler):
         self.response.out.write(users.create_login_url("/"))
         self.response.out.write(template.render(utils.path('templates/index.html'),template_values))
     
-ROUTES =    [
+ROUTES =[
             (r'/(.*)', MainHandler)
-            ]
+        ]
 
 def createMainApplication():
     return webapp.WSGIApplication(ROUTES,debug=True)

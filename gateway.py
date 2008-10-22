@@ -7,7 +7,7 @@ from google.appengine.ext import db
 def get_points_for(url):
     customer = models.Customer.all().filter('url =',url).fetch(1)
     pointset = []
-    if customer.__len__() == 0:
+    if len(customer) == 0:
         return pointset
     for point in customer[0].points:
         pointset.append(dict(lat = point.point.lat,lon = point.point.lon,title = point.title))
