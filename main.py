@@ -9,7 +9,6 @@ class MainHandler(webapp.RequestHandler):
     def get(self,url=None):
         pointset = gateway.get_points_for(url)
         template_values = {'points':pointset}
-        self.response.out.write(users.create_login_url("/"))
         self.response.out.write(template.render(utils.path('templates/index.html'),template_values))
     
 ROUTES =[
