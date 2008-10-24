@@ -29,3 +29,10 @@ class GatewayTests (test.helpers.TestFixture):
         self.assertRaises(Exception,gateway.create_customer,url='somethingelse',user=users.User('test@gmail.com'))
         self.assertRaises(Exception,gateway.create_customer,url='TeSt',user=users.User('someoneelse@gmail.com'))
     
+    def test_user_existence_check(self):
+        self.assertFalse(gateway.check_if_user_exists(users.User('nonexistentemail@gmail.com')))
+        self.assertTrue(gateway.check_if_user_exists(users.User('sudhir.j@gmail.com')))
+    
+    def test_url_existence_check(self):
+        self.assertFalse(gateway.check_if_url_exists('nonexistenturl'))
+        self.assertTrue(gateway.check_if_url_exists('sudhirurl'))

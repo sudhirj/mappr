@@ -2,8 +2,6 @@ import models,logging
 from google.appengine.api import users
 from google.appengine.ext import db
 
-
-
 def get_points_for(url):
     customer = models.Customer.all().filter('url =',url).fetch(1)
     pointset = []
@@ -27,7 +25,15 @@ def create_customer(url, user):
     new_customer.put()
     return new_customer
 
+def check_if_user_exists(user):
+    if models.Customer.all().filter('user =',user).fetch(1).__len__() > 0:
+        return True
+    return False
 
+def check_if_url_exists(url):
+    if models.Customer.all().filter('url =',url.lower()).fetch(1).__len__() > 0:
+        return True
+    return False
 
     
     
