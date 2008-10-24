@@ -1,7 +1,7 @@
-import models, unittest, main
+import models, unittest, main, logging
 from google.appengine.ext import db
 from google.appengine.api import users
-from  webtest import TestApp
+from webtest import TestApp
 from google.appengine.ext import webapp
 
 class TestFixture (unittest.TestCase):
@@ -21,8 +21,10 @@ class TestFixture (unittest.TestCase):
         self.officedict = dict(lat=23.46,lon=4.7,owner=self.sudhir, title = "sudhir_office")
         self.office = models.Point(point = db.GeoPt(23.46,4.7),owner=self.sudhir, title = "sudhir_office")
         self.office.put()
+        
         self.o2 = models.Point(point = db.GeoPt(24.234456,-85.34556),owner = self.amrita,parent = self.amrita)
         self.o2.put()
+        
             
     def tearDown(self):
         for point in models.Point.all():

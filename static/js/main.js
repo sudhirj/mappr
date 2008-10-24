@@ -1,5 +1,6 @@
 google.load("maps", "2");
-google.load("jquery", "1.2");
+google.load("jquery", "1");
+google.load("jqueryui", "1");
 
 var Map = function(){
     var mapDivName;
@@ -18,10 +19,11 @@ var Map = function(){
             if (!GBrowserIsCompatible()) {alert("This site cannot run on your browser."); return;}
             this.map = new google.maps.Map2(document.getElementById(divName),{googleBarOptions:{showOnLoad:true}});
             this.map.setCenter(new GLatLng(o.lat, o.lon), o.zoom);
-            this.map.enableScrollWheelZoom();
-            this.map.enableGoogleBar();
-            this.adsManager = new google.maps.AdsManager(this.map, 'pub-7898295704528692',{maxAdsOnMap:10});
+            this.adsManager = new google.maps.AdsManager(this.map, 'ca-pub-7898295704528692',{maxAdsOnMap:10});
             this.adsManager.enable();
+            this.map.enableGoogleBar();
+            this.map.enableScrollWheelZoom();
+            this.map.enableContinuousZoom();
         },
         addPlainMarker: function(lat, lng){
             this.map.addOverlay(new GMarker(new GLatLng(lat, lng)));
@@ -38,5 +40,5 @@ var Map = function(){
 
 google.setOnLoadCallback(function(){
     Map.initialize("map");
-    
+
 });
