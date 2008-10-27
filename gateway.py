@@ -26,9 +26,10 @@ def create_customer(url, user):
     return new_customer
 
 def check_if_user_exists(user):
-    if models.Customer.all().filter('user =',user).fetch(1).__len__() > 0:
-        return True
-    return False
+    customer = models.Customer.all().filter('user =',user).fetch(1)
+    if customer.__len__() > 0:
+        return customer[0].url
+    return None
 
 def check_if_url_exists(url):
     if models.Customer.all().filter('url =',url.lower()).fetch(1).__len__() > 0:

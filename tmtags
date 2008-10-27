@@ -12,6 +12,7 @@ Checkbox	/Users/sudhirj/mappr/webtest/__init__.py	/^class Checkbox(Field):$/;"	c
 Customer	/Users/sudhirj/mappr/models.py	/^class Customer(db.Model):$/;"	class	line:8
 Field	/Users/sudhirj/mappr/webtest/__init__.py	/^class Field(object):$/;"	class	line:1093
 Form	/Users/sudhirj/mappr/webtest/__init__.py	/^class Form(object):$/;"	class	line:864
+GatewayTests	/Users/sudhirj/mappr/test/gateway_tests.py	/^class GatewayTests (test.helpers.TestFixture):$/;"	class	line:5
 Hidden	/Users/sudhirj/mappr/webtest/__init__.py	/^class Hidden(Text):$/;"	class	line:1225
 JsonTestListHandler	/Users/sudhirj/mappr/gaeunit.py	/^class JsonTestListHandler(webapp.RequestHandler):$/;"	class	line:191
 JsonTestResult	/Users/sudhirj/mappr/gaeunit.py	/^class JsonTestResult(unittest.TestResult):$/;"	class	line:130
@@ -22,8 +23,7 @@ MainPageTest	/Users/sudhirj/mappr/test/main_page_web_tests.py	/^class MainPageTe
 MainTestPageHandler	/Users/sudhirj/mappr/gaeunit.py	/^class MainTestPageHandler(webapp.RequestHandler):$/;"	class	line:81
 ModelQueryTests	/Users/sudhirj/mappr/test/model_query_tests.py	/^class ModelQueryTests(test.helpers.TestFixture):$/;"	class	line:8
 NoDefault	/Users/sudhirj/mappr/webtest/__init__.py	/^class NoDefault(object):$/;"	class	line:37
-Point	/Users/sudhirj/mappr/models.py	/^class Point(db.Model):$/;"	class	line:23
-PresenterTests	/Users/sudhirj/mappr/test/presenter_tests.py	/^class PresenterTests (test.helpers.TestFixture):$/;"	class	line:5
+Point	/Users/sudhirj/mappr/models.py	/^class Point(db.Model):$/;"	class	line:24
 Radio	/Users/sudhirj/mappr/webtest/__init__.py	/^class Radio(Select):$/;"	class	line:1176
 Select	/Users/sudhirj/mappr/webtest/__init__.py	/^class Select(Field):$/;"	class	line:1133
 Submit	/Users/sudhirj/mappr/webtest/__init__.py	/^class Submit(Field):$/;"	class	line:1232
@@ -33,10 +33,10 @@ TestRequest	/Users/sudhirj/mappr/webtest/__init__.py	/^class TestRequest(Request
 TestResponse	/Users/sudhirj/mappr/webtest/__init__.py	/^class TestResponse(Response):$/;"	class	line:378
 Text	/Users/sudhirj/mappr/webtest/__init__.py	/^class Text(Field):$/;"	class	line:1211
 Textarea	/Users/sudhirj/mappr/webtest/__init__.py	/^class Textarea(Text):$/;"	class	line:1218
-WebTestFixture	/Users/sudhirj/mappr/test/helpers.py	/^class WebTestFixture(TestFixture):$/;"	class	line:33
+WebTestFixture	/Users/sudhirj/mappr/test/helpers.py	/^class WebTestFixture(TestFixture):$/;"	class	line:35
 __contains__	/Users/sudhirj/mappr/webtest/__init__.py	/^    def __contains__(self, s):$/;"	member	line:658
 __eq__	/Users/sudhirj/mappr/models.py	/^    def __eq__(self, other):$/;"	member	line:15
-__eq__	/Users/sudhirj/mappr/models.py	/^    def __eq__(self, other):$/;"	member	line:29
+__eq__	/Users/sudhirj/mappr/models.py	/^    def __eq__(self, other):$/;"	member	line:30
 __getitem__	/Users/sudhirj/mappr/webtest/__init__.py	/^    def __getitem__(self, name):$/;"	member	line:1001
 __init__	/Users/sudhirj/mappr/gaeunit.py	/^    def __init__(self):$/;"	member	line:131
 __init__	/Users/sudhirj/mappr/webtest/__init__.py	/^    def __init__(self, *args, **attrs):$/;"	member	line:1139
@@ -73,12 +73,15 @@ _render_plain	/Users/sudhirj/mappr/gaeunit.py	/^    def _render_plain(self):$/;"
 _run_test_suite	/Users/sudhirj/mappr/gaeunit.py	/^def _run_test_suite(runner, suite):$/;"	function	line:282
 _space_prefix	/Users/sudhirj/mappr/webtest/__init__.py	/^def _space_prefix(pref, full, sep=None, indent=None, include_sep=True):$/;"	function	line:1265
 _test_suite_to_json	/Users/sudhirj/mappr/gaeunit.py	/^def _test_suite_to_json(suite):$/;"	function	line:254
+check_if_url_exists	/Users/sudhirj/mappr/gateway.py	/^def check_if_url_exists(url):$/;"	function	line:33
+check_if_user_exists	/Users/sudhirj/mappr/gateway.py	/^def check_if_user_exists(user):$/;"	function	line:28
 check_url	/Users/sudhirj/mappr/helpers/validators.py	/^def check_url(url):$/;"	function	line:1
 click	/Users/sudhirj/mappr/webtest/__init__.py	/^    def click(self, description=None, linkid=None, href=None,$/;"	member	line:463
 clickbutton	/Users/sudhirj/mappr/webtest/__init__.py	/^    def clickbutton(self, description=None, buttonid=None, href=None,$/;"	member	line:513
-createMainApplication	/Users/sudhirj/mappr/main.py	/^def createMainApplication():$/;"	function	line:26
+createMainApplication	/Users/sudhirj/mappr/main.py	/^def createMainApplication():$/;"	function	line:18
+create_customer	/Users/sudhirj/mappr/gateway.py	/^def create_customer(url, user):$/;"	function	line:19
 debug_app	/Users/sudhirj/mappr/webtest/debugapp.py	/^def debug_app(environ, start_response):$/;"	function	line:9
-delete	/Users/sudhirj/mappr/models.py	/^    def delete(self):$/;"	member	line:37
+delete	/Users/sudhirj/mappr/models.py	/^    def delete(self):$/;"	member	line:38
 delete	/Users/sudhirj/mappr/webtest/__init__.py	/^    def delete(self, url, headers=None, extra_environ=None,$/;"	member	line:218
 do_request	/Users/sudhirj/mappr/webtest/__init__.py	/^    def do_request(self, req, status, expect_errors):$/;"	member	line:278
 encode_multipart	/Users/sudhirj/mappr/webtest/__init__.py	/^    def encode_multipart(self, params, files):$/;"	member	line:230
@@ -93,7 +96,7 @@ get	/Users/sudhirj/mappr/gaeunit.py	/^    def get(self):$/;"	member	line:82
 get	/Users/sudhirj/mappr/main.py	/^    def get(self,url=None):$/;"	member	line:9
 get	/Users/sudhirj/mappr/webtest/__init__.py	/^    def get(self, name, index=None, default=NoDefault):$/;"	member	line:1026
 get	/Users/sudhirj/mappr/webtest/__init__.py	/^    def get(self, url, params=None, headers=None, extra_environ=None,$/;"	member	line:98
-get_points_for	/Users/sudhirj/mappr/presenter.py	/^def get_points_for(url):$/;"	function	line:5
+get_points_for	/Users/sudhirj/mappr/gateway.py	/^def get_points_for(url):$/;"	function	line:5
 getvalue	/Users/sudhirj/mappr/webtest/__init__.py	/^    def getvalue(self):$/;"	member	line:375
 goto	/Users/sudhirj/mappr/webtest/__init__.py	/^    def goto(self, href, method='get', **args):$/;"	member	line:608
 html	/Users/sudhirj/mappr/webtest/__init__.py	/^    def html(self):$/;"	member	line:736
@@ -101,29 +104,28 @@ html_unquote	/Users/sudhirj/mappr/webtest/__init__.py	/^def html_unquote(v):$/;"
 json	/Users/sudhirj/mappr/webtest/__init__.py	/^    def json(self):$/;"	member	line:820
 lxml	/Users/sudhirj/mappr/webtest/__init__.py	/^    def lxml(self):$/;"	member	line:787
 main	/Users/sudhirj/mappr/gaeunit.py	/^def main():$/;"	function	line:470
-main	/Users/sudhirj/mappr/main.py	/^def main():$/;"	function	line:29
+main	/Users/sudhirj/mappr/main.py	/^def main():$/;"	function	line:21
 make_debug_app	/Users/sudhirj/mappr/webtest/debugapp.py	/^def make_debug_app(global_conf):$/;"	function	line:34
 mustcontain	/Users/sudhirj/mappr/webtest/__init__.py	/^    def mustcontain(self, *strings, **kw):$/;"	member	line:677
 normal_body__get	/Users/sudhirj/mappr/webtest/__init__.py	/^    def normal_body__get(self):$/;"	member	line:636
 path	/Users/sudhirj/mappr/helpers/utils.py	/^def path(p=''):$/;"	function	line:2
-post	/Users/sudhirj/mappr/main.py	/^    def post(self, url=None):$/;"	member	line:15
 post	/Users/sudhirj/mappr/webtest/__init__.py	/^    def post(self, url, params='', headers=None, extra_environ=None,$/;"	member	line:182
 printlog	/Users/sudhirj/mappr/webtest/__init__.py	/^        def printlog(s):$/;"	member	line:544
-put	/Users/sudhirj/mappr/models.py	/^    def put(self):$/;"	member	line:42
+put	/Users/sudhirj/mappr/models.py	/^    def put(self):$/;"	member	line:43
 put	/Users/sudhirj/mappr/webtest/__init__.py	/^    def put(self, url, params='', headers=None, extra_environ=None,$/;"	member	line:200
 render_to	/Users/sudhirj/mappr/gaeunit.py	/^    def render_to(self, stream):$/;"	member	line:135
 reset	/Users/sudhirj/mappr/webtest/__init__.py	/^    def reset(self):$/;"	member	line:84
 run	/Users/sudhirj/mappr/gaeunit.py	/^    def run(self, test):$/;"	member	line:170
 select	/Users/sudhirj/mappr/webtest/__init__.py	/^    def select(self, name, value, index=None):$/;"	member	line:1043
 set	/Users/sudhirj/mappr/webtest/__init__.py	/^    def set(self, name, value, index=None):$/;"	member	line:1013
-setUp	/Users/sudhirj/mappr/test/helpers.py	/^    def setUp(self):$/;"	member	line:34
+setUp	/Users/sudhirj/mappr/test/helpers.py	/^    def setUp(self):$/;"	member	line:36
 setUp	/Users/sudhirj/mappr/test/helpers.py	/^    def setUp(self):$/;"	member	line:8
-set_point	/Users/sudhirj/mappr/presenter.py	/^def set_point(customer, lat, lon):$/;"	function	line:18
+set_point	/Users/sudhirj/mappr/gateway.py	/^def set_point(customer, lat, lon):$/;"	function	line:14
 showbrowser	/Users/sudhirj/mappr/webtest/__init__.py	/^    def showbrowser(self):$/;"	member	line:842
 sorted	/Users/sudhirj/mappr/webtest/__init__.py	/^    def sorted(l):$/;"	function	line:43
 submit	/Users/sudhirj/mappr/webtest/__init__.py	/^    def submit(self, name=None, index=None, **args):$/;"	member	line:1052
 submit_fields	/Users/sudhirj/mappr/webtest/__init__.py	/^    def submit_fields(self, name=None, index=None):$/;"	member	line:1064
-tearDown	/Users/sudhirj/mappr/test/helpers.py	/^    def tearDown(self):$/;"	member	line:27
+tearDown	/Users/sudhirj/mappr/test/helpers.py	/^    def tearDown(self):$/;"	member	line:29
 tempnam_no_warning	/Users/sudhirj/mappr/webtest/__init__.py	/^def tempnam_no_warning(*args):$/;"	function	line:29
 test_basic_association	/Users/sudhirj/mappr/test/model_query_tests.py	/^    def test_basic_association(self):$/;"	member	line:10
 test_basic_responses	/Users/sudhirj/mappr/test/main_page_web_tests.py	/^    def test_basic_responses(self):$/;"	member	line:7
@@ -131,12 +133,15 @@ test_customer_validations	/Users/sudhirj/mappr/test/basic_model_tests.py	/^    d
 test_delete_override	/Users/sudhirj/mappr/test/advanced_model_tests.py	/^    def test_delete_override(self):$/;"	member	line:32
 test_delete_override_on_db_class	/Users/sudhirj/mappr/test/advanced_model_tests.py	/^    def test_delete_override_on_db_class(self):$/;"	member	line:41
 test_equality_overrides	/Users/sudhirj/mappr/test/advanced_model_tests.py	/^    def test_equality_overrides(self):$/;"	member	line:15
-test_getting_points_for_user	/Users/sudhirj/mappr/test/presenter_tests.py	/^    def test_getting_points_for_user(self):$/;"	member	line:6
+test_getting_points_for_user	/Users/sudhirj/mappr/test/gateway_tests.py	/^    def test_getting_points_for_user(self):$/;"	member	line:6
 test_parentage	/Users/sudhirj/mappr/test/advanced_model_tests.py	/^    def test_parentage(self):$/;"	member	line:11
 test_point_owner_counter	/Users/sudhirj/mappr/test/advanced_model_tests.py	/^    def test_point_owner_counter(self):$/;"	member	line:25
 test_point_validations	/Users/sudhirj/mappr/test/basic_model_tests.py	/^    def test_point_validations(self):$/;"	member	line:45
 test_setting_points	/Users/sudhirj/mappr/test/main_page_web_tests.py	/^    def test_setting_points(self):$/;"	member	line:20
-test_setting_points_for_user	/Users/sudhirj/mappr/test/presenter_tests.py	/^    def test_setting_points_for_user(self):$/;"	member	line:12
+test_setting_points_for_user	/Users/sudhirj/mappr/test/gateway_tests.py	/^    def test_setting_points_for_user(self):$/;"	member	line:12
+test_url_existence_check	/Users/sudhirj/mappr/test/gateway_tests.py	/^    def test_url_existence_check(self):$/;"	member	line:36
+test_user_creation	/Users/sudhirj/mappr/test/gateway_tests.py	/^    def test_user_creation(self):$/;"	member	line:21
+test_user_existence_check	/Users/sudhirj/mappr/test/gateway_tests.py	/^    def test_user_existence_check(self):$/;"	member	line:32
 unicode_normal_body__get	/Users/sudhirj/mappr/webtest/__init__.py	/^    def unicode_normal_body__get(self):$/;"	member	line:647
 value__get	/Users/sudhirj/mappr/webtest/__init__.py	/^    def value__get(self):$/;"	member	line:1128
 value__get	/Users/sudhirj/mappr/webtest/__init__.py	/^    def value__get(self):$/;"	member	line:1159

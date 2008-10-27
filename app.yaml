@@ -10,5 +10,25 @@ handlers:
 - url: /test.*
   script: gaeunit.py    
 
+- url: /_check/.*
+  script: responders.py
+  
 - url: /.*
   script: main.py
+
+skip_files: |
+ ^(.*/)?(
+ (app\.yaml)|
+ (app\.yml)|
+ (index\.yaml)|
+ (index\.yml)|
+ (#.*#)|
+ (.*~)|
+ (.*\.py[co])|
+ (.*/RCS/.*)|
+ (\..*)|
+ (.*_tests.py)|
+ (tmtags)|
+ (test/.*)|
+ (webtest/.*)|
+ )$
