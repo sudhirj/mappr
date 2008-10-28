@@ -1,6 +1,6 @@
 from google.appengine.ext import db
 from helpers import validators
-import logging
+import logging, settings
 
 
 """Database models for the app."""
@@ -46,6 +46,8 @@ class Point(db.Model):
         else:
             self.parent = self.owner
             self.owner.point_count +=1
+            if self.owner.point_count > settings.hard_point_count_ceiling:
+                raise Exception, "Maximum possible number of points reached."
             self.owner.put()
             return db.Model.put(self)
 

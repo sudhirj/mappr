@@ -1,9 +1,6 @@
 from google.appengine.ext import db
-import unittest
-import logging
-import models
+import unittest, logging, models, test.helpers, settings
 from google.appengine.api import users
-import test.helpers
 
 
 class AdvancedModelTests(test.helpers.TestFixture):
@@ -28,6 +25,16 @@ class AdvancedModelTests(test.helpers.TestFixture):
         self.assertEqual(self.sudhir.point_count,2)
         self.office.delete()
         self.assertEqual(self.sudhir.point_count,1)
+    
+    def test_point_owner_counter_does_not_exceed_hard_ceiling(self):
+        number_of_points_to_reach_ceiling = settings.hard_point_count_ceiling - self.sudhir.point_count - 1
+        
+        for i in xrange(number_of_points_to_reach_ceiling):
+            models.Point(point = db.GeoPt(i,i),owner=self.sudhir).put()
+        
+        last_straw = models.Point(point = db.GeoPt(89,89),owner=self.sudhir)
+        self.assertRaises(Exception,last_straw.put,None)
+        
     
     def test_delete_override(self):
         startcount = models.Point.all().count()

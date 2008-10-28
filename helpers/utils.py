@@ -17,6 +17,24 @@ def authdetails(page = "/"):
         status = 0
         url = 'NULL'
         
-    logging.info(status)
-    logging.info(link)
     return dict(status = status,link = link,label=label,url=url)
+    
+    
+def authorize(role):
+    def wrapper(handler_method):
+        def check_login(self, *args, **kwargs):
+            user = users.get_current_user()
+            if not user:
+                if self.request.method != 'GET':
+                    self.error(403)
+                else:
+                    self.redirect(users.create_login_url(self.request.uri))
+            elif role == "user" or (role == "admin" and users.is_current_user_admin()):
+                handler_method(self, *args, **kwargs)
+            else:
+                if self.request.method == 'GET':
+                    self.redirect("/403.html")
+                else:
+                    self.error(403)
+        return check_login
+    return wrapper

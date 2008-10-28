@@ -1,4 +1,4 @@
-import wsgiref.handlers,logging, gateway, os
+import wsgiref.handlers,logging, gateway, os, cgi, settings
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import template
 from helpers import utils
@@ -11,20 +11,17 @@ class MainHandler(webapp.RequestHandler):
         template_values = {'points':pointset,'auth':utils.authdetails()}
         self.response.out.write(template.render(utils.path('templates/index.html'),template_values))
     
+    @utils.authorize('user')
     def post(self,url=None):
         user = users.get_current_user()
-        if user == None:
+        url = cgi.escape(self.request.get('url'))
+        try:
+            new_customer = gateway.create_customer(url,user)
+        except Exception, e:
+            self.response.out.write(e)
             self.response.set_status(403)
-            return
         else:
-            url = self.request.get('url')
-            try:
-                new_customer = gateway.create_customer(url,user)
-            except Exception, e:
-                self.response.out.write(e)
-                self.response.set_status(403)
-            else:
-                self.response.out.write(new_customer.url) 
+            self.response.out.write(new_customer.url) 
                    
     
 ROUTES =[
@@ -32,7 +29,7 @@ ROUTES =[
         ]
 
 def createMainApplication():
-    return webapp.WSGIApplication(ROUTES,debug=True)
+    return webapp.WSGIApplication(ROUTES,debug=settings.debug)
                                         
 def main():
     wsgiref.handlers.CGIHandler().run(createMainApplication())

@@ -18,9 +18,9 @@ def set_point(customer, lat, lon):
 
 def create_customer(url, user):
     if models.Customer.all().filter('url =',url.lower()).fetch(1).__len__() > 0:
-        raise Exception, "URL already exists."
+        raise Exception, "This PinnSpot URL already exists."
     if models.Customer.all().filter('user =',user).fetch(1).__len__() > 0:
-        raise Exception, "This user already has an account and URL."
+        raise Exception, "You already have a PinnSpot URL."
     new_customer = models.Customer(url = url, user = user)
     new_customer.put()
     return new_customer

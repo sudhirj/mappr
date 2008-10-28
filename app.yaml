@@ -8,10 +8,13 @@ handlers:
   static_dir: static
 
 - url: /test.*
-  script: gaeunit.py    
+  script: gaeunit.py  
+
+- url: /_points/.*
+  script: points.py
 
 - url: /_check/.*
-  script: responders.py
+  script: checks.py
   
 - url: /.*
   script: main.py
