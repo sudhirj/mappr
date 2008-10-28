@@ -10,12 +10,6 @@ handlers:
 - url: /test.*
   script: gaeunit.py  
 
-- url: /_points/.*
-  script: points.py
-
-- url: /_check/.*
-  script: checks.py
-  
 - url: /.*
   script: main.py
 

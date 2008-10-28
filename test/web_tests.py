@@ -36,4 +36,5 @@ class PostMethodsSecurityTest(test.helpers.WebTestFixture):
         # Testing main user creation 
         app.post('/',status=403)
         
-        
+        # Testing point creation
+        app.post('/_points/',status=403)

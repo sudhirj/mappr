@@ -160,10 +160,6 @@ var FirstTime = function(){
 }
 ();
 
-
-
-
-
 google.setOnLoadCallback(function(){
     Map.initialize("map");
     $(document).ready(function() {

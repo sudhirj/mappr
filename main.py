@@ -22,9 +22,23 @@ class MainHandler(webapp.RequestHandler):
             self.response.set_status(403)
         else:
             self.response.out.write(new_customer.url) 
-                   
+
+class UrlCheckHandler(webapp.RequestHandler):
+    def get(self,url=None):
+        if gateway.check_if_url_exists(url):
+            self.response.out.write('Y')
+        else:
+            self.response.out.write('N')
+
+
+class PointHandler(webapp.RequestHandler):
+    @utils.authorize('user')
+    def post(self):
+        pass    
     
 ROUTES =[
+            (r'/_points/', PointHandler),
+            (r'/_check/url/(.*)', UrlCheckHandler),
             (r'/(.*)', MainHandler)
         ]
 
