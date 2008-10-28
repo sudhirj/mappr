@@ -1,4 +1,4 @@
-import wsgiref.handlers,logging, gateway, os
+import wsgiref.handlers,logging, gateway, os, settings
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import template
 from helpers import utils
@@ -7,9 +7,9 @@ from google.appengine.api import users
 class UrlCheckHandler(webapp.RequestHandler):
     def get(self,url=None):
         if gateway.check_if_url_exists(url):
-            self.response.out.write('y')
+            self.response.out.write('Y')
         else:
-            self.response.out.write('n')
+            self.response.out.write('N')
 
         
     
@@ -18,7 +18,7 @@ ROUTES =[
         ]
 
 def createMainApplication():
-    return webapp.WSGIApplication(ROUTES,debug=True)
+    return webapp.WSGIApplication(ROUTES,debug=settings.debug)
                                         
 def main():
     wsgiref.handlers.CGIHandler().run(createMainApplication())
