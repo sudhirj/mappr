@@ -17,24 +17,31 @@ class MainHandler(webapp.RequestHandler):
         url = cgi.escape(self.request.get('url'))
         try:
             new_customer = gateway.create_customer(url,user)
+            self.response.out.write(new_customer.url) 
         except Exception, e:
             self.response.out.write(e)
             self.response.set_status(403)
-        else:
-            self.response.out.write(new_customer.url) 
+            
 
 class UrlCheckHandler(webapp.RequestHandler):
     def get(self,url=None):
-        if gateway.check_if_url_exists(url):
-            self.response.out.write('Y')
-        else:
-            self.response.out.write('N')
+        self.response.out.write('Y' if gateway.check_if_url_exists(url) else 'N')
 
 
 class PointHandler(webapp.RequestHandler):
     @utils.authorize('user')
     def post(self):
-        pass    
+        user = users.get_current_user()
+        lat = cgi.escape(self.request.get('lat'))
+        lon = cgi.escape(self.request.get('lon'))
+        try:
+            new_point = gateway.set_point(customer = gateway.get_customer(user) , lat = lat, lon = lon)
+            new_point.title = cgi.escape(self.request.get('title'))
+            
+            self.response.out.write('OK_%s',new_point.key())
+        except Exception, e:
+            self.response.out.write('ERROR_%s',e)
+            self.response.set_status(403)    
     
 ROUTES =[
             (r'/_points/', PointHandler),

@@ -3,38 +3,40 @@ from google.appengine.api import users
 from google.appengine.ext import db
 
 def get_points_for(url):
-    customer = models.Customer.all().filter('url =',url).fetch(1)
+    customer = get_customer_by_url(url)
     pointset = []
-    if len(customer) == 0:
-        return pointset
-    for point in customer[0].points:
+    if not customer:
+        return []
+    for point in customer.points:
         pointset.append(dict(lat = point.point.lat,lon = point.point.lon,title = point.title,key=point.key()))
     return pointset
 
 def set_point(customer, lat, lon):
     newpoint = models.Point(point = db.GeoPt(lat,lon), owner = customer, parent = customer)
     newpoint.put()
-    return newpoint.key()
+    return newpoint
 
 def create_customer(url, user):
-    if models.Customer.all().filter('url =',url.lower()).fetch(1).__len__() > 0:
+    if get_customer_by_url(url):
         raise Exception, "This PinnSpot URL already exists."
-    if models.Customer.all().filter('user =',user).fetch(1).__len__() > 0:
+    if get_customer(user):
         raise Exception, "You already have a PinnSpot URL."
     new_customer = models.Customer(url = url, user = user)
     new_customer.put()
     return new_customer
 
 def check_if_user_exists(user):
-    customer = models.Customer.all().filter('user =',user).fetch(1)
-    if customer.__len__() > 0:
-        return customer[0].url
-    return None
+    return True if get_customer(user) else False
 
 def check_if_url_exists(url):
-    if models.Customer.all().filter('url =',url.lower()).fetch(1).__len__() > 0:
-        return True
-    return False
+    return True if get_customer_by_url(url) else False
 
+def get_customer(user):
+     customer = models.Customer.all().filter('user =',user).fetch(1)
+     return customer[0] if len(customer) else None 
+     
+def get_customer_by_url(url):
+     customer = models.Customer.all().filter('url =',url.lower()).fetch(1)
+     return customer[0] if len(customer) else None 
     
     

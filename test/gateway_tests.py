@@ -16,8 +16,8 @@ class GatewayTests (test.helpers.TestFixture):
         self.assertTrue(confirmation)
         result = gateway.get_points_for('momurl')
         self.assertEqual(len(result),1)
-        self.assertEqual(result.count(dict(lat=34.678,lon=-44.3456,title=None,key=confirmation)),1) 
-    
+        self.assertEqual(result.count(dict(lat=34.678,lon=-44.3456,title=None,key=confirmation.key())),1) 
+        
     def test_user_creation(self):
         new = gateway.create_customer(url = 'test', user=users.User('test@gmail.com'))
         self.assertTrue(new)
