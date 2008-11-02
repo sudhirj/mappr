@@ -8,7 +8,7 @@ from google.appengine.api import users
 class MainHandler(webapp.RequestHandler):
     def get(self,url=None):
         pointset = gateway.get_points_for(url)
-        template_values = {'points':pointset,'auth':utils.authdetails(), 'info':dict(current_url = url)}
+        template_values = {'points':pointset,'auth':utils.authdetails('/'+url), 'info':dict(current_url = url)}
         self.response.out.write(template.render(utils.path('templates/index.html'),template_values))
     
     @utils.authorize('user')
@@ -30,11 +30,12 @@ class UrlCheckHandler(webapp.RequestHandler):
 
 class PointHandler(webapp.RequestHandler):
     @utils.authorize('user')
-    def post(self):
+    def post(self,url=None):
         user = users.get_current_user()
         lat = self.request.get('lat')
         lon = self.request.get('lon')
         title = cgi.escape(self.request.get('title'))
+        logging.info(lat+lon+title)
         try:
             new_point = gateway.set_point(gateway.get_customer(user), dict(title=title, lat = lat, lon = lon))
             
@@ -43,8 +44,14 @@ class PointHandler(webapp.RequestHandler):
             self.response.out.write('ERROR_%s' % (e))
             self.response.set_status(403)    
     
+    @utils.authorize('user')
+    def get(self,url=None):
+        pointset = gateway.get_points_for(url)
+        self.response.out.write(template.render(utils.path('templates/pointlist.html'),{'points':pointset}))
+        
+    
 ROUTES =[
-            (r'/_points.*', PointHandler),
+            (r'/_points/(.*)', PointHandler),
             (r'/_check/url/(.*)', UrlCheckHandler),
             (r'/(.*)', MainHandler)
         ]

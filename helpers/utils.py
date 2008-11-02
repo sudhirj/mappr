@@ -1,6 +1,6 @@
 import os,logging, gateway
 from google.appengine.api import users
-def path(p=''):
+def path(p='/'):
     return os.path.join(os.path.dirname(__file__), '../'+p )
     
 def authdetails(page = "/"):

@@ -15,7 +15,11 @@ var Map = function(){
                 zoom:6
             }
             var o = $.extend(defaults, o || {});
-            if (google.loader.ClientLocation && o.lat == 0 && o.lon == 0) {o.lat = google.loader.ClientLocation.latitude; o.lon = google.loader.ClientLocation.longitude;o.zoom=12}
+            if (google.loader.ClientLocation && o.lat == 0 && o.lon == 0) {
+                o.lat = google.loader.ClientLocation.latitude; 
+                o.lon = google.loader.ClientLocation.longitude;
+                o.zoom = 12
+            }
             if (!GBrowserIsCompatible()) {alert("Sorry, this site cannot run on your browser."); return;}
             this.map = new google.maps.Map2(document.getElementById(divName));
             this.map.setCenter(new GLatLng(o.lat, o.lon), o.zoom);
@@ -98,12 +102,10 @@ var PointMaker = function(){
                     show:'drop',
                     hide:'drop'
                 });
-
                 $('.ok.button',this.dialog).click(function() {PointMaker.save()});
-                $('.cancel.button',this.dialog).click(function(){PointMaker.dialog.dialog('close')})
-
-
+                $('.cancel.button',this.dialog).click(function(){PointMaker.close();})
             }
+            $('.error',this.dialog).text('');
             this.dialog.dialog("open");
             var center = Map.map.getCenter();
             this.marker = Map.addMarker({point:center,draggable:true});
@@ -116,11 +118,38 @@ var PointMaker = function(){
         },
         save: function(){
             var title = $('input#text-title',PointMaker.dialog).val();
-            $.post('/_points/',{
-                title: title,
-                lat: PointMaker.marker.getLatLng().lat(),
-                lon: PointMaker.marker.getLatLng().lng()
+            if (!this.validate()) return;
+            $.ajax({
+                url: '/_points/',
+                type: 'POST',
+                data:{
+                    title: title,
+                    lat: PointMaker.marker.getLatLng().lat(),
+                    lon: PointMaker.marker.getLatLng().lng()
+                },
+                dataType: 'text',
+                error: function(response,status,error){
+                    $('.error',this.dialog).text(response.responseText);
+                },
+                success: function(data){
+                    PointMaker.close();
+                    $('#points').load('/_points/'+INFO.currentUrl);
+                    $(PointMaker).trigger('pointCreated');
+                    
+                }
             });
+        },
+        validate: function(){
+            var title = $('input#text-title',this.dialog).val();
+            if ($.trim(title) == '')
+            {
+                $('.error',this.dialog).text('You need to provide a title for this Pinn.');
+                return false;
+            }
+            return true;
+        },
+        close: function(){
+            PointMaker.dialog.dialog('close');
         }
     };
 }
@@ -146,6 +175,8 @@ var FirstTime = function(){
                 $('.ok.button',this.dialog).click(function() {FirstTime.save()});
                 $('.cancel.button',this.dialog).click(function(){FirstTime.close()})
             }
+            $('.error',this.dialog).text('');
+            $('input#text-url',this.dialog).val('');
             this.dialog.dialog("open");
             this.open = true;
         },
@@ -153,11 +184,37 @@ var FirstTime = function(){
             this.open = false;
         },
         save: function(){
-            var url = $('input#text-url',FirstTime.dialog).val();
-            $.post('/',{url: url});
+            if (!this.validate()) return;
+            var url = $('input#text-url',this.dialog).val();
+
+            $.ajax({
+                type: "POST",
+                url: '/',
+                data: {url:url},
+                success: function(data){
+                    FirstTime.close();
+                    $(FirstTime).trigger('urlCreated');
+                    window.location = '/'+$.trim(data);
+                },
+                dataType: "text",
+                error: function(response,status,error){
+                    $('.error',this.dialog).text(response.responseText);
+                }                
+            });
         },
         close: function(){
-            FirstTime.dialog.dialog('close');
+            this.dialog.dialog('close');
+        },
+        validate: function(){
+            var url = $('input#text-url',this.dialog).val();
+            if ($.trim(url) == '')
+            {
+                $('.error',this.dialog).text('You need to provide a url for your PinnSpot.');
+                return false;
+            }
+            //TODO: add regex validation for only letters and numbers. 
+            //if ()
+            return true;
         }
     };
 }
