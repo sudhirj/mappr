@@ -1,4 +1,4 @@
-import models, unittest, main, logging
+import models, unittest, main, logging, settings
 from google.appengine.ext import db
 from google.appengine.api import users
 from webtest import TestApp
@@ -6,6 +6,7 @@ from google.appengine.ext import webapp
 
 class TestFixture (unittest.TestCase):
     def setUp(self):
+        
         self.sudhir_gmail = users.User('sudhir.j@gmail.com')
         self.amrita_gmail = users.User('amrita@gmail.com')
         

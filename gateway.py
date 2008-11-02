@@ -11,8 +11,10 @@ def get_points_for(url):
         pointset.append(dict(lat = point.point.lat,lon = point.point.lon,title = point.title,key=point.key()))
     return pointset
 
-def set_point(customer, lat, lon):
-    newpoint = models.Point(point = db.GeoPt(lat,lon), owner = customer, parent = customer)
+def set_point(customer, point_info):
+    defaults = dict(title="Untitled",lat=0,lon=0)
+    defaults.update(point_info)
+    newpoint = models.Point(point = db.GeoPt(defaults['lat'],defaults['lon']),title=defaults['title'], owner = customer, parent = customer)
     newpoint.put()
     return newpoint
 
@@ -29,7 +31,8 @@ def check_if_user_exists(user):
     return True if get_customer(user) else False
 
 def check_if_url_exists(url):
-    return True if get_customer_by_url(url) else False
+    customer = get_customer_by_url(url)
+    return (True,customer.url) if customer else (False,None)
 
 def get_customer(user):
      customer = models.Customer.all().filter('user =',user).fetch(1)

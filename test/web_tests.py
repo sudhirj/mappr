@@ -1,4 +1,4 @@
-import logging,unittest,main,test.helpers,presenter
+import logging,unittest,main,test.helpers,presenter,settings,urllib
 from  webtest import TestApp
 from google.appengine.ext import webapp
 from google.appengine.api import users
@@ -8,6 +8,7 @@ class MainPageTest(test.helpers.WebTestFixture):
         app = self.app
         
         self.assertEqual('200 OK', app.get('/').status)
+        self.assertEqual('200 OK', app.get('/sudhirurlcheck').status)
         self.assertEqual('200 OK', app.get('/sudhirurlcheck').status)
         self.assertEqual('200 OK', app.get('/thisoughttoworkforanyurl').status)
         

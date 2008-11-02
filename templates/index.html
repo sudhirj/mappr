@@ -7,12 +7,18 @@
 	<link type="text/css" rel="Stylesheet" href="/static/css/main.css"/>
 	<script type="text/javascript">
 	var INFO = {
-		status: {{auth.status}},
-		url: {% if auth.url %}"{{auth.url}}"{% else %}false{% endif %}		
+		auth: {{auth.status}},
+		url: {% if auth.url %}"{{auth.url}}"{% else %}false{% endif %},
+		currentUrl: {% if info.current_url %}"{{info.current_url}}"{% else %}false{%endif%}	
 	};
 	</script>
 </head>
 <body onunload="GUnload()">
+	<div id="load_message">
+		<h2>Welcome to PinnSpot!</h2>
+		<p>Please wait a few seconds while we load the map...</p>
+		<em>If you cannot see the map, make sure you have Javascript turned on and also disable ad blockers you might have.</em>
+	</div>
 	<div id ="map"></div>
 	<div id = "pointlist">
 		{% for point in points|dictsort:"title" %}
@@ -22,11 +28,13 @@
 			<div class="title">{{point.title}}</div>
 		</div>
 		{% endfor %}
-		{% if auth.url and auth.status%}	
+		{% if auth.url and auth.status%}
+		{% ifequal auth.url info.current_url  %}
 		<div id="add-point" class="pointer">New Point</div>
+		{% endifequal %}	
 		{% endif %}
-		
-		{% if not auth.url %}	
+
+		{% if not auth.url and auth.status %}	
 		<div id="create-user" class="pointer">Create User</div>
 		{% endif %}
 		<a href="{{auth.link}}">{{auth.label}}</a>

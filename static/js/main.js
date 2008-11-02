@@ -94,7 +94,7 @@ var PointMaker = function(){
                     draggable:true,
                     resizable:false,
                     close: function(){PointMaker.cancel();},
-                    title: "Add a Pinn",
+                    title: "Set a new Pinn",
                     show:'drop',
                     hide:'drop'
                 });
@@ -116,7 +116,7 @@ var PointMaker = function(){
         },
         save: function(){
             var title = $('input#text-title',PointMaker.dialog).val();
-            $.post('/',{
+            $.post('/_points/',{
                 title: title,
                 lat: PointMaker.marker.getLatLng().lat(),
                 lon: PointMaker.marker.getLatLng().lng()
@@ -144,7 +144,7 @@ var FirstTime = function(){
                     hide:'drop'
                 });
                 $('.ok.button',this.dialog).click(function() {FirstTime.save()});
-                $('.cancel.button',this.dialog).click(function(){FirstTime.dialog.dialog('close')})
+                $('.cancel.button',this.dialog).click(function(){FirstTime.close()})
             }
             this.dialog.dialog("open");
             this.open = true;
@@ -155,6 +155,9 @@ var FirstTime = function(){
         save: function(){
             var url = $('input#text-url',FirstTime.dialog).val();
             $.post('/',{url: url});
+        },
+        close: function(){
+            FirstTime.dialog.dialog('close');
         }
     };
 }

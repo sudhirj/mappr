@@ -9,13 +9,16 @@ def authdetails(page = "/"):
         label = "Logout"
         link = users.create_logout_url(page)
         status = 1
-        url = gateway.check_if_user_exists(user)
+        customer = gateway.get_customer(user)
+        url = customer.url if customer else None
+
+        
         
     else:
         label = "Login"
         link = users.create_login_url(page)
         status = 0
-        url = 'NULL'
+        url = None
         
     return dict(status = status,link = link,label=label,url=url)
     

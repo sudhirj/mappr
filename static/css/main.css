@@ -1,10 +1,19 @@
-html,body{height:100%;overflow:hidden;}
+html{font-size:62.5%;}
+html,body{height:100%;overflow:hidden;font-family:Verdana,'Helvetica','Arial';font-size:0.9em;}
 body{position:relative;}
 #map {height:100%;width:100%;z-index:1;position:relative;}
 #pointlist {position:absolute;z-index:100;width:200px;background-color: #fff;top:0px;right:100px;}
 #info-message {position:absolute;z-index:500;background-color: #fff;padding:10px;}
-
+#load_message {position:absolute;z-index:0;left:10px;top:10px;}
 .dialogs {display:none;}
 .pointer {cursor:pointer;}
 .hidden {display:none;}
 .ui-resizable-handle {cursor:default !important;display:none !important;}
+.ui-dialog{border:2px solid #f2bf24;overflow:hidden;}
+.ui-dialog-titlebar {padding:10px;opacity:0.9;background:#99b3cc;cursor:move;font-weight:bold;font-family:Helvetica,Verdana,Arial;position:relative;}
+.ui-dialog-content {padding:10px;opacity:0.9;background:#fff;}
+.ui-dialog-titlebar-close{position:absolute;cursor:pointer;right:0px;top:0px;}
+
+.button {display:block;padding:5px;float:left;margin:5px 5px 0px 0px;}
+.button.ok {background:#c4f9af;border:1px solid #0f0;}
+.button.cancel{background:#fa7373;border:1px solid #f00;}
