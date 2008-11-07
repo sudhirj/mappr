@@ -1,4 +1,4 @@
-import wsgiref.handlers,logging, gateway, os, cgi, settings
+import wsgiref.handlers,logging, gateway, os, settings, cgi
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import template
 from helpers import utils
@@ -35,17 +35,38 @@ class PointHandler(webapp.RequestHandler):
         lat = self.request.get('lat')
         lon = self.request.get('lon')
         title = cgi.escape(self.request.get('title'))
-        try:
-            new_point = gateway.set_point(gateway.get_customer(user), dict(title=title, lat = lat, lon = lon))
-            self.response.out.write(new_point.key())
-        except Exception, e:
-            self.response.out.write(e)
-            self.response.set_status(403)    
+        key = self.request.get('key')
+        
+        point = dict(title=title, lat = lat, lon = lon)
+        if not key:
+            try:
+                new_point = gateway.set_point(gateway.get_customer(user), point)
+                self.response.out.write(new_point.key())
+            except Exception, e:
+                self.response.out.write(e)
+                self.response.set_status(403)    
+        else:
+            try:
+                gateway.edit_point(key, point)
+                self.response.out.write('OK')
+            except Exception, e:
+                self.response.out.write(e)
+                self.response.set_status(403)
     
     @utils.authorize('user')
     def get(self,url=None):
         pointset = gateway.get_points_for(url)
         self.response.out.write(template.render(utils.path('templates/pointlist.html'),{'points':pointset}))
+    
+    @utils.authorize('user')
+    def delete(self,url=None):
+        key = self.request.get('key')
+        try:
+            gateway.delete_point(key)
+        except Exception, e:
+            self.response.out.write(e)
+            self.response.out.write(403)
+        
         
 
         

@@ -23,7 +23,6 @@ var Map = function(){
             if (!GBrowserIsCompatible()) {alert("Sorry, this site cannot run on your browser."); return;}
             this.map = new google.maps.Map2(document.getElementById(divName));
             this.map.setCenter(new GLatLng(o.lat, o.lon), o.zoom);
-            this.map.enableGoogleBar();
             this.adsManager = new google.maps.AdsManager(this.map, 'ca-pub-7898295704528692',{maxAdsOnMap:10});
             this.adsManager.enable();
             this.map.addControl(new GLargeMapControl());

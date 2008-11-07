@@ -4,19 +4,21 @@ from google.appengine.ext import db
 
 def get_points_for(url):
     customer = get_customer_by_url(url)
-    pointset = []
-    if not customer:
-        return []
-    for point in customer.points:
-        pointset.append(dict(lat = point.point.lat,lon = point.point.lon,title = point.title,key=point.key()))
-    return pointset
+    if not customer: return []
+    return [dict(lat = point.point.lat,
+                lon = point.point.lon,
+                title = point.title,
+                key=point.key()) for point in customer.points]
 
-def set_point(customer, point_info):
-    defaults = dict(title="Untitled",lat=0,lon=0)
-    defaults.update(point_info)
-    newpoint = models.Point(point = db.GeoPt(defaults['lat'],defaults['lon']),title=defaults['title'], owner = customer, parent = customer)
-    newpoint.put()
-    return newpoint
+def set_point(customer, new_point):
+    point = dict(title="Untitled",lat=0,lon=0)
+    point.update(new_point)
+    created_point = models.Point(point = db.GeoPt(point['lat'],point['lon']),
+                                title=point['title'], 
+                                owner = customer, 
+                                parent = customer)
+    created_point.put()
+    return created_point
 
 def create_customer(url, user):
     if get_customer_by_url(url):

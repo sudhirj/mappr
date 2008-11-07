@@ -1,14 +1,19 @@
 html{font-size:62.5%;}
 html,body{height:100%;overflow:hidden;font-family:"Lucida Grande",Verdana,Helvetica,Arial;font-size:0.9em;}
 body{position:relative;}
+.clear {clear:both;}
+.floatleft {float:left;}
+.actions {padding:2px 5px;cursor:pointer;font-size:9px;background:#ddd;margin:3px;margin-top:0px;}
+.actions:hover {color:#00f;}
+.pointer {cursor:pointer;}
+.hidden {display:none;}
 
 #map {height:100%;width:100%;z-index:1;position:relative;}
 #pointlist {position:absolute;z-index:100;width:200px;background-color: #fff;top:0px;right:100px;}
 #info-message {position:absolute;z-index:500;background-color: #fff;padding:10px;}
 #load_message {position:absolute;z-index:0;left:10px;top:10px;}
 #auth {position:absolute;z-index:2;right:0px;top:0px;}
-.pointer {cursor:pointer;}
-.hidden {display:none;}
+
 
 /*Dialog box styles*/
 .dialogs {display:none;}

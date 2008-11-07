@@ -1,7 +1,11 @@
 {% for point in points|dictsort:"title" %}
 <div class="point">
+	<span class="hidden key">{{point.key}}</span>
 	<span class="hidden lat">{{point.lat}}</span>
 	<span class="hidden lon">{{point.lon}}</span>
-	<div class="title">{{point.title}}</div>
+	<div class="title floatleft">{{point.title}}</div>
+	<div class="edit floatleft actions">edit</div>
+	<div class="delete floatleft actions">delete</div>
+	<div class="clear"></div>
 </div>
 {% endfor %}
