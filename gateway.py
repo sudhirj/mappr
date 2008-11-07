@@ -35,11 +35,20 @@ def check_if_url_exists(url):
     return (True,customer.url) if customer else (False,None)
 
 def get_customer(user):
-     customer = models.Customer.all().filter('user =',user).fetch(1)
-     return customer[0] if len(customer) else None 
+    customer = models.Customer.all().filter('user =',user).fetch(1)
+    return customer[0] if len(customer) else None 
      
 def get_customer_by_url(url):
-     customer = models.Customer.all().filter('url =',url.lower()).fetch(1)
-     return customer[0] if len(customer) else None 
+    customer = models.Customer.all().filter('url =',url.lower()).fetch(1)
+    return customer[0] if len(customer) else None 
+
+def edit_point(key, new_point):
+    point = db.get(key)
+    point.title = new_point['title']
+    point.point = db.GeoPt(new_point['lat'],new_point['lon'])
+    point.put()
     
+def delete_point(key):
+    point = db.get(key)
+    db.delete(point)
     

@@ -23,7 +23,7 @@ class TestFixture (unittest.TestCase):
         self.office = models.Point(point = db.GeoPt(23.46,4.7),owner=self.sudhir, title = "sudhir_office")
         self.office.put()
         
-        self.o2 = models.Point(point = db.GeoPt(24.234456,-85.34556),owner = self.amrita,parent = self.amrita)
+        self.o2 = models.Point(title="O2",point = db.GeoPt(24.234456,-85.34556),owner = self.amrita,parent = self.amrita)
         self.o2.put()
         
             
@@ -32,7 +32,8 @@ class TestFixture (unittest.TestCase):
             db.delete(point)
         for customer in models.Customer.all():
             db.delete(customer)
-    
+                    
+                
 class WebTestFixture(TestFixture):
     def setUp(self):
         TestFixture.setUp(self)

@@ -6,7 +6,7 @@ from google.appengine.api import users
 class AdvancedModelTests(test.helpers.TestFixture):
     
     def test_parentage(self):
-        point = models.Point(point = db.GeoPt(34.66467,46.366), owner=self.sudhir,parent=self.sudhir)
+        point = models.Point(title="parentage_test_point",point = db.GeoPt(34.66467,46.366), owner=self.sudhir,parent=self.sudhir)
         self.assertEqual(self.sudhir.key(),point.parent_key())
     
     def test_equality_overrides(self):
@@ -30,9 +30,9 @@ class AdvancedModelTests(test.helpers.TestFixture):
         number_of_points_to_reach_ceiling = settings.hard_point_count_ceiling - self.sudhir.point_count - 1
         
         for i in xrange(number_of_points_to_reach_ceiling):
-            models.Point(point = db.GeoPt(i,i),owner=self.sudhir).put()
+            models.Point(title="point"+str(i),point = db.GeoPt(i,i),owner=self.sudhir).put()
         
-        last_straw = models.Point(point = db.GeoPt(89,89),owner=self.sudhir)
+        last_straw = models.Point(title="last_straw",point = db.GeoPt(89,89),owner=self.sudhir)
         self.assertRaises(Exception,last_straw.put,None)
         
     

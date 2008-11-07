@@ -46,7 +46,7 @@ class BasicModelTests(test.helpers.TestFixture):
         sudhir = models.Customer(user=self.sudhir_gmail,url='df').put()
         self.assertRaises(db.BadValueError,models.Point,None)
         
-        point = models.Point(point = db.GeoPt(34.5,36.23),owner=sudhir)
+        point = models.Point(point = db.GeoPt(34.5,36.23),owner=sudhir,title="testpoint")
         
         try:
             point.owner = None

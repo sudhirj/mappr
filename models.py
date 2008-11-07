@@ -24,7 +24,7 @@ class Customer(db.Model):
 class Point(db.Model):
     """Store the map points"""
     point = db.GeoPtProperty(required = True)
-    title = db.StringProperty(required = False)
+    title = db.StringProperty(required = True)
     owner = db.ReferenceProperty(Customer,collection_name='points',required=True)
     
     def __eq__(self, other):

@@ -36,3 +36,47 @@ class GatewayTests (test.helpers.TestFixture):
     def test_url_existence_check(self):
         self.assertFalse(gateway.check_if_url_exists('nonexistenturl')[0])
         self.assertTrue(gateway.check_if_url_exists('sudhirurl'))
+        
+    def test_point_editing(self):
+        result = gateway.get_points_for('sudhirurl')
+        start_count = len(result)
+        new_point_dict = dict(lat=7.0,lon=7.0,title="seven")
+        new_point_key = gateway.set_point(self.sudhir,new_point_dict).key()
+        result = gateway.get_points_for('sudhirurl')
+        self.assertEqual(len(result),start_count+1)
+        found = filter(lambda x, lat=7.0, lon = 7.0, title='seven': x['lat']==lat and 
+                                                                    x['lon'] ==lon and 
+                                                                    x['title'] == title, 
+                        result)
+        self.assertEqual(len(found),1)
+        gateway.edit_point(new_point_key,dict(lon = 7.0, lat = 8.0, title = 'seveneight'))
+        new_results = gateway.get_points_for('sudhirurl')
+        self.assertEqual(len(new_results),start_count+1)
+        new_found = filter(lambda x, lat = 8.0, 
+                                        lon = 7.0, 
+                                        title = 'seveneight':   x['lat']==lat and 
+                                                                x['lon']==lon and 
+                                                                x['title']==title, 
+                            new_results)
+        self.assertEqual(len(new_found),1)
+        self.assertRaises(db.BadValueError,gateway.edit_point,new_point_key,dict(lon=2345,lat=3,title='invalid values'))
+  
+    def test_point_deletion(self):
+        result = gateway.get_points_for('sudhirurl')
+        start_count = len(result)
+        first_point = result[0]
+        gateway.delete_point(first_point['key'])
+        new_result = gateway.get_points_for('sudhirurl')
+        self.assertEqual(len(new_result),start_count-1)
+        find = filter(lambda x, lat = first_point['lat'],
+                                lon = first_point['lon'],
+                                title = first_point['title']:   x['lat'] == lat and
+                                                                x['lon'] == lon and
+                                                                x['title'] == title,
+                    new_result)
+        self.assertFalse(find)
+        
+        
+        
+        
+        

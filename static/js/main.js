@@ -12,7 +12,7 @@ var Map = function(){
             var defaults = {
                 lat:0,
                 lon:0,
-                zoom:6
+                zoom:2
             }
             var o = $.extend(defaults, o || {});
             if (google.loader.ClientLocation && o.lat == 0 && o.lon == 0) {
@@ -106,6 +106,7 @@ var PointMaker = function(){
                 $('.cancel.button',this.dialog).click(function(){PointMaker.close();})
             }
             $('.error',this.dialog).text('');
+            $('input#text-title',this.dialog).val('');
             this.dialog.dialog("open");
             var center = Map.map.getCenter();
             this.marker = Map.addMarker({point:center,draggable:true});

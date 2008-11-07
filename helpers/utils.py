@@ -11,17 +11,12 @@ def authdetails(page = "/"):
         status = 1
         customer = gateway.get_customer(user)
         url = customer.url if customer else None
-
-        
-        
     else:
         label = "Login"
         link = users.create_login_url(page)
         status = 0
         url = None
-        
     return dict(status = status,link = link,label=label,url=url)
-    
     
 def authorize(role):
     def wrapper(handler_method):

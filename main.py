@@ -35,19 +35,19 @@ class PointHandler(webapp.RequestHandler):
         lat = self.request.get('lat')
         lon = self.request.get('lon')
         title = cgi.escape(self.request.get('title'))
-        logging.info(lat+lon+title)
         try:
             new_point = gateway.set_point(gateway.get_customer(user), dict(title=title, lat = lat, lon = lon))
-            
-            self.response.out.write('OK_%s'%(new_point.key()))
+            self.response.out.write(new_point.key())
         except Exception, e:
-            self.response.out.write('ERROR_%s' % (e))
+            self.response.out.write(e)
             self.response.set_status(403)    
     
     @utils.authorize('user')
     def get(self,url=None):
         pointset = gateway.get_points_for(url)
         self.response.out.write(template.render(utils.path('templates/pointlist.html'),{'points':pointset}))
+        
+
         
     
 ROUTES =[
