@@ -57,10 +57,13 @@ class PointHandler(webapp.RequestHandler):
     def get(self,url=None):
         pointset = gateway.get_points_for(url)
         self.response.out.write(template.render(utils.path('templates/pointlist.html'),{'points':pointset}))
-    
+
+class PointDeleteHandler(webapp.RequestHandler): 
     @utils.authorize('user')
-    def delete(self,url=None):
-        key = self.request.get('key')
+    def post(self,url=None):
+        logging.info('started delete')
+        key = self.request.get_all('key')
+        logging.info(key)
         try:
             gateway.delete_point(key)
         except Exception, e:
@@ -72,6 +75,7 @@ class PointHandler(webapp.RequestHandler):
         
     
 ROUTES =[
+            (r'/_points/delete.*', PointDeleteHandler),
             (r'/_points/(.*)', PointHandler),
             (r'/_check/url/(.*)', UrlCheckHandler),
             (r'/(.*)', MainHandler)
