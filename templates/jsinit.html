@@ -1,0 +1,7 @@
+<script type="text/javascript">
+var INFO = {
+	auth: {{auth.status}},
+	url: {% if auth.url %}"{{auth.url}}"{% else %}false{% endif %},
+	currentUrl: {% if info.current_url %}"{{info.current_url}}"{% else %}false{%endif%}	
+};
+</script>

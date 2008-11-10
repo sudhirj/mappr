@@ -1,43 +1,55 @@
-
 var PointMaker = function(){
-    var CREATE = 'CREATE';
-    var EDIT = 'EDIT';
+    var Modes = {
+      CREATE: 'CREATE',
+      EDIT: 'EDIT'  
+    };
     var marker = null;
     var dialog = null;
-    var open = false;
+    var isOpen = false;
     var dialogOpts = {
         autoOpen:false,
         draggable:true,
         resizable:false,
         close: function(){PointMaker.cancel();},
         show:'drop',
-        hide:'drop'
+        hide:'drop',
+        position: [100,50]
     };
-    var saveMode = 'C';
+    var mode = Modes.CREATE;
+    var data = null;
     return {
+        create: function(){
+            this.data = {
+                dialogTitle: "Push a new Pinn"
+            };
+        },
+        edit: function(){
+            this.data = {
+                dialogTitle: ""
+            };
+        },
         initialize: function(opts){
-            var defaults = {mode:CREATE};
-            var opts = $.extend(defaults, opts) || {};
-            if (this.open) return;
+            var defaults = {mode:Modes.CREATE};
+            var opts = $.extend(defaults, opts || {});
+            if (this.isOpen) return;
             if (this.dialog == null)
             {
-                var title = (opts.mode=='C')? "Push a new Pinn" : "Change this Pinn";
-                $.extend(dialogOpts, {title:title});
+                $.extend(dialogOpts, {title:data.dialogTitle});
                 this.dialog = $('#dialog-add-point').show().dialog(dialogOpts);
                 $('.ok.button',this.dialog).click(function() {PointMaker.save()});
-                $('.cancel.button',this.dialog).click(function(){PointMaker.close();})
+                $('.cancel.button',this.dialog).click(function() {PointMaker.close()})
             }
             $('.error',this.dialog).text('');
             $('input#text-title',this.dialog).val('');
             this.dialog.dialog("open");
             var center = Map.map.getCenter();
             this.marker = Map.addMarker({point:center,draggable:true});
-            this.open = true;
+            this.isOpen = true;
         },
         cancel: function(){
             Map.map.removeOverlay(PointMaker.marker);
             PointMaker.marker = null;
-            this.open = false;
+            this.isOpen = false;
         },
         save: function(){
             var title = $('input#text-title',PointMaker.dialog).val();
@@ -58,7 +70,6 @@ var PointMaker = function(){
                     PointMaker.close();
                     $('#points').load('/_points/'+INFO.currentUrl);
                     $(PointMaker).trigger('pointCreated');
-                    
                 }
             });
         },
