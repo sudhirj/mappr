@@ -3,10 +3,11 @@ html,body{height:100%;overflow:hidden;font-family:"Lucida Grande",Verdana,Helvet
 body{position:relative;}
 .clear {clear:both;}
 .floatleft {float:left;}
-.actions {padding:2px 5px;cursor:pointer;font-size:9px;background:#ddd;margin:3px;margin-top:0px;}
+.actions {display:none;padding:2px 5px;cursor:pointer;font-size:9px;background:#ddd;margin:3px;margin-top:0px;}
 .actions:hover {color:#00f;}
 .pointer {cursor:pointer;}
 .hidden {display:none;}
+.authorized .actions {display:block;}
 
 #map {height:100%;width:100%;z-index:1;position:relative;}
 #pointlist {position:absolute;z-index:100;width:200px;background-color: #fff;top:0px;right:100px;}

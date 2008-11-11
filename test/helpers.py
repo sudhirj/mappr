@@ -37,6 +37,9 @@ class TestFixture (unittest.TestCase):
 class WebTestFixture(TestFixture):
     def setUp(self):
         TestFixture.setUp(self)
-        self.app = TestApp(main.createMainApplication(),extra_environ=dict(REMOTE_USER='bob'))
+        self.app = TestApp(main.createMainApplication())
+        self.login(None)
+    def login(self, user):
+        users.get_current_user = lambda user = user: user
         
     

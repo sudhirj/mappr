@@ -16,13 +16,11 @@
 	</div>
 	<div id ="map"></div>
 	<div id = "pointlist">
-		<div id = "points">
+		<div id = "points" {% if auth.at_home %} class="authorized" {% endif %}>
 			{% include "pointlist.html" %}
 		</div>
-		{% if auth.url and auth.status%}
-		{% ifequal auth.url info.current_url  %}
+		{% if auth.at_home%}
 		<div id="add-point" class="pointer">New Pinn</div>
-		{% endifequal %}	
 		{% endif %}
 		{% if not auth.url and auth.status %}	
 		<div id="create-user" class="pointer">Create User</div>
