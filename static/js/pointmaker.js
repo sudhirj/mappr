@@ -40,7 +40,7 @@ var PointMaker = function(){
             this.initialize();          
             $('#text-title').val(title);
         },
-        delete: function(key){
+        del: function(key){
             var answer = confirm('Are you sure you want to delete this Pinn?');
             if (!answer) return;
             if (this.isOpen) this.close();
@@ -48,9 +48,7 @@ var PointMaker = function(){
                 url: '/_points/delete/',
                 type: 'POST',
                 data: {key: key},
-                success: function(data){
-                    $('#points').load('/_points/'+INFO.currentUrl);
-                }
+                success: PointMaker.update
             });
         },
         initialize: function(){
@@ -92,7 +90,7 @@ var PointMaker = function(){
                 },
                 success: function(data){
                     PointMaker.close();
-                    $('#points').load('/_points/'+INFO.currentUrl);
+                    PointMaker.update();
                 }
             });
         },
@@ -107,6 +105,9 @@ var PointMaker = function(){
         },
         close: function(){
             if (this.isOpen) this.dialog.dialog('close');
+        },
+        update: function(){
+            $('#points').load('/_points/'+INFO.currentUrl);
         }
     };
 }

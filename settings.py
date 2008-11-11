@@ -1,2 +1,2 @@
 debug = True
-hard_point_count_ceiling = 20
+hard_point_count_ceiling = 10

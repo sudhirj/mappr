@@ -1,4 +1,3 @@
-
 var Map = function(){
     var mapDivName;
     var map;
