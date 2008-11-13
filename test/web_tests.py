@@ -1,4 +1,5 @@
 import logging,unittest,main,test.helpers,presenter,settings,urllib
+from BeautifulSoup import BeautifulSoup
 from  webtest import TestApp
 from google.appengine.ext import webapp
 from google.appengine.api import users
@@ -34,9 +35,60 @@ class ChecksWebTest(test.helpers.WebTestFixture):
 class PostMethodsSecurityTest(test.helpers.WebTestFixture):
     def test_security_of_post_handlers(self):
         app = self.app
-        
-        # Testing main user creation 
+        self.logout()
         app.post('/',status=403)
-        
-        # Testing point creation
         app.post('/_points/',status=403)
+        app.post('/_points/delete',status=403)
+
+class UserOperationsTest(test.helpers.WebTestFixture):
+    def test_user_creation(self):
+        app = self.app
+        self.logout()
+        
+        before = app.get('/pagetotest').html
+        self.assertFalse(before.find('div',id="create-user"))
+        self.assertFalse(before.find('div',id="add-point"))
+        
+        self.login('testuser@testsite.com')
+        
+        intermediate = app.get('/pagetotest').html
+        self.assertTrue(intermediate.find('div',id="create-user"))
+        self.assertFalse(before.find('div',id="add-point"))
+        
+        app.post('/',{'url':'pagetotest'})
+        after = app.get('/pagetotest').html
+        self.assertTrue(after.find('div',id="add-point"))
+        
+        otherpage = app.get('/somebodyelsespage').html
+        self.assertFalse(otherpage.find('div',id='add-point'))
+        self.assertFalse(before.find('div',id="create-user"))
+
+class PointOperationsTest(test.helpers.WebTestFixture):    
+    def points_in_partial(self,url):
+        partial = self.app.get('/%s' % url).html
+        return partial.findAll('div','point')
+            
+    def test_point_display(self):
+        app = self.app
+        self.logout()
+        
+        mainpage = app.get('/sudhirurl').html
+        points = mainpage.findAll('div', "point")
+        logging.info(len(points))
+        self.assertEqual(len(points),2)
+        
+        self.login('sudhir.j@gmail.com')
+        self.assertEqual(len(self.points_in_partial('sudhirurl')),2)
+    
+    def test_point_creation(self):
+        app = self.app
+        self.login('sudhir.j@gmail.com')
+        count = len(self.points_in_partial('sudhirurl'))
+        app.post('/_points/',{'lat':34,'lon':35,'title':'new_point'})
+        self.assertEqual(len(self.points_in_partial('sudhirurl')),count+1)
+        
+        soup = app.get('/sudhirurl').html
+        self.assertTrue(soup.find(text="new_point"))
+        self.assertTrue(soup.find(text="34.0"))
+        
+        

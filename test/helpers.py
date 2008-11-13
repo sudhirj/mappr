@@ -38,8 +38,12 @@ class WebTestFixture(TestFixture):
     def setUp(self):
         TestFixture.setUp(self)
         self.app = TestApp(main.createMainApplication())
+        self.logout()
+
+    def login(self, user = "sudhir.j@gmail.com"):
+        users.get_current_user = lambda user=user : users.User(user) if user else None
+    def logout(self):
         self.login(None)
-    def login(self, user):
-        users.get_current_user = lambda user = user: user
+        
         
     
