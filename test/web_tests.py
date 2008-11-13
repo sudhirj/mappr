@@ -84,11 +84,41 @@ class PointOperationsTest(test.helpers.WebTestFixture):
         app = self.app
         self.login('sudhir.j@gmail.com')
         count = len(self.points_in_partial('sudhirurl'))
-        app.post('/_points/',{'lat':34,'lon':35,'title':'new_point'})
+        app.post('/_points/',{'lat':54,'lon':35,'title':'new_point'})
         self.assertEqual(len(self.points_in_partial('sudhirurl')),count+1)
         
         soup = app.get('/sudhirurl').html
         self.assertTrue(soup.find(text="new_point"))
+        self.assertTrue(soup.find(text="54.0"))
+        
+        amrita_soup = app.get('/amritaurl').html
+        self.assertFalse(amrita_soup.find(text='new_point'))
+    
+    def test_point_editing_and_deleting(self):
+        app = self.app
+        self.login('sudhir.j@gmail.com')
+        response = app.post('/_points/',{'lat':12,'lon':34,'title':'point_to_be_changed'})
+        returned_key = response.html
+        soup = app.get('/sudhirurl').html
+        self.assertTrue(soup.find(text="point_to_be_changed"))
+        self.assertTrue(soup.find(text="12.0"))
         self.assertTrue(soup.find(text="34.0"))
+        
+        app.post('/_points/',{'key':returned_key, 'title':'point_that_was_changed', 'lat':21, 'lon':43})
+        soup = app.get('/sudhirurl').html
+        self.assertTrue(soup.find(text="point_that_was_changed"))
+        self.assertTrue(soup.find(text="21.0"))
+        self.assertTrue(soup.find(text="43.0"))
+        
+        app.post('/_points/delete',{'key':returned_key})
+        soup = app.get('/sudhirurl').html
+        self.assertFalse(soup.find(text="point_that_was_changed"))
+        self.assertFalse(soup.find(text="21.0"))
+        self.assertFalse(soup.find(text="43.0"))
+
+            
+        
+        
+        
         
         
