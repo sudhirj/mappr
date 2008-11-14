@@ -11,27 +11,7 @@ google.setOnLoadCallback(function(){
     };
     Map.initialize("map");    
     $(document).ready(function() {
-        $('#add-point').click(function() {PointMaker.create();});
-        $('#create-user').click(function() {FirstTime.initialize();});
-        $('#points').click(
-            $.delegate({
-                '.edit': function(e){
-                    var point = $(e.target).parents('.point');
-                    var key = $('.key',point).text();
-                    PointMaker.edit(key);
-                },
-                '.delete': function(e){
-                    var point = $(e.target).parents('.point');
-                    var key = $('.key',point).text();
-                    PointMaker.del(key);
-                }
-            })
-        );
+        PointList.initialize();        
+        $('#create-user').click(function() {FirstTime.initialize();});            
     });
 });
-
-
-
-
-
-

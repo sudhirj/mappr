@@ -9,7 +9,7 @@
 
 </head>
 <body onunload="GUnload()">
-	<div id="load_message">
+	<div id="load-message">
 		<h2>Welcome to PinnSpot!</h2>
 		<p>Loading the map... this might take a few seconds.</p>
 		<em>If you cannot see the map, make sure you have Javascript turned on and also disable ad blockers you might have.</em>
@@ -26,6 +26,11 @@
 		<div id="create-user" class="pointer">Create User</div>
 		{% endif %}		
 	</div>
+	
+	{% if info.user_url %}
+	{% ifnotequal info.user_url info.current_url %}<div id="homespot-link"><a href="/{{info.user_url}}">Go to your Pinnspot</a></div>{% endifnotequal %}
+	{% endif %}
+	
 	<div id="auth"><a href="{{auth.link}}">{{auth.label}}</a></div>
 	<div id="info-message" class="dialogs"></div>
 	

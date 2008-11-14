@@ -1,4 +1,3 @@
-
 var Message = function(){
     return {
         show: function(o){

@@ -1,4 +1,3 @@
-
 var FirstTime = function(){
     var dialog = null;
     var open = false;

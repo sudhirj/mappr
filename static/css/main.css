@@ -12,8 +12,9 @@ body{position:relative;}
 #map {height:100%;width:100%;z-index:1;position:relative;}
 #pointlist {position:absolute;z-index:100;width:200px;background-color: #fff;top:0px;right:100px;}
 #info-message {position:absolute;z-index:500;background-color: #fff;padding:10px;}
-#load_message {position:absolute;z-index:0;left:10px;top:10px;}
+#load-message {position:absolute;z-index:0;left:10px;top:10px;}
 #auth {position:absolute;z-index:2;right:0px;top:0px;}
+#homespot-link{position:absolute;z-index:2;top:0px;left:0px;}
 
 
 /*Dialog box styles*/

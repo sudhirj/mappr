@@ -53,7 +53,15 @@ var Map = function(){
         },
         changetoHybrid: function(){
             this.map.setMapType(G_HYBRID_MAP);
-        }
+        },
+        removeMarker: function(marker){
+            this.map.removeOverlay(marker);
+        },
+        newPoint: function(lat, lon){
+            return new google.maps.LatLng(lat,lon);
+        },
+        center: function(){return this.map.getCenter()},
+        examine: function(marker){return {lat: marker.getLatLng().lat(), lon: marker.getLatLng().lng()}}
     };
 }
 ();

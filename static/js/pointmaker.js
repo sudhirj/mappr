@@ -15,7 +15,7 @@ var PointMaker = function(){
     return {
         create: function(){
             if (this.isOpen) PointMaker.close();
-            var center = Map.map.getCenter();
+            var center = Map.center();
             this.data = {
                 dialogTitle: "Push a new Pinn",
                 title: "",
@@ -30,7 +30,7 @@ var PointMaker = function(){
             var lat = $('.lat',point).text();
             var lon = $('.lon',point).text();
             var title = $('.title',point).text();
-            var latlon = new google.maps.LatLng(lat,lon);
+            var latlon = Map.newPoint(lat,lon);
 
             this.data = {
                 dialogTitle: "Change this Pinn",
@@ -48,7 +48,7 @@ var PointMaker = function(){
                 url: '/_points/delete/',
                 type: 'POST',
                 data: {key: key},
-                success: PointMaker.update
+                success: PointList.update
             });
         },
         initialize: function(){
@@ -67,7 +67,7 @@ var PointMaker = function(){
             this.isOpen = true;
         },
         cancel: function(){
-            Map.map.removeOverlay(PointMaker.marker);
+            Map.removeMarker(PointMaker.marker);
             PointMaker.marker = null;
             this.isOpen = false;
         },
@@ -75,9 +75,9 @@ var PointMaker = function(){
             var title = $('input#text-title',PointMaker.dialog).val();
             if (!this.validate()) return;
             var pointData = {
-                title: title,
-                lat: PointMaker.marker.getLatLng().lat(),
-                lon: PointMaker.marker.getLatLng().lng()
+                title: title,                
+                lat: Map.examine(this.marker).lat,
+                lon: Map.examine(this.marker).lon
             };
             if (this.data.key) $.extend(pointData,{key:this.data.key});            
             $.ajax({
@@ -90,7 +90,7 @@ var PointMaker = function(){
                 },
                 success: function(data){
                     PointMaker.close();
-                    PointMaker.update();
+                    PointList.update();
                 }
             });
         },
@@ -105,9 +105,6 @@ var PointMaker = function(){
         },
         close: function(){
             if (this.isOpen) this.dialog.dialog('close');
-        },
-        update: function(){
-            $('#points').load('/_points/'+INFO.currentUrl);
         }
     };
 }
