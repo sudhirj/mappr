@@ -77,6 +77,18 @@ class GatewayTests (test.helpers.TestFixture):
         self.assertFalse(find)
         
         
-        
+    def test_get_current_user_url(self):
+        self.logout()
+        url = gateway.get_current_user_url()
+        self.assertFalse(url)
+
+        self.login("sudhir.j@gmail.com")
+        url = gateway.get_current_user_url()
+        self.assertEqual(url,'sudhirurl')
+
+        self.login("somebodywithoutaspot")
+        url = gateway.get_current_user_url()
+        self.assertFalse(url)
+  
         
         

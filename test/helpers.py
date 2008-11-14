@@ -32,7 +32,13 @@ class TestFixture (unittest.TestCase):
             db.delete(point)
         for customer in models.Customer.all():
             db.delete(customer)
-                    
+            
+    
+    def login(self, user = "sudhir.j@gmail.com"):
+        users.get_current_user = lambda user=user : users.User(user) if user else None
+    def logout(self):
+        self.login(None)
+            
                 
 class WebTestFixture(TestFixture):
     def setUp(self):
@@ -40,10 +46,6 @@ class WebTestFixture(TestFixture):
         self.app = TestApp(main.createMainApplication())
         self.logout()
 
-    def login(self, user = "sudhir.j@gmail.com"):
-        users.get_current_user = lambda user=user : users.User(user) if user else None
-    def logout(self):
-        self.login(None)
         
         
     

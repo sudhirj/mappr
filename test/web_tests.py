@@ -62,7 +62,27 @@ class UserOperationsTest(test.helpers.WebTestFixture):
         otherpage = app.get('/somebodyelsespage').html
         self.assertFalse(otherpage.find('div',id='add-point'))
         self.assertFalse(before.find('div',id="create-user"))
-
+    
+    def test_homespot_link(self):
+        app = self.app
+        self.logout()
+        soup = app.get('/sudhirurl').html
+        self.assertFalse(soup.find('div', id="homespot-link"))
+        self.login('sudhir.j@gmail.com')
+        soup = app.get('/sudhirurl').html
+        self.assertFalse(soup.find('div', id="homespot-link"))
+        soup = app.get('/someotherurl').html
+        self.assertTrue(soup.find('div', id ="homespot-link"))
+        
+    def test_signin_signout_link(self):
+        app = self.app
+        self.logout()
+        auth_link = app.get('/sudhirurl').html.find('div',id="auth").find('a').contents[0]
+        self.assertEqual(auth_link,'Login')
+        self.login('sudhir.j@gmail.com')
+        auth_link = app.get('/sudhirurl').html.find('div',id="auth").find('a').contents[0]
+        self.assertEqual(auth_link,'Logout')        
+           
 class PointOperationsTest(test.helpers.WebTestFixture):    
     def points_in_partial(self,url):
         partial = self.app.get('/%s' % url).html
@@ -74,7 +94,6 @@ class PointOperationsTest(test.helpers.WebTestFixture):
         
         mainpage = app.get('/sudhirurl').html
         points = mainpage.findAll('div', "point")
-        logging.info(len(points))
         self.assertEqual(len(points),2)
         
         self.login('sudhir.j@gmail.com')

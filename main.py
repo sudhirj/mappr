@@ -8,7 +8,11 @@ from google.appengine.api import users
 class MainHandler(webapp.RequestHandler):
     def get(self,url=None):
         pointset = gateway.get_points_for(url)
-        template_values = {'points':pointset,'auth':utils.authdetails('/'+url), 'info':dict(current_url = url)}
+        info = dict(current_url = url, user_url = gateway.get_current_user_url())
+        template_values = { 'points':pointset,
+                            'auth':utils.authdetails('/'+url), 
+                            'info':info}
+                            
         self.response.out.write(template.render(utils.path('templates/index.html'),template_values))
     
     @utils.authorize('user')

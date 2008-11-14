@@ -2,7 +2,6 @@ from google.appengine.ext import db
 from helpers import validators
 import logging, settings
 
-
 """Database models for the app."""
 
 class Customer(db.Model):
