@@ -18,6 +18,12 @@ var PointList = function(){
                         var key = $('.key',point).text();
                         PointMaker.del(key);
                     },
+                    '.point': function(e){
+                        var point = $(e.target);
+                        var lat = $('.lat', point).text();
+                        var lon = $('.lon', point).text();
+                        Map.setCenter(lat, lon);
+                    },
                     '.title': function(e){
                         var point = $(e.target).parents('.point');
                         var lat = $('.lat', point).text();

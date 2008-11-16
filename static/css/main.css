@@ -3,21 +3,24 @@ html,body{height:100%;overflow:hidden;font-family:"Lucida Grande",Verdana,Helvet
 body{position:relative;}
 .clear {clear:both;}
 .floatleft {float:left;}
-.actions {display:none;padding:2px 5px;cursor:pointer;font-size:9px;background:#ddd;margin:3px;margin-top:0px;}
-.actions:hover {color:#00f;}
+
 .pointer {cursor:pointer;}
 .hidden {display:none;}
-.authorized .actions {display:block;}
+#points.authorized .actions {display:inline;}
 
 #map {height:100%;width:100%;z-index:1;position:relative;}
-#pointlist {position:absolute;z-index:100;width:200px;background-color: #fff;top:0px;right:100px;opacity:0.85;}
+#pointlist {position:absolute;z-index:100;width:200px;background-color: #fff;top:0px;right:100px;opacity:0.9;}
 #info-message {position:absolute;z-index:500;background-color: #fff;padding:10px;}
 #load-message {position:absolute;z-index:0;left:10px;top:10px;}
 #auth {position:absolute;z-index:2;right:0px;top:0px;}
 #homespot-link{position:absolute;z-index:2;top:0px;left:0px;}
-#points {width:100%;}
+#points {width:100%;overflow:auto;display:block;max-height:200px;}
+#points .point {display:block;padding:5px 2px; border-bottom:1px solid #d9d6d1;cursor:pointer;}
+#points .point:hover {background:#eee;}
 #points .title {cursor:pointer;padding:5px;}
 #points .title:hover {text-decoration:underline;background-color: #ddd;}
+#points .actions {display:none;padding:2px 5px;margin:5px 0px 0px 5px;cursor:pointer;font-size:9px;background:#eee;}
+#points .actions:hover {color:#00f;text-decoration:underline;}
 
 
 /*Dialog box styles*/

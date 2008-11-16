@@ -1,11 +1,11 @@
 {% for point in points|dictsort:"title" %}
-<div class="point">
+<div class="point jump">
 	<span class="hidden key">{{point.key}}</span>
 	<span class="hidden lat">{{point.lat}}</span>
 	<span class="hidden lon">{{point.lon}}</span>
-	<div class="title floatleft">{{point.title}}</div>
-	<div class="edit floatleft actions">change</div>
-	<div class="delete floatleft actions">delete</div>
+	<span class="title jump floatleft">{{point.title}}</span>
+	<span class="edit  floatleft actions">change</span>
+	<span class="delete  floatleft actions">delete</span>
 	<div class="clear"></div>
 </div>
 {% endfor %}
