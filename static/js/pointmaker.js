@@ -57,12 +57,12 @@ var PointMaker = function(){
             {
                 this.dialog = $('#dialog-add-point').show().dialog(dialogOpts);
                 $('.ok.button',this.dialog).click(function() {PointMaker.save()});
-                $('.cancel.button',this.dialog).click(function() {PointMaker.close()})
+                $('.cancel.button',this.dialog).click(function() {PointList.addAllMarkers();PointMaker.close()})
             }
             $('.error',this.dialog).text('');
             $('span.ui-dialog-title',this.dialog.parent()).text(this.data.dialogTitle);
             this.dialog.dialog("open");
-
+            Map.clearAllMarkers();
             this.marker = Map.addMarker({point:this.data.point,draggable:true});
             this.isOpen = true;
         },
@@ -70,6 +70,7 @@ var PointMaker = function(){
             Map.removeMarker(PointMaker.marker);
             PointMaker.marker = null;
             this.isOpen = false;
+            
         },
         save: function(){
             var title = $('input#text-title',PointMaker.dialog).val();
@@ -104,7 +105,7 @@ var PointMaker = function(){
             return true;
         },
         close: function(){
-            if (this.isOpen) this.dialog.dialog('close');
+            if (this.isOpen) {this.dialog.dialog('close');}
         }
     };
 }

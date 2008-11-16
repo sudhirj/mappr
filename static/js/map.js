@@ -43,7 +43,7 @@ var Map = function(){
             }
             var o = $.extend(defaults, o || {});
             var marker;
-            if (o.point == null) marker = new google.maps.Marker(new google.maps.LatLng(o.lat,o.lng));
+            if (o.point == null) marker = new google.maps.Marker(new google.maps.LatLng(o.lat,o.lon));
             else marker = new google.maps.Marker(o.point,{draggable:o.draggable});
             this.map.addOverlay(marker);
             return marker;
@@ -61,7 +61,13 @@ var Map = function(){
             return new google.maps.LatLng(lat,lon);
         },
         center: function(){return this.map.getCenter()},
-        examine: function(marker){return {lat: marker.getLatLng().lat(), lon: marker.getLatLng().lng()}}
+        examine: function(marker){return {lat: marker.getLatLng().lat(), lon: marker.getLatLng().lng()}},
+        clearAllMarkers: function(){this.map.clearOverlays();},
+        setCenter: function(lat, lon, zoom){
+            if (!zoom) var zoom = this.map.getZoom();
+            this.map.setCenter(new google.maps.LatLng(lat, lon), zoom);
+        }
+        
     };
 }
 ();
