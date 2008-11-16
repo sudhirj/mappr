@@ -52,7 +52,8 @@ def edit_point(key, new_point):
     
 def delete_point(key):
     point = db.get(key)
-    db.delete(point)
+    logging.info(point)
+    point.delete()
 
 def get_current_user_url():
     user = users.get_current_user()

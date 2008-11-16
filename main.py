@@ -65,12 +65,12 @@ class PointHandler(webapp.RequestHandler):
 class PointDeleteHandler(webapp.RequestHandler): 
     @utils.authorize('user')
     def post(self):
-        key = self.request.get_all('key')
+        key = self.request.get('key')
         try:
             gateway.delete_point(key)
         except Exception, e:
             self.response.out.write(e)
-            self.response.out.write(403)    
+            self.response.set_status(403)    
     
 ROUTES =[
             (r'/_points/delete.*', PointDeleteHandler),
