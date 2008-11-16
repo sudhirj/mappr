@@ -36,9 +36,9 @@ class PointHandler(webapp.RequestHandler):
     @utils.authorize('user')
     def post(self,url=None):
         user = users.get_current_user()
-        lat = self.request.get('lat')
-        lon = self.request.get('lon')
-        title = cgi.escape(self.request.get('title'))
+        lat = float(self.request.get('lat'))
+        lon = float(self.request.get('lon'))
+        title = str(cgi.escape(self.request.get('title')))
         key = self.request.get('key')
         
         point = dict(title=title, lat = lat, lon = lon)

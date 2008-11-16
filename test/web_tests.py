@@ -1,6 +1,6 @@
 import logging,unittest,main,test.helpers,presenter,settings,urllib
 from BeautifulSoup import BeautifulSoup
-from  webtest import TestApp
+from webtest import TestApp
 from google.appengine.ext import webapp
 from google.appengine.api import users
 
