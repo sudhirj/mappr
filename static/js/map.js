@@ -65,7 +65,7 @@ var Map = function(){
         clearAllMarkers: function(){this.map.clearOverlays();},
         setCenter: function(lat, lon, zoom){
             if (!zoom) var zoom = this.map.getZoom();
-            this.map.setCenter(new google.maps.LatLng(lat, lon), zoom);
+            this.map.panTo(new google.maps.LatLng(lat, lon), zoom);
         }
         
     };

@@ -11,11 +11,17 @@ var PointList = function(){
                     '.edit': function(e){
                         var point = $(e.target).parents('.point');
                         var key = $('.key',point).text();
+                        var lat = $('.lat', point).text();
+                        var lon = $('.lon', point).text();
+                        Map.setCenter(lat,lon);
                         PointMaker.edit(key);
                     },
                     '.delete': function(e){
                         var point = $(e.target).parents('.point');
                         var key = $('.key',point).text();
+                        var lat = $('.lat', point).text();
+                        var lon = $('.lon', point).text();
+                        Map.setCenter(lat,lon);
                         PointMaker.del(key);
                     },
                     '.point': function(e){

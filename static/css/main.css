@@ -1,6 +1,12 @@
 html{font-size:62.5%;}
 html,body{height:100%;overflow:hidden;font-family:"Lucida Grande",Verdana,Helvetica,Arial;font-size:0.9em;}
 body{position:relative;}
+
+#load-message {position:absolute;z-index:0;left:30px;top:30px;width:500px;}
+#load-message h2 {font-size:2em;padding:10px 0px;}
+#load-message p {font-size:1em;padding:5px 0px;}
+
+
 .clear {clear:both;}
 .floatleft {float:left;}
 
@@ -11,7 +17,7 @@ body{position:relative;}
 #map {height:100%;width:100%;z-index:1;position:relative;}
 #pointlist {position:absolute;z-index:100;width:200px;background-color: #fff;top:0px;right:100px;opacity:0.9;}
 #info-message {position:absolute;z-index:500;background-color: #fff;padding:10px;}
-#load-message {position:absolute;z-index:0;left:10px;top:10px;}
+
 #auth {position:absolute;z-index:2;right:0px;top:0px;}
 #homespot-link{position:absolute;z-index:2;top:0px;left:0px;}
 #points {width:100%;overflow:auto;display:block;max-height:200px;}
@@ -19,7 +25,7 @@ body{position:relative;}
 #points .point:hover {background:#eee;}
 #points .title {cursor:pointer;padding:5px;}
 #points .title:hover {text-decoration:underline;background-color: #ddd;}
-#points .actions {display:none;padding:2px 5px;margin:5px 0px 0px 5px;cursor:pointer;font-size:9px;background:#eee;}
+#points .actions {display:none;padding:5px;margin:2px 0px 0px 5px;cursor:pointer;font-size:9px;background:#eee;}
 #points .actions:hover {color:#00f;text-decoration:underline;}
 
 
