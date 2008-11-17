@@ -26,12 +26,16 @@ class TestFixture (unittest.TestCase):
         self.o2 = models.Point(title="O2",point = db.GeoPt(24.234456,-85.34556),owner = self.amrita,parent = self.amrita)
         self.o2.put()
         
+        self.temp_gcu = users.get_current_user
+        
+        
             
     def tearDown(self):
         for point in models.Point.all():
             db.delete(point)
         for customer in models.Customer.all():
             db.delete(customer)
+        users.get_current_user = self.temp_gcu
             
     
     def login(self, user = "sudhir.j@gmail.com"):
