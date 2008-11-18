@@ -44,7 +44,7 @@ input {padding:5px 0px;color:#823f41;font-weight:bold;font-size:1.5em;display:bl
 #points .actions {display:none;padding:3px;margin:2px 0px 0px 5px;font-size:9px;background:#fff;}
 #points .actions:hover {color:#00f;text-decoration:underline;}
 
-#pointlist .heading{border-bottom:1px solid #823f41;}
+#pointlist .heading{border-bottom:1px solid #d9d6d1;}
 
 
 /*Dialog box styles*/
