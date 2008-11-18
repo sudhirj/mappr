@@ -15,8 +15,18 @@ var FirstTime = function(){
                     show:'drop',
                     hide:'drop'
                 });
-                $('.ok.button',this.dialog).click(function() {FirstTime.save()});
-                $('.cancel.button',this.dialog).click(function(){FirstTime.close()})
+                FirstTime.ready();
+                $('#text-url').keyup(function(e){
+                    if (e.keyCode == 13) FirstTime.save();
+                    else $('#dynamic-url').text($('#text-url').val());
+                });
+                $('#text-url').keypress(function(e){
+                    if(e.which == 13 || e.which == 8 || e.which == 0) return true;
+                    if(48 <= e.which && e.which <= 57) return true;
+                    if(65 <= e.which && e.which <= 90) return true;
+                    if(97 <= e.which && e.which <= 122) return true;
+                    return false;                 
+                });
             }
             $('.error',this.dialog).text('');
             $('input#text-url',this.dialog).val('');
@@ -57,6 +67,14 @@ var FirstTime = function(){
             }
             //TODO: add regex validation to allow only letters and numbers. 
             return true;
+        },
+        ready: function(){
+            $('#text-url').addClass('green-border').removeClass('red-border');
+            $('#create-button').addClass('ok').removeClass('cancel').text('Create!');            
+        },
+        notReady: function(){
+            $('#text-url').addClass('red-border').removeClass('green-border');
+            $('#create-button').addClass('cancel').removeClass('ok').text('That\'s been taken :(');
         }
     };
 }
