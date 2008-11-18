@@ -29,7 +29,7 @@ class MainHandler(webapp.RequestHandler):
 
 class UrlCheckHandler(webapp.RequestHandler):
     def get(self,url=None):
-        self.response.out.write('Y' if gateway.check_if_url_exists(url)[0] else 'N')
+        self.response.out.write('N' if gateway.check_if_url_exists(url)[0] else 'Y')
 
 
 class PointHandler(webapp.RequestHandler):

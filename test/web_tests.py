@@ -23,14 +23,14 @@ class MainPageTest(test.helpers.WebTestFixture):
 class ChecksWebTest(test.helpers.WebTestFixture):
     def test_url_presence_checks(self):
         app = self.app
-        
-        resp_good_choice = app.get('/_check/url/abracadabra')
-        resp_good_choice.mustcontain('N')
-        self.assertEqual('200 OK',resp_good_choice.status)
-        
-        resp_url_already_present = app.get('/_check/url/sudhirurl')
-        resp_url_already_present.mustcontain('Y')
-        self.assertEqual('200 OK',resp_url_already_present.status)
+        resp = app.get('/_check/url/abracadabra')
+        resp.mustcontain('Y')
+        resp = app.get('/_check/url/sudhirurl')
+        resp.mustcontain('N')
+        self.login('magician@gmail.com')
+        app.post('/',{'url':'abracadabra'})
+        resp = app.get('/_check/url/abracadabra')
+        resp.mustcontain('N')
 
 class PostMethodsSecurityTest(test.helpers.WebTestFixture):
     def test_security_of_post_handlers(self):
@@ -135,7 +135,7 @@ class PointOperationsTest(test.helpers.WebTestFixture):
         self.assertFalse(soup.find(text="21.0"))
         self.assertFalse(soup.find(text="43.0"))
 
-            
+
         
         
         

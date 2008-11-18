@@ -17,7 +17,11 @@
 	</div>
 	<div id ="map"></div>	
 	{% if info.user_url %}
-	{% ifnotequal info.user_url info.current_url %}<div id="homespot-link" class="overlay"><a class="main_button white_trans pointer" href="/{{info.user_url}}">Back to Your Pinnspot</a></div>{% endifnotequal %}
+	{% ifnotequal info.user_url info.current_url %}
+	<div id="homespot-link" class="overlay">
+		<a class="main_button white_trans pointer" href="/{{info.user_url}}">Back to Your Pinnspot -></a>
+		</div>
+	{% endifnotequal %}
 	{% endif %}
 	
 	{% if not auth.url and auth.status %}	

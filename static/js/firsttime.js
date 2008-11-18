@@ -1,6 +1,7 @@
 var FirstTime = function(){
     var dialog = null;
     var open = false;
+    var currentValue;
     return {
         initialize: function(){
             if (this.open) return;
@@ -11,14 +12,18 @@ var FirstTime = function(){
                     draggable:true,
                     resizable:false,
                     close: function(){FirstTime.cancel();},
-                    title: "Create a PinnSpot",
-                    show:'drop',
-                    hide:'drop'
+                    title: "Create a PinnSpot"
                 });
                 FirstTime.ready();
                 $('#text-url').keyup(function(e){
                     if (e.keyCode == 13) FirstTime.save();
-                    else $('#dynamic-url').text($('#text-url').val());
+                    else{
+                        currentValue = $('#text-url').val();
+                        $.get('/_check/url/'+currentValue,null,function(data,status){
+                            if (data == 'Y') FirstTime.ready();
+                            else FirstTime.notReady();
+                        },"text");                     
+                    } 
                 });
                 $('#text-url').keypress(function(e){
                     if(e.which == 13 || e.which == 8 || e.which == 0) return true;
@@ -31,6 +36,8 @@ var FirstTime = function(){
             $('.error',this.dialog).text('');
             $('input#text-url',this.dialog).val('');
             this.dialog.dialog("open");
+            $('input#text-url',this.dialog)[0].focus();
+            $('#create-button').click(function(){FirstTime.save()});
             this.open = true;
         },
         cancel: function(){
@@ -52,6 +59,7 @@ var FirstTime = function(){
                 dataType: "text",
                 error: function(response,status,error){
                     $('.error',this.dialog).text(response.responseText);
+                    FirstTime.notReady();
                 }                
             });
         },
@@ -70,7 +78,8 @@ var FirstTime = function(){
         },
         ready: function(){
             $('#text-url').addClass('green-border').removeClass('red-border');
-            $('#create-button').addClass('ok').removeClass('cancel').text('Create!');            
+            $('#create-button').addClass('ok').removeClass('cancel').text('Create!');   
+            $('#dynamic-url').text($('#text-url').val());         
         },
         notReady: function(){
             $('#text-url').addClass('red-border').removeClass('green-border');
