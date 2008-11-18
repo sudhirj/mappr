@@ -2,6 +2,7 @@ var Map = function(){
     var mapDivName;
     var map;
     var adsManager;
+    var icon = null;
 
     return {
         initialize: function(divName,o){
@@ -42,6 +43,13 @@ var Map = function(){
                     }
                 });
                 new google.maps.KeyboardHandler(this.map);
+                this.icon = new google.maps.Icon(G_DEFAULT_ICON);
+                this.icon.image = '/static/images/pinn.png';
+                this.icon.iconSize = new google.maps.Size(21,60);
+                this.icon.iconAnchor = new google.maps.Point(10,55);
+                this.icon.shadow = '/static/images/shadow.png';
+                this.icon.shadowSize = new google.maps.Size(50,60);
+                
             },
             addMarker: function(o){
                 var defaults = {
@@ -51,9 +59,11 @@ var Map = function(){
                     draggable:false
                 }
                 var o = $.extend(defaults, o || {});
+                
+                
                 var marker;
-                if (o.point == null) marker = new google.maps.Marker(new google.maps.LatLng(o.lat,o.lon));
-                else marker = new google.maps.Marker(o.point,{draggable:o.draggable});
+                if (o.point == null) marker = new google.maps.Marker(new google.maps.LatLng(o.lat,o.lon),{icon:Map.icon});
+                else marker = new google.maps.Marker(o.point,{draggable:o.draggable,icon:Map.icon});
                 this.map.addOverlay(marker);
                 return marker;
             },

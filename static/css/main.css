@@ -22,7 +22,7 @@ input {padding:5px 0px;color:#823f41;font-weight:bold;font-size:1.5em;display:bl
 #add-point{font-weight:bold;}
 #add-point:hover{text-decoration:underline;}
 .white_trans {background-color: #fff;opacity:0.9;}
-.main_button{padding:10px 5px;display:block;color:#fff;background:#823f41;}
+.main_button, .heading{padding:10px 5px;display:block;color:#fff;background:#823f41;}
 .main_button:hover{color:#823f41;background:#fff;}
 
 
@@ -34,7 +34,8 @@ input {padding:5px 0px;color:#823f41;font-weight:bold;font-size:1.5em;display:bl
 #auth {right:0px;top:0px;}
 #create-user ,#homespot-link {top:15px;left:250px;font-size:1.8em;padding:15px;z-index:10;}
 
-#pointlist .heading{border-bottom:1px solid #823f41;}
+
+
 #points {width:100%;overflow:auto;display:block;max-height:200px;}
 #points .point {display:block;padding:5px 2px; border-bottom:1px solid #d9d6d1; color:#531012;}
 #points .point:hover {background:#823f41;color:#fff;}
@@ -42,6 +43,8 @@ input {padding:5px 0px;color:#823f41;font-weight:bold;font-size:1.5em;display:bl
 #points .title {padding:5px;}
 #points .actions {display:none;padding:3px;margin:2px 0px 0px 5px;font-size:9px;background:#fff;}
 #points .actions:hover {color:#00f;text-decoration:underline;}
+
+#pointlist .heading{border-bottom:1px solid #823f41;}
 
 
 /*Dialog box styles*/

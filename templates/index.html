@@ -33,13 +33,13 @@
 	
 	<div id = "pointlist" class="pointer white_trans">
 		{% if info.user_nick %}
-		<div class="main_button heading">{{info.user_nick}}'s Pinns</div>
+		<div class="heading">{{info.user_nick}}'s Pinns</div>
 		{% endif %}
 		<div id = "points" {% if auth.at_home %} class="authorized" {% endif %}>
 			{% include "pointlist.html" %}
 		</div>
 		{% if auth.at_home%}
-		<div id="add-point" class="main_button">+ New Pinn</div>
+		<div id="add-point" class="heading">+ New Pinn</div>
 		{% endif %}			
 	</div>
 	
