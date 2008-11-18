@@ -49,6 +49,17 @@ var PointList = function(){
                 Map.addMarker({lat:lat, lon:lon});
                 
             });            
+        },
+        getPoints: function(){
+            var pointArray = []
+            $('#points .point').each(function(index) {
+                var point = {
+                    lat: $('.lat',this).text(),
+                    lon: $('.lon',this).text()
+                }
+                pointArray[index] = point;
+            });
+            return pointArray;
         }        
     };
 }

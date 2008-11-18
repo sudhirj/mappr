@@ -57,7 +57,9 @@ var PointMaker = function(){
             {
                 this.dialog = $('#dialog-add-point').show().dialog(dialogOpts);
                 $('.ok.button',this.dialog).click(function() {PointMaker.save()});
-                $('.cancel.button',this.dialog).click(function() {PointList.addAllMarkers();PointMaker.close()})
+                $('.cancel.button',this.dialog).click(function() {PointList.addAllMarkers();PointMaker.close()});
+                $('#text-title').keyup(function(e){if (e.keyCode == 13) PointMaker.save();});
+                
             }
             $('.error',this.dialog).text('');
             $('span.ui-dialog-title',this.dialog.parent()).text(this.data.dialogTitle);
