@@ -46,9 +46,9 @@ var PointList = function(){
             $('#points .point').each(function(index) {
                 var lat = $('.lat',$(this)).text();
                 var lon = $('.lon',$(this)).text();
-                Map.addMarker({lat:lat, lon:lon});
-                
-            });            
+                Map.addMarker({lat:lat, lon:lon});                
+            });
+            PointList.setCount();            
         },
         getPoints: function(){
             var pointArray = []
@@ -60,6 +60,12 @@ var PointList = function(){
                 pointArray[index] = point;
             });
             return pointArray;
+        },
+        setCount: function(){
+            var numLeft = INFO.pointCeiling - PointList.getPoints().length;
+            if (numLeft > 0) $('#add-point').text('+ New Pinn ( '+numLeft+' left )');
+            else $('#add-point').text('No more Pinns :(');
+            
         }        
     };
 }

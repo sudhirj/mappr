@@ -20,17 +20,19 @@ input {padding:5px 0px;color:#823f41;font-weight:bold;font-size:1.5em;display:bl
 .block{display:block;}
 #points.authorized .point:hover .actions {display:inline;}
 #add-point{font-weight:bold;}
-.main_button{padding:10px 5px;display:block;}
-.main_button:hover{color:#fff;background:#823f41;}
-
+#add-point:hover{text-decoration:underline;}
 .white_trans {background-color: #fff;opacity:0.9;}
+.main_button{padding:10px 5px;display:block;color:#fff;background:#823f41;}
+.main_button:hover{color:#823f41;background:#fff;}
+
+
 
 #map {height:100%;width:100%;z-index:1;position:relative;}
 #pointlist {position:absolute;z-index:100;width:200px;top:0px;right:100px;}
 #info-message {position:absolute;z-index:500;background-color: #fff;padding:10px;}
 
-#auth {left:250px;top:0px;}
-#create-user ,#homespot-link {top:20px;left:280px;font-size:1.8em;padding:15px;z-index:10;}
+#auth {right:0px;top:0px;}
+#create-user ,#homespot-link {top:15px;left:250px;font-size:1.8em;padding:15px;z-index:10;}
 
 #pointlist .heading{border-bottom:1px solid #823f41;}
 #points {width:100%;overflow:auto;display:block;max-height:200px;}

@@ -70,6 +70,7 @@ var PointMaker = function(){
             Map.removeMarker(PointMaker.marker);
             PointMaker.marker = null;
             this.isOpen = false;
+            PointList.addAllMarkers();
             
         },
         save: function(){
@@ -105,7 +106,8 @@ var PointMaker = function(){
             return true;
         },
         close: function(){
-            if (this.isOpen) {this.dialog.dialog('close');}
+            if (this.isOpen) {this.dialog.dialog('close');};
+            
         }
     };
 }
