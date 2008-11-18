@@ -4,36 +4,46 @@
 <head>
 	<meta name="verify-v1" content="7pCmCeddmiTapszgiQ55WU9hMDcxrUIkWm2wlv1+6cQ=" />
 	<title>PinnSpot : Put Yourself on the Map!</title>
+
 	<link type="text/css" rel="Stylesheet" href="/static/css/reset.css"/>
 	<link type="text/css" rel="Stylesheet" href="/static/css/main.css"/>
 	{% include "jsinit.html" %}
 
 </head>
 <body onunload="GUnload()">
+	<div id="logo"><img src="static/images/logo.png"/></div>
 	<div id="load-message">
-		<h2>Welcome to PinnSpot!</h2>
-		<p>Loading the map... this might take a few seconds.</p>
-		<em>If you cannot see the map, make sure you have Javascript turned on and also disable ad blockers you might have.</em>
+		<h2>Welcome to {% if info.user_nick %}{{info.user_nick}}'s{% endif %} PinnSpot!</h2>
+		<p>The map is loading right now... this might take a few seconds.</p>
+		<p>If you cannot see the map, make sure you have Javascript turned on and also disable any ad-blockers you might have.</p>
 	</div>
-	<div id ="map"></div>
-	<div id = "pointlist">
+	<div id ="map"></div>	
+	{% if info.user_url %}
+	{% ifnotequal info.user_url info.current_url %}
+	<div id="homespot-link" class="overlay">
+		<a class="main_button white_trans pointer" href="/{{info.user_url}}">Back to Your Pinnspot -></a>
+		</div>
+	{% endifnotequal %}
+	{% endif %}
+	
+	{% if not auth.url and auth.status %}	
+	<div id="create-user" class="main_button overlay white_trans pointer">+ Create your own PinnSpot</div>
+	{% endif %}
+	
+	<div id="auth" class="overlay" ><a class="main_button white_trans pointer" href="{{auth.link}}">{{auth.label}}</a></div>
+	<div id="info-message" class="dialogs"></div>
+	
+	<div id = "pointlist" class="pointer white_trans">
+		{% if info.user_nick %}
+		<div class="heading">{{info.user_nick}}'s Pinns</div>
+		{% endif %}
 		<div id = "points" {% if auth.at_home %} class="authorized" {% endif %}>
 			{% include "pointlist.html" %}
 		</div>
 		{% if auth.at_home%}
-		<div id="add-point" class="pointer">New Pinn</div>
-		{% endif %}
-		{% if not auth.url and auth.status %}	
-		<div id="create-user" class="pointer">Create User</div>
-		{% endif %}		
+		<div id="add-point" class="heading">+ New Pinn</div>
+		{% endif %}			
 	</div>
-	
-	{% if info.user_url %}
-	{% ifnotequal info.user_url info.current_url %}<div id="homespot-link"><a href="/{{info.user_url}}">Go to your Pinnspot</a></div>{% endifnotequal %}
-	{% endif %}
-	
-	<div id="auth"><a href="{{auth.link}}">{{auth.label}}</a></div>
-	<div id="info-message" class="dialogs"></div>
 	
 	{% include "dialogs/pinns.html" %}
 	{% include "dialogs/newuser.html" %}

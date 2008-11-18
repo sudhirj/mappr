@@ -7,8 +7,7 @@ var PointMaker = function(){
         draggable:true,
         resizable:false,
         close: function(){PointMaker.cancel();},
-        show:'drop',
-        hide:'drop',
+        open: function(){$('#text-title')[0].focus()},
         position: [100,50]
     };
     var data = null;
@@ -57,7 +56,8 @@ var PointMaker = function(){
             {
                 this.dialog = $('#dialog-add-point').show().dialog(dialogOpts);
                 $('.ok.button',this.dialog).click(function() {PointMaker.save()});
-                $('.cancel.button',this.dialog).click(function() {PointList.addAllMarkers();PointMaker.close()})
+                $('#text-title').keyup(function(e){if (e.keyCode == 13) PointMaker.save();});
+                
             }
             $('.error',this.dialog).text('');
             $('span.ui-dialog-title',this.dialog.parent()).text(this.data.dialogTitle);
@@ -70,6 +70,7 @@ var PointMaker = function(){
             Map.removeMarker(PointMaker.marker);
             PointMaker.marker = null;
             this.isOpen = false;
+            PointList.addAllMarkers();
             
         },
         save: function(){
@@ -105,7 +106,8 @@ var PointMaker = function(){
             return true;
         },
         close: function(){
-            if (this.isOpen) {this.dialog.dialog('close');}
+            if (this.isOpen) {this.dialog.dialog('close');};
+            
         }
     };
 }

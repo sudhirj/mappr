@@ -1,36 +1,61 @@
 html{font-size:62.5%;}
-html,body{height:100%;overflow:hidden;font-family:"Lucida Grande",Verdana,Helvetica,Arial;font-size:0.9em;}
-body{position:relative;}
+html,body{height:100%;overflow:hidden;font-family:"Lucida Grande","lucida sans",Verdana,Helvetica,Arial;font-size:0.9em;}
+body{position:relative;color:#531012;line-height:1em;}
+a {text-decoration:none;color:inherit;}
+a:hover{text-decoration:underline;}
+em{font-style:italic;}
+input {padding:5px 0px;color:#823f41;font-weight:bold;font-size:1.5em;display:block;margin:10px 0px;}
+#logo {position:absolute;z-index:2;left:10px;top:10px;color:#823f41;}
+#load-message {position:absolute;z-index:0;left:30px;top:90px;width:60%;}
+#load-message h2 {font-size:2em;padding:10px 0px;line-height:1em;}
+#load-message p {font-size:1em;padding:5px 0px;}
+
+.green-border {border:3px solid #C4F9AF;}
+.red-border {border: 3px solid #fa7373;}
 .clear {clear:both;}
 .floatleft {float:left;}
-
+.overlay {position:absolute;z-index:2;}
 .pointer {cursor:pointer;}
 .hidden {display:none;}
-#points.authorized .actions {display:inline;}
+.block{display:block;}
+#points.authorized .point:hover .actions {display:inline;}
+#add-point{font-weight:bold;}
+#add-point:hover{text-decoration:underline;}
+.white_trans {background-color: #fff;opacity:0.9;}
+.main_button, .heading{padding:10px 5px;display:block;color:#fff;background:#823f41;}
+.main_button:hover{color:#823f41;background:#fff;}
+
+
 
 #map {height:100%;width:100%;z-index:1;position:relative;}
-#pointlist {position:absolute;z-index:100;width:200px;background-color: #fff;top:0px;right:100px;opacity:0.9;}
+#pointlist {position:absolute;z-index:100;width:200px;top:0px;right:100px;}
 #info-message {position:absolute;z-index:500;background-color: #fff;padding:10px;}
-#load-message {position:absolute;z-index:0;left:10px;top:10px;}
-#auth {position:absolute;z-index:2;right:0px;top:0px;}
-#homespot-link{position:absolute;z-index:2;top:0px;left:0px;}
+
+#auth {right:0px;top:0px;}
+#create-user ,#homespot-link {top:15px;left:250px;font-size:1.8em;padding:15px;z-index:10;}
+
+
+
 #points {width:100%;overflow:auto;display:block;max-height:200px;}
-#points .point {display:block;padding:5px 2px; border-bottom:1px solid #d9d6d1;cursor:pointer;}
-#points .point:hover {background:#eee;}
-#points .title {cursor:pointer;padding:5px;}
-#points .title:hover {text-decoration:underline;background-color: #ddd;}
-#points .actions {display:none;padding:2px 5px;margin:5px 0px 0px 5px;cursor:pointer;font-size:9px;background:#eee;}
+#points .point {display:block;padding:5px 2px; border-bottom:1px solid #d9d6d1; color:#531012;}
+#points .point:hover {background:#823f41;color:#fff;}
+#points .point:hover .actions{color:#823f41;}
+#points .title {padding:5px;}
+#points .actions {display:none;padding:3px;margin:2px 0px 0px 5px;font-size:9px;background:#fff;}
 #points .actions:hover {color:#00f;text-decoration:underline;}
+
+#pointlist .heading{border-bottom:1px solid #823f41;}
 
 
 /*Dialog box styles*/
 .dialogs {display:none;}
+.dialogs em{width:97%;}
 .ui-resizable-handle {cursor:default !important;display:none !important;}
-.ui-dialog{border:2px solid #f2bf24;overflow:hidden;}
-.ui-dialog-titlebar {padding:10px;opacity:0.9;background:#99b3cc;cursor:move;font-weight:bold;font-family:"Lucida Grande",Helvetica,Verdana,Arial;position:relative;}
+.ui-dialog{border:2px solid #823f41;overflow:hidden;}
+.ui-dialog-titlebar {color:#fff;padding:10px;opacity:0.9;background:#823f41;cursor:move;font-weight:bold;font-family:"Lucida Grande",Helvetica,Verdana,Arial;position:relative;}
 .ui-dialog-content {padding:10px;opacity:0.9;background:#fff;}
-.ui-dialog-titlebar-close{position:absolute;cursor:pointer;right:0px;top:0px;}
-.dialogs .error {color:#f00;font-size:0.8em;padding:5px;}
+.ui-dialog-titlebar-close{z-index:10;position:absolute;cursor:pointer;right:1px;top:1px;text-indent:-99999px;width:30px;height:30px;background:url('/static/images/close.png') no-repeat center center;}
+.dialogs .error {color:#f00;font-size:0.8em;padding:3px;}
 .button {display:block;padding:5px;float:left;margin:5px 5px 0px 0px;}
 .button:hover {text-decoration:underline;}
 .button.ok {background:#c4f9af;border:1px solid #0f0;}

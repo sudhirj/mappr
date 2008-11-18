@@ -61,6 +61,10 @@ def get_current_user_url():
     customer = get_customer(user) if user else None
     if not customer: return None
     return customer.url
-    
+
+def get_current_user_nick(url):
+    customer = get_customer_by_url(url)
+    if not customer: return None
+    return customer.user.nickname()
     
     
