@@ -64,14 +64,14 @@ input {padding:5px 0px;color:#823f41;font-weight:bold;font-size:1.5em;display:bl
 .pointer {cursor:pointer;}
 .hidden {display:none;}
 .block{display:block;}
-#points.authorized .point:hover .actions {display:inline;}
-#add-point{font-weight:bold;}
-#add-point:hover{text-decoration:underline;}
 .white_trans {background-color: #fff;opacity:0.9;}
 .main_button, .heading{padding:10px 5px;display:block;color:#fff;background:#823f41;}
 .main_button:hover{color:#823f41;background:#fff;}
 
 
+#points.authorized .point:hover .actions {display:inline;}
+#add-point{font-weight:bold;}
+#add-point:hover{text-decoration:underline;}
 
 #map {height:100%;width:100%;z-index:1;position:relative;}
 #pointlist {position:absolute;z-index:100;width:200px;top:0px;right:100px;}
