@@ -90,5 +90,9 @@ class GatewayTests (test.helpers.TestFixture):
         url = gateway.get_current_user_url()
         self.assertFalse(url)
   
+    def test_get_current_user_nickname(self):
+        self.assertEqual(gateway.get_current_user_nick('nosuchurl'),None)
+        self.assertEqual(gateway.get_current_user_nick('sudhirurl'),'sudhir.j')
+
         
         

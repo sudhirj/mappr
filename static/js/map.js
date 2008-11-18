@@ -21,7 +21,9 @@ var Map = function(){
             this.map.setCenter(new google.maps.LatLng(o.lat, o.lon), o.zoom);
             this.adsManager = new google.maps.AdsManager(this.map, 'ca-pub-7898295704528692',{maxAdsOnMap:10});
             this.adsManager.enable();
-            this.map.addControl(new GLargeMapControl());
+            this.map.addControl(new google.maps.LargeMapControl(),
+                                new google.maps.ControlPosition(G_ANCHOR_TOP_LEFT, 
+                                                                new google.maps.Size(20,150)));
 
             this.map.enableScrollWheelZoom();
             this.map.enableContinuousZoom();
