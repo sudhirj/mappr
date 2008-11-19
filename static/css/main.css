@@ -4,12 +4,15 @@ body{position:relative;color:#531012;line-height:1em;}
 a {text-decoration:none;color:inherit;}
 a:hover{text-decoration:underline;}
 em{font-style:italic;}
+strong{font-weight:bold;}
 input {padding:5px 0px;color:#823f41;font-weight:bold;font-size:1.5em;display:block;margin:10px 0px;}
 #logo {position:absolute;z-index:2;left:10px;top:10px;color:#823f41;}
-#load-message, #welcome {position:absolute;z-index:0;left:30px;top:90px;width:60%;}
-#load-message h2, #welcome h2 {font-size:2em;padding:10px 0px;line-height:1em;}
-#load-message p, #welcome p {font-size:1em;padding:5px 0px;}
-#welcome{z-index:2;left:120px;padding:20px;top:130px;width:650px;line-height:1.2em;display:none;}
+
+.display_message {position:absolute;z-index:0;left:30px;top:90px;width:60%;}
+.display_message h2 {font-size:2em;padding:10px 0px;line-height:1em;}
+.display_message p {font-size:1em;padding:5px 0px;}
+
+.over_map {z-index:2;left:120px;padding:20px;top:130px;width:650px;line-height:1.3em;display:none;}
 
 .green-border {border:3px solid #C4F9AF;}
 .red-border {border: 3px solid #fa7373;}
