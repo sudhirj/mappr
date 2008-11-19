@@ -3,7 +3,8 @@ var FirstTime = function(){
     var open = false;
     var currentValue;
     return {
-        initialize: function(){
+        initialize: function(url){
+            if (!url) url = '';
             if (this.open) return;
             if (this.dialog == null)
             {
@@ -34,7 +35,7 @@ var FirstTime = function(){
                 });
             }
             $('.error',this.dialog).text('');
-            $('input#text-url',this.dialog).val('');
+            $('input#text-url',this.dialog).val(url);
             this.dialog.dialog("open");
             $('input#text-url',this.dialog)[0].focus();
             $('#create-button').click(function(){FirstTime.save()});

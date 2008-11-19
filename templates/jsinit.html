@@ -1,8 +1,9 @@
 <script type="text/javascript">
 var INFO = {
-	auth: {{auth.status}},
+	auth: {% if auth.status %}true{% else %}false{% endif %},
 	url: {% if auth.url %}"{{auth.url}}"{% else %}false{% endif %},
 	currentUrl: {% if info.current_url %}"{{info.current_url}}"{% else %}false{%endif%},
-	pointCeiling: {% if info.point_ceiling %}{{info.point_ceiling}}{% endif %}	
+	pointCeiling: {% if info.point_ceiling %}{{info.point_ceiling}}{% endif %},
+	emptySpot: {% if info.empty_spot %}true{% else %}false{% endif %}	
 };
 </script>
