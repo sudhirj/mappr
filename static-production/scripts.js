@@ -98,7 +98,8 @@ var Map = function(){
     var open = false;
     var currentValue;
     return {
-        initialize: function(){
+        initialize: function(url){
+            if (!url) url = '';
             if (this.open) return;
             if (this.dialog == null)
             {
@@ -129,7 +130,7 @@ var Map = function(){
                 });
             }
             $('.error',this.dialog).text('');
-            $('input#text-url',this.dialog).val('');
+            $('input#text-url',this.dialog).val(url);
             this.dialog.dialog("open");
             $('input#text-url',this.dialog)[0].focus();
             $('#create-button').click(function(){FirstTime.save()});
@@ -379,6 +380,7 @@ google.setOnLoadCallback(function(){
     };
     $(Map).bind('mapLoaded', function(event) {
         $('#welcome').fadeIn();
+        if (INFO.auth && INFO.emptySpot && !INFO.url) FirstTime.initialize(INFO.currentUrl);
     });
     Map.initialize("map");    
     $(document).ready(function() {
