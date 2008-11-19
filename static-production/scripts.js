@@ -236,7 +236,7 @@ var PointList = function(){
             PointList.setCount();            
         },
         getPoints: function(){
-            var pointArray = []
+            var pointArray = [];
             $('#points .point').each(function(index) {
                 var point = {
                     lat: $('.lat',this).text(),
@@ -248,7 +248,7 @@ var PointList = function(){
         },
         setCount: function(){
             var numLeft = INFO.pointCeiling - PointList.getPoints().length;
-            if (numLeft > 0) $('#add-point').text('+ New Pinn ( '+numLeft+' left )');
+            if (numLeft > 0) $('#add-point').text('+ Add Pinn ( '+numLeft+' left )');
             else $('#add-point').text('No more Pinns :(');
             
         }        
