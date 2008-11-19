@@ -19,17 +19,17 @@
 	{% ifnotequal info.user_url info.current_url %}
 	<div id="homespot-link" class="overlay">
 		<a class="main_button white_trans pointer" href="/{{info.user_url}}">Back to Your Pinnspot -></a>
-		</div>
+	</div>
 	{% endifnotequal %}
 	{% endif %}
-	
+
 	{% if not auth.url and auth.status %}	
 	<div id="create-user" class="main_button overlay white_trans pointer">+ Create your own PinnSpot</div>
 	{% endif %}
-	
+
 	<div id="auth" class="overlay" ><a class="main_button white_trans pointer" href="{{auth.link}}">{{auth.label}}</a></div>
 	<div id="info-message" class="dialogs"></div>
-	
+
 	<div id = "pointlist" class="pointer white_trans">
 		{% if info.user_nick %}
 		<div class="heading">{{info.user_nick}}'s Pinns</div>
@@ -41,10 +41,28 @@
 		<div id="add-point" class="heading">+ New Pinn</div>
 		{% endif %}			
 	</div>
-	
+
 	{% include "dialogs/pinns.html" %}
 	{% include "dialogs/newuser.html" %}
-		
+
+	{% if not info.current_url %}
+	<div id="welcome" class="white_trans">
+		<h2>You're at PinnSpot.</h2>
+		<p>This is a site where you can quickly and easily share the places you want to with the rest of world.</p>
+		<p>Get started by logging in, creating your own spot and sticking 'pinns' into it. Then give out pinnspot.com/yourname to to friends, clients, colleagues and anyone else you want.</p>
+		<p>This is a still a work in progress, so any feedback and feature requests are welcome. There's a good chance you'll get what you ask for :)</p>
+		<p>If you're looking for a more powerful commercial solution that you can use with your own branding, then PinnPro might be what you need. Watch this space for more details.</p>
+	</div>
+	{% else %}
+		{% if info.empty_spot %}
+			<div id="welcome" class="white_trans">
+				<h2>Empty PinnSpot.</h2>
+				<p>Looks like no one has taken this spot yet... if you don't already have one, login to create your PinnSpot here.</p>
+			</div>
+		{% endif %}
+	{% endif %}
+
 	{% include "javascripts.html" %}
+
 </body>
 </html>

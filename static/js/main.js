@@ -9,9 +9,13 @@ google.setOnLoadCallback(function(){
             if (target.is(selector)) return rules[selector].apply(this, $.makeArray(arguments));
         }
     };
+    $(Map).bind('mapLoaded', function(event) {
+        $('#welcome').fadeIn();
+    });
     Map.initialize("map");    
     $(document).ready(function() {
         PointList.initialize();        
-        $('#create-user').click(function() {FirstTime.initialize();});            
+        $('#create-user').click(function() {FirstTime.initialize();});    
+               
     });
 });
