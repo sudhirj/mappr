@@ -7,12 +7,20 @@ class GatewayTests (test.helpers.TestFixture):
         valid_result = gateway.get_points_for('sudhirurl')
         self.assertEqual(len(valid_result),2)
         
+        valid_result = gateway.get_points_for('suDhirurl')
+        self.assertEqual(len(valid_result),2)
+        
+        valid_result = gateway.get_points_for('sudhirURl')
+        self.assertEqual(len(valid_result),2)
+        
         non_existent_url = gateway.get_points_for('somerubbish')
         self.assertEqual(non_existent_url,None)
         
         new_guy = models.Customer(user=users.User('someguy@gmail.com'),url='someguyurl')
         new_guy.put()
         empty_result = gateway.get_points_for('someguyurl')
+        self.assertEqual(empty_result,[])
+        empty_result = gateway.get_points_for('SomEguyurl')
         self.assertEqual(empty_result,[])
     
     def test_setting_points_for_user(self):
@@ -41,7 +49,9 @@ class GatewayTests (test.helpers.TestFixture):
     
     def test_url_existence_check(self):
         self.assertFalse(gateway.check_if_url_exists('nonexistenturl')[0])
-        self.assertTrue(gateway.check_if_url_exists('sudhirurl'))
+        self.assertTrue(gateway.check_if_url_exists('sudhirurl')[0])
+        self.assertTrue(gateway.check_if_url_exists('SuDhirurl')[0])
+        self.assertTrue(gateway.check_if_url_exists('SuDhirUrl')[0])
         
     def test_point_editing(self):
         result = gateway.get_points_for('sudhirurl')

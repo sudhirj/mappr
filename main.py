@@ -22,7 +22,7 @@ class MainHandler(webapp.RequestHandler):
     @utils.authorize('user')
     def post(self,url=None):
         user = users.get_current_user()
-        url = cgi.escape(self.request.get('url'))
+        url = cgi.escape(self.request.get('url')).lower()
         try:
             new_customer = gateway.create_customer(url,user)
             self.response.out.write(new_customer.url) 
@@ -48,6 +48,8 @@ class PointHandler(webapp.RequestHandler):
         point = dict(title=title, lat = lat, lon = lon)
         if not key:
             try:
+                if title == '': raise Exception, "You need to provide a title."
+                if title == None: raise Exception, "You need to provide a title."
                 new_point = gateway.set_point(gateway.get_customer(user), point)
                 self.response.out.write(new_point.key())
             except Exception, e:
