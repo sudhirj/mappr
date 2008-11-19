@@ -11,7 +11,7 @@
 </head>
 <body onunload="GUnload()">
 	<div id="logo"><img src="static/images/logo.png"/></div>
-	<div id="load-message">
+	<div id="load-message" class="display_message">
 		<h2>Welcome to {% if info.user_nick %}{{info.user_nick}}'s{% endif %} PinnSpot!</h2>
 		<p>The map is loading right now... this might take a few seconds.</p>
 		<p>If you cannot see the map, make sure you have Javascript turned on and also disable any ad-blockers you might have.</p>
@@ -40,7 +40,7 @@
 			{% include "pointlist.html" %}
 		</div>
 		{% if auth.at_home%}
-		<div id="add-point" class="heading">+ New Pinn</div>
+		<div id="add-point" class="heading">+ Add Pinn</div>
 		{% endif %}			
 	</div>
 
@@ -48,21 +48,21 @@
 	{% include "dialogs/newuser.html" %}
 
 	{% if not info.current_url %}
-	<div id="welcome" class="white_trans">
-		<h2>You're at PinnSpot.</h2>
-		<p>This is a site where you can quickly and easily share the places you want to with the rest of world.</p>
-		<p>Get started by logging in, creating your own spot and sticking 'pinns' into it. Then give out pinnspot.com/yourname to to friends, clients, colleagues and anyone else you want.</p>
+	<div id="welcome" class="white_trans display_message over_map">
+		<h2>Show Everyone.</h2>
+		<p>Need to show the world where you are? Where the party is tonight? Where your offices are?</p>
+		<p>Log in, create your spot, and give pinnspot.com/name to everyone. <strong>It's easy, fast and free.</strong></p>
 		<p>This is a still a work in progress, so any feedback and feature requests are welcome. There's a good chance you'll get what you ask for :)</p>
 		<p>If you're looking for a more powerful commercial solution that you can use with your own branding, then PinnPro might be what you need. Watch this space for more details.</p>
 	</div>
-	{% else %}
-		{% if info.empty_spot %}
-			<div id="welcome" class="white_trans">
-				<h2>Empty PinnSpot.</h2>
-				<p>Looks like no one has taken this spot yet... if you don't already have one, login to create your PinnSpot here.</p>
-			</div>
-		{% endif %}
 	{% endif %}
+	{% if info.empty_spot %}
+	<div id="welcome" class="white_trans display_message over_map">
+		<h2>Empty PinnSpot.</h2>
+		<p>Looks like no one has taken this spot yet... if you don't already have one, login to create your PinnSpot here.</p>
+	</div>
+	{% endif %}
+
 
 	{% include "javascripts.html" %}
 

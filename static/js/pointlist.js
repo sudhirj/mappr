@@ -63,7 +63,7 @@ var PointList = function(){
         },
         setCount: function(){
             var numLeft = INFO.pointCeiling - PointList.getPoints().length;
-            if (numLeft > 0) $('#add-point').text('+ New Pinn ( '+numLeft+' left )');
+            if (numLeft > 0) $('#add-point').text('+ Add Pinn ( '+numLeft+' left )');
             else $('#add-point').text('No more Pinns :(');
             
         }        
