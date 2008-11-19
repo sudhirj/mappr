@@ -11,6 +11,7 @@ google.setOnLoadCallback(function(){
     };
     $(Map).bind('mapLoaded', function(event) {
         $('#welcome').fadeIn();
+        if (INFO.auth && INFO.emptySpot && !INFO.url) FirstTime.initialize(INFO.currentUrl);
     });
     Map.initialize("map");    
     $(document).ready(function() {
