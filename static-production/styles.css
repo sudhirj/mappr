@@ -70,7 +70,8 @@ input {padding:5px 0px;color:#823f41;font-weight:bold;font-size:1.5em;display:bl
 .main_button:hover{color:#823f41;background:#fff;}
 
 
-#points.authorized .point:hover .actions {display:inline;}
+#points.authorized .point .actions {display:inline;opacity:0.5;}
+#points.authorized .point:hover .actions {display:inline;opacity:1;}
 #add-point{font-weight:bold;}
 #add-point:hover{text-decoration:underline;}
 
