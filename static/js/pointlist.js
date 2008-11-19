@@ -51,7 +51,7 @@ var PointList = function(){
             PointList.setCount();            
         },
         getPoints: function(){
-            var pointArray = []
+            var pointArray = [];
             $('#points .point').each(function(index) {
                 var point = {
                     lat: $('.lat',this).text(),
