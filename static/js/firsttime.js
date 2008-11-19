@@ -36,6 +36,7 @@ var FirstTime = function(){
             }
             $('.error',this.dialog).text('');
             $('input#text-url',this.dialog).val(url);
+            $('#dynamic-url').text(url);
             this.dialog.dialog("open");
             $('input#text-url',this.dialog)[0].focus();
             $('#create-button').click(function(){FirstTime.save()});
