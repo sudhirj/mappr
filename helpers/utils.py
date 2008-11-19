@@ -13,7 +13,7 @@ def authdetails(page = "/"):
         url = customer.url if customer else None
         at_home = status and (url == page[1:])
     else:
-        label = "Login"
+        label = "Login / Create"
         link = users.create_login_url(page)
         status = 0
         url = None
