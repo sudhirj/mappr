@@ -52,9 +52,10 @@ a:hover{text-decoration:underline;}
 em{font-style:italic;}
 input {padding:5px 0px;color:#823f41;font-weight:bold;font-size:1.5em;display:block;margin:10px 0px;}
 #logo {position:absolute;z-index:2;left:10px;top:10px;color:#823f41;}
-#load-message {position:absolute;z-index:0;left:30px;top:90px;width:60%;}
-#load-message h2 {font-size:2em;padding:10px 0px;line-height:1em;}
-#load-message p {font-size:1em;padding:5px 0px;}
+#load-message, #welcome {position:absolute;z-index:0;left:30px;top:90px;width:60%;}
+#load-message h2, #welcome h2 {font-size:2em;padding:10px 0px;line-height:1em;}
+#load-message p, #welcome p {font-size:1em;padding:5px 0px;}
+#welcome{z-index:2;left:120px;padding:20px;top:130px;width:650px;line-height:1.2em;display:none;}
 
 .green-border {border:3px solid #C4F9AF;}
 .red-border {border: 3px solid #fa7373;}
@@ -101,7 +102,7 @@ input {padding:5px 0px;color:#823f41;font-weight:bold;font-size:1.5em;display:bl
 .ui-dialog-titlebar {color:#fff;padding:10px;opacity:0.9;background:#823f41;cursor:move;font-weight:bold;font-family:"Lucida Grande",Helvetica,Verdana,Arial;position:relative;}
 .ui-dialog-content {padding:10px;opacity:0.9;background:#fff;}
 .ui-dialog-titlebar-close{z-index:10;position:absolute;cursor:pointer;right:1px;top:1px;text-indent:-99999px;width:30px;height:30px;background:url('/static/images/close.png') no-repeat center center;}
-.dialogs .error {color:#f00;font-size:0.8em;padding:3px;}
+.dialogs .error {color:#f00;font-size:0.8em;margin-top:-3px;}
 .button {display:block;padding:5px;float:left;margin:5px 5px 0px 0px;}
 .button:hover {text-decoration:underline;}
 .button.ok {background:#c4f9af;border:1px solid #0f0;}
