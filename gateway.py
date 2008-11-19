@@ -4,7 +4,7 @@ from google.appengine.ext import db
 
 def get_points_for(url):
     customer = get_customer_by_url(url)
-    if not customer: return []
+    if not customer: return None
     return [dict(lat = point.point.lat,
                 lon = point.point.lon,
                 title = point.title,
@@ -52,7 +52,6 @@ def edit_point(key, new_point):
     
 def delete_point(key):
     point = db.get(key)
-    logging.info(point)
     point.delete()
 
 def get_current_user_url():

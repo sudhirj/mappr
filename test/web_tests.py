@@ -78,7 +78,7 @@ class UserOperationsTest(test.helpers.WebTestFixture):
         app = self.app
         self.logout()
         auth_link = app.get('/sudhirurl').html.find('div',id="auth").find('a').contents[0]
-        self.assertEqual(auth_link,'Login')
+        self.assertEqual(auth_link,'Login / Create')
         self.login('sudhir.j@gmail.com')
         auth_link = app.get('/sudhirurl').html.find('div',id="auth").find('a').contents[0]
         self.assertEqual(auth_link,'Logout')        

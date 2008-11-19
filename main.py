@@ -11,8 +11,9 @@ class MainHandler(webapp.RequestHandler):
         info = dict(current_url = url, 
                     user_url = gateway.get_current_user_url(), 
                     user_nick = gateway.get_current_user_nick(url),
-                    point_ceiling = settings.hard_point_count_ceiling)
-        template_values = { 'points':pointset,
+                    point_ceiling = settings.hard_point_count_ceiling,
+                    empty_spot = True if pointset == None else False)
+        template_values = { 'points':pointset if not pointset==None else [],
                             'auth':utils.authdetails('/'+url), 
                             'info':info}
                             

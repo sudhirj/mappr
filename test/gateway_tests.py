@@ -4,10 +4,16 @@ from google.appengine.api import users
 
 class GatewayTests (test.helpers.TestFixture):
     def test_getting_points_for_user(self):
-        result = gateway.get_points_for('sudhirurl')
-        self.assertEqual(len(result),2)
-        result2 = gateway.get_points_for('somerubbish')
-        self.assertEqual(len(result2),0)
+        valid_result = gateway.get_points_for('sudhirurl')
+        self.assertEqual(len(valid_result),2)
+        
+        non_existent_url = gateway.get_points_for('somerubbish')
+        self.assertEqual(non_existent_url,None)
+        
+        new_guy = models.Customer(user=users.User('someguy@gmail.com'),url='someguyurl')
+        new_guy.put()
+        empty_result = gateway.get_points_for('someguyurl')
+        self.assertEqual(empty_result,[])
     
     def test_setting_points_for_user(self):
         mom = models.Customer(user=users.User('mom@gmail.com'),url='momurl')
