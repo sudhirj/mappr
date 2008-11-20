@@ -77,6 +77,7 @@ input {padding:5px 0px;color:#823f41;font-weight:bold;font-size:1.5em;display:bl
 #points.authorized .point .actions {display:inline;opacity:0.5;}
 #points.authorized .point:hover .actions {display:inline;opacity:1;}
 #add-point{font-weight:bold;}
+#add-point.heading{border-bottom:none;}
 #add-point:hover{text-decoration:underline;}
 
 #map {height:100%;width:100%;z-index:1;position:relative;}

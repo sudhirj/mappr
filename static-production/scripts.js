@@ -35,12 +35,10 @@ var Map = function(){
       this.map.addControl(new google.maps.LargeMapControl(), new google.maps.ControlPosition(G_ANCHOR_TOP_LEFT, new google.maps.Size(20,150)));
       this.map.enableScrollWheelZoom();
       this.map.enableContinuousZoom();
+ 
 
       google.maps.Event.addListener(this.map,'click',function(overlay,  latlng,  overlaylatlng){
-        if (overlay == null)
-        {
-          $(Map).trigger('mapClick',{point:latlng})
-        }
+        if (overlay == null) $(Map).trigger('mapClick',{point:latlng});
       });
 
       new google.maps.KeyboardHandler(this.map);
