@@ -11,10 +11,11 @@
 </head>
 <body onunload="GUnload()">
 	<div id="logo"><img src="static/images/logo.png"/></div>
-	<div id="load-message" class="display_message">
-		<h2>Welcome to {% if info.user_nick %}{{info.user_nick}}'s{% endif %} PinnSpot!</h2>
-		<p>The map is loading right now... this might take a few seconds.</p>
+	<div id="load-message" class="display_message over_map">
+		<h2>Loading {% if info.user_nick %}{{info.user_nick}}'s{% endif %} PinnSpot...</h2>
+		<noscript>
 		<p>If you cannot see the map, make sure you have Javascript turned on and also disable any ad-blockers you might have.</p>
+		</noscript>
 	</div>
 	<div id ="map"></div>	
 	{% if info.user_url %}
@@ -44,8 +45,8 @@
 		{% endif %}			
 	</div>
 
-	{% include "dialogs/pinns.html" %}
-	{% include "dialogs/newuser.html" %}
+	{% include "dialogs/pointmaker.html" %}
+	{% include "dialogs/firsttime.html" %}
 
 	{% if not info.current_url %}
 	<div id="welcome" class="white_trans display_message over_map">
@@ -62,7 +63,7 @@
 		<p>Looks like no one has taken this spot yet... if you don't already have one, login to create your PinnSpot here.</p>
 	</div>
 	{% endif %}
-
+	<div id="view_shift" class="main_button white_trans pointer overlay">Satellite View</div>
 
 	{% include "javascripts.html" %}
 
