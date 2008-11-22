@@ -38,10 +38,7 @@ var Map = function(){
       this.map.enableGoogleBar()
 
       google.maps.Event.addListener(this.map,'click',function(overlay,  latlng,  overlaylatlng){
-        if (overlay) {
-          Map.map.zoomIn();
-          Map.map.panTo(overlaylatlng);
-        }
+        if (overlay) Map.map.zoomIn(overlaylatlng, true, true);
         if (overlay == null) $(Map).trigger('mapClick',{point:latlng});
       });
 
