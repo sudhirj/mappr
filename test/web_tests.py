@@ -62,6 +62,9 @@ class UserOperationsTest(test.helpers.WebTestFixture):
         otherpage = app.get('/somebodyelsespage').html
         self.assertFalse(otherpage.find('div',id='add-point'))
         self.assertFalse(before.find('div',id="create-user"))
+        
+        self.login('guywhowantsform@gmail.com')
+        app.post('/',{'url':'form'},status=403)
     
     def test_homespot_link(self):
         app = self.app

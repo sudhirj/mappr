@@ -24,6 +24,7 @@ class MainHandler(webapp.RequestHandler):
         user = users.get_current_user()
         url = cgi.escape(self.request.get('url')).lower()
         try:
+            if url == 'form': raise Exception, "You cannot use 'form'."
             new_customer = gateway.create_customer(url,user)
             self.response.out.write(new_customer.url) 
         except Exception, e:
