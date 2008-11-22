@@ -47,8 +47,8 @@ blockquote, q {
 html{font-size:62.5%;}
 html,body{height:100%;overflow:hidden;font-family:"Lucida Grande","lucida sans",Verdana,Helvetica,Arial;font-size:0.9em;}
 body{position:relative;color:#531012;line-height:1em;}
-a {text-decoration:none;color:inherit;}
-a:hover{text-decoration:underline;}
+.nice_links a {text-decoration:none;color:inherit;border-bottom:2px dotted #823f41;}
+.nice_links a:hover{border-bottom:2px solid #823f41;}
 em{font-style:italic;}
 strong{font-weight:bold;}
 input.special {padding:5px 0px;color:#823f41;font-weight:bold;font-size:1.5em;display:block;margin:10px 0px;}
@@ -85,8 +85,8 @@ input.special {padding:5px 0px;color:#823f41;font-weight:bold;font-size:1.5em;di
 #pointlist {position:absolute;z-index:100;width:200px;top:0px;right:130px;}
 #info-message {position:absolute;z-index:500;background-color: #fff;padding:10px;}
 
-#auth {right:0px;top:0px;}
-#create-user ,#homespot-link {top:15px;left:250px;font-size:1.8em;padding:15px;z-index:10;}
+#auth {right:0px;top:0px;color:#fff;}
+#create-user ,#homespot-link {top:15px;left:250px;font-size:1.8em;padding:15px;z-index:10; color:#fff;}
 
 
 
@@ -108,9 +108,11 @@ input.special {padding:5px 0px;color:#823f41;font-weight:bold;font-size:1.5em;di
 .ui-dialog{border:2px solid #823f41;overflow:hidden;}
 .ui-dialog-titlebar {color:#fff;padding:10px;opacity:0.9;background:#823f41;cursor:move;font-weight:bold;font-family:"Lucida Grande",Helvetica,Verdana,Arial;position:relative;}
 .ui-dialog-content {padding:10px;opacity:0.9;background:#fff;}
-.ui-dialog-titlebar-close{z-index:10;position:absolute;cursor:pointer;right:1px;top:1px;text-indent:-99999px;width:30px;height:30px;background:url('/static/images/close.png') no-repeat center center;}
+.ui-dialog-titlebar-close, .close_button{z-index:10;position:absolute;cursor:pointer;right:1px;top:1px;text-indent:-99999px;width:30px;height:30px;background:url('/static/images/close.png') no-repeat center center;}
 .dialogs .error {color:#f00;font-size:0.8em;margin-top:-3px;}
 .button {display:block;padding:5px;float:left;margin:5px 5px 0px 0px;}
 .button:hover {text-decoration:underline;}
 .button.ok {background:#c4f9af;border:1px solid #0f0;}
 .button.cancel{background:#fa7373;border:1px solid #f00;}
+
+
