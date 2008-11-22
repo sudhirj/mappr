@@ -14,13 +14,13 @@
 	<div id="load-message" class="display_message over_map">
 		<h2>Loading {% if info.user_nick %}{{info.user_nick}}'s{% endif %} PinnSpot...</h2>
 		<noscript>
-		<p>If you cannot see the map, make sure you have Javascript turned on and also disable any ad-blockers you might have.</p>
+			<p>If you cannot see the map, make sure you have Javascript turned on and also disable any ad-blockers you might have.</p>
 		</noscript>
 	</div>
 	<div id ="map"></div>	
 	{% if info.user_url %}
 	{% ifnotequal info.user_url info.current_url %}
-	<div id="homespot-link" class="overlay">
+	<div id="homespot-link" class="overlay nice_links">
 		<a class="main_button white_trans pointer" href="/{{info.user_url}}">Back to Your Pinnspot -></a>
 	</div>
 	{% endifnotequal %}
@@ -30,7 +30,7 @@
 	<div id="create-user" class="main_button overlay white_trans pointer">+ Create your own PinnSpot</div>
 	{% endif %}
 
-	<div id="auth" class="overlay" ><a class="main_button white_trans pointer" href="{{auth.link}}">{{auth.label}}</a></div>
+	<div id="auth" class="overlay nice_links" ><a class="main_button white_trans pointer" href="{{auth.link}}">{{auth.label}}</a></div>
 	<div id="info-message" class="dialogs"></div>
 
 	<div id = "pointlist" class="pointer white_trans">
@@ -48,21 +48,7 @@
 	{% include "dialogs/pointmaker.html" %}
 	{% include "dialogs/firsttime.html" %}
 
-	{% if not info.current_url %}
-	<div id="welcome" class="white_trans display_message over_map">
-		<h2>Show Everyone.</h2>
-		<p>Need to show the world where you are? Where the party is tonight? Where your offices are?</p>
-		<p>Log in, create your spot, and give pinnspot.com/name to everyone. <strong>It's easy, fast and free.</strong></p>
-		<p>This is a still a work in progress, so any feedback and feature requests are welcome. There's a good chance you'll get what you ask for :)</p>
-		<p>If you're looking for a more powerful commercial solution that you can use with your own branding, then PinnPro might be what you need. Watch this space for more details.</p>
-	</div>
-	{% endif %}
-	{% if info.empty_spot %}
-	<div id="welcome" class="white_trans display_message over_map">
-		<h2>Empty PinnSpot.</h2>
-		<p>Looks like no one has taken this spot yet... if you don't already have one, login to create your PinnSpot here.</p>
-	</div>
-	{% endif %}
+	{% include "messages.html" %}
 	<div id="view_shift" class="main_button white_trans pointer overlay">Satellite View</div>
 
 	{% include "javascripts.html" %}

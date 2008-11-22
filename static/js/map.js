@@ -38,6 +38,7 @@ var Map = function(){
       this.map.enableGoogleBar()
 
       google.maps.Event.addListener(this.map,'click',function(overlay,  latlng,  overlaylatlng){
+        if (overlay) Map.map.zoomIn(overlaylatlng, true, true);
         if (overlay == null) $(Map).trigger('mapClick',{point:latlng});
       });
 
@@ -83,7 +84,7 @@ var Map = function(){
     clearAllMarkers: function(){this.map.clearOverlays();},
     setCenter: function(lat, lon, zoom){
       if (!zoom) var zoom = this.map.getZoom();
-      this.map.panTo(new google.maps.LatLng(lat, lon), zoom);
+      this.map.panTo(new google.maps.LatLng(lat, lon));
     }
 
   };
