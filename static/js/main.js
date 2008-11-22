@@ -24,7 +24,9 @@ google.setOnLoadCallback(function(){
   };
   $(Map).bind('mapLoaded', function(event) {
     $('#load-message').fadeOut();
-    $('#welcome').fadeIn();
+    var showWelcome = true;
+    if ((INFO.url == INFO.currentUrl) && PointList.getPoints().length > 0) showWelcome = false;
+    if (showWelcome) $('#welcome').fadeIn();
     if (INFO.auth && INFO.emptySpot && !INFO.url) FirstTime.initialize(INFO.currentUrl);
     setUpViewShifter();    
   });

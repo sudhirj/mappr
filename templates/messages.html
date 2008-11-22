@@ -1,0 +1,29 @@
+{% if not info.current_url %}
+<div id="welcome" class="white_trans display_message over_map nice_links">
+	<div class="close_button"></div>
+	<h2>Show Everyone.</h2>
+	<p>Need to show the world where you are? Where the party is tonight? Where your offices are?</p>
+	<p>{% if not auth.status %}<a href="{{ auth.link }}">Log in</a>, {% endif %}Create your spot, and give pinnspot.com/name to everyone. <strong>It's easy, fast and free.</strong></p>
+	<p>This is still a work in progress, so any feedback and feature requests are welcome. There's a good chance you'll get what you ask for :)</p>
+	<p>If you're looking for a more powerful commercial solution that you can use with your own branding, then <strong>PinnPro</strong> might be what you need. Watch this space for more details.</p>
+</div>
+{% endif %}
+
+{% if info.empty_spot %}
+<div id="welcome" class="white_trans display_message over_map nice_links">
+	<div class="close_button"></div>
+	<h2>Empty PinnSpot.</h2>
+	<p>Looks like no one has taken this spot yet... if you don't already have one, {% if not auth.status %}<a href="{{ auth.link }}">login</a> and {% endif %}create your PinnSpot here.</p>
+</div>
+{% endif %}
+
+{% ifequal auth.url info.current_url %}
+<div id="welcome" class="white_trans display_message over_map nice_links">
+	<div class="close_button"></div>
+	<h2>Getting started.</h2>
+	<p>Now that you've created your PinnSpot, lets put your pinns on the map!</p>
+	<p>You can <strong>add a pinn</strong> by clicking on the '+ Add Pinn' button on the right.<br/>The pinn will appear on the center of the map, and you can move it wherever you want, give it a title, and click 'Save' (or press 'Enter').</p>
+	<p>To <strong>change or delete</strong> a pinn, click the buttons near the title of the pinn in the pinn list on the right.</p>
+	<p>Thats it! :-) Give <strong>www.pinnspot.com/{{auth.url}}</strong> to everyone.
+</div>
+{% endifequal %}
