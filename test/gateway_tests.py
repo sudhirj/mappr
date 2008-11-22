@@ -32,16 +32,26 @@ class GatewayTests (test.helpers.TestFixture):
         self.assertEqual(len(result),1)
         self.assertEqual(result.count(dict(lat=34.678,lon=-44.3456,title='Untitled',key=confirmation.key())),1) 
         
-    def test_user_creation(self):
-        new = gateway.create_customer(url = 'test', user=users.User('test@gmail.com'))
+    def test_user_creation_and_editing(self):
+        test_user = users.User('test@gmail.com')
+        new = gateway.create_customer(url = 'test', user=test_user)
         self.assertTrue(new)
         self.assertEqual(gateway.get_points_for('test').__len__(),0)
         self.assertTrue(gateway.set_point(new,dict(lat = 63.345, lon = -4.23)))
         self.assertEqual(gateway.get_points_for('test').__len__(),1)
         
         self.assertRaises(Exception,gateway.create_customer,url='test',user=users.User('someone@gmail.com'))
-        self.assertRaises(Exception,gateway.create_customer,url='somethingelse',user=users.User('test@gmail.com'))
         self.assertRaises(Exception,gateway.create_customer,url='TeSt',user=users.User('someoneelse@gmail.com'))
+        self.assertRaises(Exception,gateway.create_customer,url='new_test', user = test_user)
+        
+        renew = gateway.create_customer(url = 'newtest',user = test_user)
+        self.assertTrue(renew)
+        self.assertEqual(gateway.get_points_for('newtest').__len__(),1)
+        self.assertTrue(gateway.set_point(renew,dict(lat = 43.345, lon = -3.23)))
+        self.assertEqual(gateway.get_points_for('newtest').__len__(),2)
+        
+        
+        
     
     def test_user_existence_check(self):
         self.assertFalse(gateway.check_if_user_exists(users.User('nonexistentemail@gmail.com')))
