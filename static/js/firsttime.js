@@ -14,7 +14,8 @@ var FirstTime = function(){
                     draggable:true,
                     resizable:false,
                     close: function(){FirstTime.cancel();},
-                    title: "Create a PinnSpot"
+                    title: "Create a PinnSpot",
+                    height:250
                 });
                 FirstTime.ready();
                 $('#text-url').keyup(function(e){

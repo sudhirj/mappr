@@ -49,6 +49,8 @@ input.special {padding:5px 0px;color:#823f41;font-weight:bold;font-size:1.5em;di
 #points .actions:hover {color:#00f;text-decoration:underline;}
 #points.authorized .point .actions {display:inline;opacity:0.5;}
 #points.authorized .point:hover .actions {display:inline;opacity:1;}
+#add_point.heading {border-bottom:none;}
+#add_point.heading:hover {text-decoration:underline;}
 
 
 

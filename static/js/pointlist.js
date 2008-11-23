@@ -12,7 +12,9 @@ var PointList = function(){
       };        
     },
     initialize: function(){
-      $('#add_point').click(function() {PointMaker.create();});
+      $('#add_point').click(function() {
+        if (INFO.pointCeiling > PointList.getPoints().length) PointMaker.create();
+      });
       $('#points').click(
         $.delegate({
           '.edit': function(e){
