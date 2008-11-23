@@ -92,7 +92,8 @@ var Map = function(){
 ();var FirstTime = function(){
     var dialog = null;
     var open = false;
-    var currentValue;
+    var oldValue = '';
+    var readyFlag = false;
     return {
         initialize: function(url){
             if (!url) url = '';
@@ -110,11 +111,13 @@ var Map = function(){
                 $('#text-url').keyup(function(e){
                     if (e.keyCode == 13) FirstTime.save();
                     else{
-                        currentValue = $('#text-url').val();
+                        var currentValue = $('#text-url').val();
+                        if (FirstTime.oldValue == currentValue) return;
                         $.get('/_check/url/'+currentValue,null,function(data,status){
                             if (data == 'Y') FirstTime.ready();
                             else FirstTime.notReady();
-                        },"text");                     
+                        },"text");     
+                        FirstTime.oldValue = currentValue;                
                     } 
                 });
                 $('#text-url').keypress(function(e){
@@ -137,9 +140,10 @@ var Map = function(){
             this.open = false;
         },
         save: function(){
-            if (!this.validate()) return;
+            if (!this.readyFlag || !this.validate()) return;
             var url = $('input#text-url',this.dialog).val();
-
+            
+            if (!INFO.auth) {window.location = "/_create/"+url;FirstTime.close(); return;}
             $.ajax({
                 type: "POST",
                 url: '/',
@@ -172,11 +176,13 @@ var Map = function(){
         ready: function(){
             $('#text-url').addClass('green-border').removeClass('red-border');
             $('#create-button').addClass('ok').removeClass('cancel').text('Create!');   
-            $('#dynamic-url').text($('#text-url').val());         
+            $('#dynamic-url').text($('#text-url').val());    
+            this.readyFlag = true;     
         },
         notReady: function(){
             $('#text-url').addClass('red-border').removeClass('green-border');
             $('#create-button').addClass('cancel').removeClass('ok').text('That\'s been taken :(');
+            this.readyFlag = false;
         }
     };
 }
@@ -194,7 +200,7 @@ var Map = function(){
       };        
     },
     initialize: function(){
-      $('#add-point').click(function() {PointMaker.create();});
+      $('#add_point').click(function() {PointMaker.create();});
       $('#points').click(
         $.delegate({
           '.edit': function(e){
@@ -237,8 +243,8 @@ var Map = function(){
     },
     setCount: function(){
       var numLeft = INFO.pointCeiling - PointList.getPoints().length;
-      if (numLeft > 0) $('#add-point').text('+ Add Pinn ( '+numLeft+' left )');
-      else $('#add-point').text('No more Pinns :(');
+      if (numLeft > 0) $('#add_point').text('+ Add Pinn ( '+numLeft+' left )');
+      else $('#add_point').text('No more Pinns :(');
     }        
   };
 }
@@ -390,9 +396,11 @@ google.setOnLoadCallback(function(){
   Map.initialize("map");    
   $(document).ready(function() {
     PointList.initialize();        
-    $('#create-user').click(function() {FirstTime.initialize()});
+    $('#create_user').click(function() {FirstTime.initialize()});
     $('body').click(function(e){
       if ($(e.target).hasClass('close_button')) $(e.target).parent().fadeOut();
+      if ($(e.target).hasClass('show_help')) $('#welcome').fadeIn();
+      if ($(e.target).hasClass('show_create')) FirstTime.initialize();      
     });
   });
 });
