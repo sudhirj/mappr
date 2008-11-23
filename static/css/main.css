@@ -34,6 +34,8 @@ input.special {padding:5px 0px;color:#823f41;font-weight:bold;font-size:1.5em;di
 #auth {right:0px;top:0px;}
 #view_shift{top:0px;right:400px;}
 #auth,#homespot_link{color:#fff;}
+#create_user{font-size:1.5em;}
+#help_button{right:0px;top:40px;}
 
 #pointlist {position:absolute;z-index:100;width:200px;top:0px;right:130px;}
 #pointlist .heading{border-bottom:1px solid #d9d6d1;}
