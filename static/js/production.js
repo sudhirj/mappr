@@ -74,7 +74,7 @@ google.setOnLoadCallback(function(){
     Map.initialize("map");    
     $(document).ready(function() {
         PointList.initialize();        
-        $('#create-user').click(function() {FirstTime.initialize();});            
+        $('#create_user').click(function() {FirstTime.initialize();});            
     });
 });var Map = function(){
     var mapDivName;

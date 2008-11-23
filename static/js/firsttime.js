@@ -1,7 +1,8 @@
 var FirstTime = function(){
     var dialog = null;
     var open = false;
-    var currentValue;
+    var oldValue = '';
+    var readyFlag = false;
     return {
         initialize: function(url){
             if (!url) url = '';
@@ -19,11 +20,13 @@ var FirstTime = function(){
                 $('#text-url').keyup(function(e){
                     if (e.keyCode == 13) FirstTime.save();
                     else{
-                        currentValue = $('#text-url').val();
+                        var currentValue = $('#text-url').val();
+                        if (FirstTime.oldValue == currentValue) return;
                         $.get('/_check/url/'+currentValue,null,function(data,status){
                             if (data == 'Y') FirstTime.ready();
                             else FirstTime.notReady();
-                        },"text");                     
+                        },"text");     
+                        FirstTime.oldValue = currentValue;                
                     } 
                 });
                 $('#text-url').keypress(function(e){
@@ -46,9 +49,10 @@ var FirstTime = function(){
             this.open = false;
         },
         save: function(){
-            if (!this.validate()) return;
+            if (!this.readyFlag || !this.validate()) return;
             var url = $('input#text-url',this.dialog).val();
-
+            
+            if (!INFO.auth) {window.location = "/_create/"+url;FirstTime.close(); return;}
             $.ajax({
                 type: "POST",
                 url: '/',
@@ -81,11 +85,13 @@ var FirstTime = function(){
         ready: function(){
             $('#text-url').addClass('green-border').removeClass('red-border');
             $('#create-button').addClass('ok').removeClass('cancel').text('Create!');   
-            $('#dynamic-url').text($('#text-url').val());         
+            $('#dynamic-url').text($('#text-url').val());    
+            this.readyFlag = true;     
         },
         notReady: function(){
             $('#text-url').addClass('red-border').removeClass('green-border');
             $('#create-button').addClass('cancel').removeClass('ok').text('That\'s been taken :(');
+            this.readyFlag = false;
         }
     };
 }

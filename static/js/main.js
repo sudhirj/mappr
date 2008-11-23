@@ -33,9 +33,11 @@ google.setOnLoadCallback(function(){
   Map.initialize("map");    
   $(document).ready(function() {
     PointList.initialize();        
-    $('#create-user').click(function() {FirstTime.initialize()});
+    $('#create_user').click(function() {FirstTime.initialize()});
     $('body').click(function(e){
       if ($(e.target).hasClass('close_button')) $(e.target).parent().fadeOut();
+      if ($(e.target).hasClass('show_help')) $('#welcome').fadeIn();
+      if ($(e.target).hasClass('show_create')) FirstTime.initialize();      
     });
   });
 });

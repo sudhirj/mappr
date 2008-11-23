@@ -7,6 +7,10 @@ from google.appengine.api import users
 
 class MainHandler(webapp.RequestHandler):
     def get(self,url=None):
+        if not url:
+            logged_in_user_url = gateway.get_current_user_url()
+            if logged_in_user_url: self.redirect('/'+logged_in_user_url)
+        
         pointset = gateway.get_points_for(url)
         info = dict(current_url = url, 
                     user_url = gateway.get_current_user_url(), 
@@ -24,6 +28,7 @@ class MainHandler(webapp.RequestHandler):
         user = users.get_current_user()
         url = cgi.escape(self.request.get('url')).lower()
         try:
+            if url == 'form': raise Exception, "You cannot use 'form'."
             new_customer = gateway.create_customer(url,user)
             self.response.out.write(new_customer.url) 
         except Exception, e:
@@ -35,7 +40,19 @@ class UrlCheckHandler(webapp.RequestHandler):
     def get(self,url=None):
         self.response.out.write('N' if gateway.check_if_url_exists(url)[0] else 'Y')
 
-
+class UrlCreateHandler(webapp.RequestHandler):
+    @utils.authorize('user')
+    def get(self,url=None):
+        user = users.get_current_user()
+        url = url.lower()
+        try:
+            if url == 'form': raise Exception, "You cannot use 'form'."
+            new_customer = gateway.create_customer(url,user)
+            self.redirect("/"+new_customer.url)            
+        except Exception, e:
+            self.redirect('/')
+        
+        
 class PointHandler(webapp.RequestHandler):
     @utils.authorize('user')
     def post(self,url=None):
@@ -80,6 +97,7 @@ class PointDeleteHandler(webapp.RequestHandler):
 ROUTES =[
             (r'/_points/delete.*', PointDeleteHandler),
             (r'/_points/(.*)', PointHandler),
+            (r'/_create/(.*)', UrlCreateHandler),
             (r'/_check/url/(.*)', UrlCheckHandler),
             (r'/(.*)', MainHandler)
         ]

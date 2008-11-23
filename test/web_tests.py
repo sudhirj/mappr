@@ -19,6 +19,15 @@ class MainPageTest(test.helpers.WebTestFixture):
         sudhirpage.mustcontain(self.homedict['title'],self.officedict['title'])
         sudhirpage.mustcontain(self.homedict['lat'],self.homedict['lon'])
         sudhirpage.mustcontain(self.officedict['lat'],self.officedict['lon'])
+        
+        
+    def test_automatic_redirect_when_signed_in(self):
+        app = self.app
+        self.logout()
+        app.get('/',status=200)
+        self.login('sudhir.j@gmail.com')
+        redirect = app.get('/',status=302)
+        self.assertEqual(redirect.location,"""http://localhost/sudhirurl""")
 
 class ChecksWebTest(test.helpers.WebTestFixture):
     def test_url_presence_checks(self):
@@ -46,42 +55,61 @@ class UserOperationsTest(test.helpers.WebTestFixture):
         self.logout()
         
         before = app.get('/pagetotest').html
-        self.assertFalse(before.find('div',id="create-user"))
-        self.assertFalse(before.find('div',id="add-point"))
+        self.assertTrue(before.find('div',id="create_user"))
+        self.assertFalse(before.find('div',id="add_point"))
         
         self.login('testuser@testsite.com')
         
         intermediate = app.get('/pagetotest').html
-        self.assertTrue(intermediate.find('div',id="create-user"))
-        self.assertFalse(before.find('div',id="add-point"))
+        self.assertTrue(intermediate.find('div',id="create_user"))
+        self.assertFalse(before.find('div',id="add_point"))
         
         app.post('/',{'url':'pagetotest'})
         after = app.get('/pagetotest').html
-        self.assertTrue(after.find('div',id="add-point"))
+        self.assertTrue(after.find('div',id="add_point"))
         
         otherpage = app.get('/somebodyelsespage').html
-        self.assertFalse(otherpage.find('div',id='add-point'))
-        self.assertFalse(before.find('div',id="create-user"))
+        self.assertFalse(otherpage.find('div',id='add_point'))
+        self.assertTrue(before.find('div',id="create_user"))
+        
+        self.login('guywhowantsform@gmail.com')
+        app.post('/',{'url':'form'},status=403)
     
     def test_homespot_link(self):
         app = self.app
         self.logout()
         soup = app.get('/sudhirurl').html
-        self.assertFalse(soup.find('div', id="homespot-link"))
+        self.assertFalse(soup.find('div', id="homespot_link"))
         self.login('sudhir.j@gmail.com')
         soup = app.get('/sudhirurl').html
-        self.assertFalse(soup.find('div', id="homespot-link"))
+        self.assertFalse(soup.find('div', id="homespot_link"))
         soup = app.get('/someotherurl').html
-        self.assertTrue(soup.find('div', id ="homespot-link"))
+        self.assertTrue(soup.find('div', id ="homespot_link"))
         
     def test_signin_signout_link(self):
         app = self.app
         self.logout()
         auth_link = app.get('/sudhirurl').html.find('div',id="auth").find('a').contents[0]
-        self.assertEqual(auth_link,'Login / Create')
+        self.assertEqual(auth_link,'Sign In')
         self.login('sudhir.j@gmail.com')
         auth_link = app.get('/sudhirurl').html.find('div',id="auth").find('a').contents[0]
-        self.assertEqual(auth_link,'Logout')        
+        self.assertEqual(auth_link,'Sign Out')        
+    
+    def test_single_step_signon(self):
+        app = self.app
+        self.logout()
+        resp = app.get('/_create/newurl',status=302)
+        self.assertEqual(resp.location,"""http://localhost/_ah/login?continue=http%3A//localhost/_create/newurl""")
+        app.get('/_check/url/newurl').mustcontain('Y')
+        
+        self.login('newuser@gmail.com')
+        new_spot = app.get('/_create/newurl',status=302).follow().html
+        self.assertTrue(new_spot.find('div',id='add_point'))
+        self.assertTrue(new_spot.find(text="Getting started."))
+        
+        self.login('somebodyelse@gmail.com')
+        problem = app.get('/_create/newurl',status=302)
+        self.assertEqual(problem.location,"""http://localhost/""")       
            
 class PointOperationsTest(test.helpers.WebTestFixture):    
     def points_in_partial(self,url):

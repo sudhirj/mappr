@@ -18,20 +18,23 @@
 		</noscript>
 	</div>
 	<div id ="map"></div>	
+	{% include "messages.html" %}
+
+	<div id="view_shift" class="main_button white_trans pointer overlay">Satellite View</div>
+	{% ifequal auth.url info.current_url %}<div id="help_button" class="main_button white_trans pointer overlay show_help">Help ?</div>{% endifequal %}
+	<div id="auth" class="overlay nice_links" ><a class="main_button white_trans pointer" href="{{auth.link}}">{{auth.label}}</a></div>
+	
 	{% if info.user_url %}
 	{% ifnotequal info.user_url info.current_url %}
-	<div id="homespot-link" class="overlay nice_links">
+	<div id="homespot_link" class="overlay nice_links">
 		<a class="main_button white_trans pointer" href="/{{info.user_url}}">Back to Your Pinnspot -></a>
 	</div>
 	{% endifnotequal %}
 	{% endif %}
 
-	{% if not auth.url and auth.status %}	
-	<div id="create-user" class="main_button overlay white_trans pointer">+ Create your own PinnSpot</div>
+	{% if not info.user_url %}	
+	<div id="create_user" class="main_button white_trans pointer overlay">+ Create your own PinnSpot</div>
 	{% endif %}
-
-	<div id="auth" class="overlay nice_links" ><a class="main_button white_trans pointer" href="{{auth.link}}">{{auth.label}}</a></div>
-	<div id="info-message" class="dialogs"></div>
 
 	<div id = "pointlist" class="pointer white_trans">
 		{% if info.user_nick %}
@@ -41,17 +44,12 @@
 			{% include "pointlist.html" %}
 		</div>
 		{% if auth.at_home%}
-		<div id="add-point" class="heading">+ Add Pinn</div>
+		<div id="add_point" class="heading">+ Add Pinn</div>
 		{% endif %}			
 	</div>
 
 	{% include "dialogs/pointmaker.html" %}
 	{% include "dialogs/firsttime.html" %}
-
-	{% include "messages.html" %}
-	<div id="view_shift" class="main_button white_trans pointer overlay">Satellite View</div>
-
 	{% include "javascripts.html" %}
-
 </body>
 </html>
