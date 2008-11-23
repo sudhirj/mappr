@@ -105,7 +105,8 @@ var Map = function(){
                     draggable:true,
                     resizable:false,
                     close: function(){FirstTime.cancel();},
-                    title: "Create a PinnSpot"
+                    title: "Create a PinnSpot",
+                    height:250
                 });
                 FirstTime.ready();
                 $('#text-url').keyup(function(e){
@@ -200,7 +201,9 @@ var Map = function(){
       };        
     },
     initialize: function(){
-      $('#add_point').click(function() {PointMaker.create();});
+      $('#add_point').click(function() {
+        if (INFO.pointCeiling > PointList.getPoints().length) PointMaker.create();
+      });
       $('#points').click(
         $.delegate({
           '.edit': function(e){
