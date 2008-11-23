@@ -85,6 +85,22 @@ class UserOperationsTest(test.helpers.WebTestFixture):
         self.login('sudhir.j@gmail.com')
         auth_link = app.get('/sudhirurl').html.find('div',id="auth").find('a').contents[0]
         self.assertEqual(auth_link,'Sign Out')        
+    
+    def test_single_step_signon(self):
+        app = self.app
+        self.logout()
+        resp = app.get('/_create/newurl',status=302)
+        self.assertEqual(resp.location,"""http://localhost/_ah/login?continue=http%3A//localhost/_create/newurl""")
+        app.get('/_check/url/newurl').mustcontain('Y')
+        
+        self.login('newuser@gmail.com')
+        new_spot = app.get('/_create/newurl',status=302).follow().html
+        self.assertTrue(new_spot.find('div',id='add_point'))
+        self.assertTrue(new_spot.find(text="Getting started."))
+        
+        self.login('somebodyelse@gmail.com')
+        problem = app.get('/_create/newurl',status=302)
+        self.assertEqual(problem.location,"""http://localhost/""")       
            
 class PointOperationsTest(test.helpers.WebTestFixture):    
     def points_in_partial(self,url):

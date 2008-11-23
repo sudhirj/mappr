@@ -36,7 +36,19 @@ class UrlCheckHandler(webapp.RequestHandler):
     def get(self,url=None):
         self.response.out.write('N' if gateway.check_if_url_exists(url)[0] else 'Y')
 
-
+class UrlCreateHandler(webapp.RequestHandler):
+    @utils.authorize('user')
+    def get(self,url=None):
+        user = users.get_current_user()
+        url = url.lower()
+        try:
+            if url == 'form': raise Exception, "You cannot use 'form'."
+            new_customer = gateway.create_customer(url,user)
+            self.redirect("/"+new_customer.url)            
+        except Exception, e:
+            self.redirect('/')
+        
+        
 class PointHandler(webapp.RequestHandler):
     @utils.authorize('user')
     def post(self,url=None):
@@ -81,6 +93,7 @@ class PointDeleteHandler(webapp.RequestHandler):
 ROUTES =[
             (r'/_points/delete.*', PointDeleteHandler),
             (r'/_points/(.*)', PointHandler),
+            (r'/_create/(.*)', UrlCreateHandler),
             (r'/_check/url/(.*)', UrlCheckHandler),
             (r'/(.*)', MainHandler)
         ]
