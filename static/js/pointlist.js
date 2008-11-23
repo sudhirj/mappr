@@ -12,7 +12,7 @@ var PointList = function(){
       };        
     },
     initialize: function(){
-      $('#add-point').click(function() {PointMaker.create();});
+      $('#add_point').click(function() {PointMaker.create();});
       $('#points').click(
         $.delegate({
           '.edit': function(e){
@@ -55,8 +55,8 @@ var PointList = function(){
     },
     setCount: function(){
       var numLeft = INFO.pointCeiling - PointList.getPoints().length;
-      if (numLeft > 0) $('#add-point').text('+ Add Pinn ( '+numLeft+' left )');
-      else $('#add-point').text('No more Pinns :(');
+      if (numLeft > 0) $('#add_point').text('+ Add Pinn ( '+numLeft+' left )');
+      else $('#add_point').text('No more Pinns :(');
     }        
   };
 }

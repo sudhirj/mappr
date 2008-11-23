@@ -7,13 +7,13 @@ def authdetails(page = "/"):
     user = users.get_current_user()
     if user: 
         customer = gateway.get_customer(user)
-        label = "Logout"
+        label = "Sign Out"
         link = users.create_logout_url(page)
         status = 1
         url = customer.url if customer else None
         at_home = status and (url == page[1:])
     else:
-        label = "Login / Create"
+        label = "Sign In"
         link = users.create_login_url(page)
         status = 0
         url = None
