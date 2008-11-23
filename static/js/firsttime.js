@@ -48,7 +48,8 @@ var FirstTime = function(){
         save: function(){
             if (!this.validate()) return;
             var url = $('input#text-url',this.dialog).val();
-
+            
+            if (!INFO.auth) {window.location = "/_create/"+url;FirstTime.close(); return;}
             $.ajax({
                 type: "POST",
                 url: '/',
