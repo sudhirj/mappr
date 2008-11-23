@@ -19,6 +19,15 @@ class MainPageTest(test.helpers.WebTestFixture):
         sudhirpage.mustcontain(self.homedict['title'],self.officedict['title'])
         sudhirpage.mustcontain(self.homedict['lat'],self.homedict['lon'])
         sudhirpage.mustcontain(self.officedict['lat'],self.officedict['lon'])
+        
+        
+    def test_automatic_redirect_when_signed_in(self):
+        app = self.app
+        self.logout()
+        app.get('/',status=200)
+        self.login('sudhir.j@gmail.com')
+        redirect = app.get('/',status=302)
+        self.assertEqual(redirect.location,"""http://localhost/sudhirurl""")
 
 class ChecksWebTest(test.helpers.WebTestFixture):
     def test_url_presence_checks(self):
