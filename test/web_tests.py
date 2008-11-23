@@ -46,22 +46,22 @@ class UserOperationsTest(test.helpers.WebTestFixture):
         self.logout()
         
         before = app.get('/pagetotest').html
-        self.assertFalse(before.find('div',id="create-user"))
-        self.assertFalse(before.find('div',id="add-point"))
+        self.assertTrue(before.find('div',id="create_user"))
+        self.assertFalse(before.find('div',id="add_point"))
         
         self.login('testuser@testsite.com')
         
         intermediate = app.get('/pagetotest').html
-        self.assertTrue(intermediate.find('div',id="create-user"))
-        self.assertFalse(before.find('div',id="add-point"))
+        self.assertTrue(intermediate.find('div',id="create_user"))
+        self.assertFalse(before.find('div',id="add_point"))
         
         app.post('/',{'url':'pagetotest'})
         after = app.get('/pagetotest').html
-        self.assertTrue(after.find('div',id="add-point"))
+        self.assertTrue(after.find('div',id="add_point"))
         
         otherpage = app.get('/somebodyelsespage').html
-        self.assertFalse(otherpage.find('div',id='add-point'))
-        self.assertFalse(before.find('div',id="create-user"))
+        self.assertFalse(otherpage.find('div',id='add_point'))
+        self.assertTrue(before.find('div',id="create_user"))
         
         self.login('guywhowantsform@gmail.com')
         app.post('/',{'url':'form'},status=403)
@@ -70,21 +70,21 @@ class UserOperationsTest(test.helpers.WebTestFixture):
         app = self.app
         self.logout()
         soup = app.get('/sudhirurl').html
-        self.assertFalse(soup.find('div', id="homespot-link"))
+        self.assertFalse(soup.find('div', id="homespot_link"))
         self.login('sudhir.j@gmail.com')
         soup = app.get('/sudhirurl').html
-        self.assertFalse(soup.find('div', id="homespot-link"))
+        self.assertFalse(soup.find('div', id="homespot_link"))
         soup = app.get('/someotherurl').html
-        self.assertTrue(soup.find('div', id ="homespot-link"))
+        self.assertTrue(soup.find('div', id ="homespot_link"))
         
     def test_signin_signout_link(self):
         app = self.app
         self.logout()
         auth_link = app.get('/sudhirurl').html.find('div',id="auth").find('a').contents[0]
-        self.assertEqual(auth_link,'Login / Create')
+        self.assertEqual(auth_link,'Sign In')
         self.login('sudhir.j@gmail.com')
         auth_link = app.get('/sudhirurl').html.find('div',id="auth").find('a').contents[0]
-        self.assertEqual(auth_link,'Logout')        
+        self.assertEqual(auth_link,'Sign Out')        
            
 class PointOperationsTest(test.helpers.WebTestFixture):    
     def points_in_partial(self,url):
