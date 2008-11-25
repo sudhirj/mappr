@@ -48,14 +48,16 @@ def get_customer_by_url(url):
     customer = models.Customer.all().filter('url =',url.lower()).fetch(1)
     return customer[0] if len(customer) else None 
 
-def edit_point(key, new_point):
+def edit_point(key, new_point, user):
     point = db.get(key)
+    if point.owner.user != user: raise Exception, "That's not your Pinn."
     point.title = new_point['title']
     point.point = db.GeoPt(new_point['lat'],new_point['lon'])
     point.put()
     
-def delete_point(key):
+def delete_point(key, user):
     point = db.get(key)
+    if not point.owner.user == user: raise Exception, "That's not your Pinn."
     point.delete()
 
 def get_current_user_url():

@@ -32,7 +32,7 @@ class TestFixture (unittest.TestCase):
             
     def tearDown(self):
         for point in models.Point.all():
-            db.delete(point)
+            db.delete(point) 
         for customer in models.Customer.all():
             db.delete(customer)
         users.get_current_user = self.temp_gcu
