@@ -73,7 +73,7 @@ class PointHandler(webapp.RequestHandler):
                 self.response.set_status(403)    
         else:
             try:
-                gateway.edit_point(key, point)
+                gateway.edit_point(key, point, user)
                 self.response.out.write('OK')
             except Exception, e:
                 self.response.out.write(e)
@@ -89,7 +89,7 @@ class PointDeleteHandler(webapp.RequestHandler):
     def post(self):
         key = self.request.get('key')
         try:
-            gateway.delete_point(key)
+            gateway.delete_point(key,users.get_current_user())
         except Exception, e:
             self.response.out.write(e)
             self.response.set_status(403)    

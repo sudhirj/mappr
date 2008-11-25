@@ -75,7 +75,7 @@ class GatewayTests (test.helpers.TestFixture):
                                                                     x['title'] == title, 
                         result)
         self.assertEqual(len(found),1)
-        gateway.edit_point(new_point_key,dict(lon = 7.0, lat = 8.0, title = 'seveneight'))
+        gateway.edit_point(new_point_key,dict(lon = 7.0, lat = 8.0, title = 'seveneight'),self.sudhir_gmail)
         new_results = gateway.get_points_for('sudhirurl')
         self.assertEqual(len(new_results),start_count+1)
         new_found = filter(lambda x, lat = 8.0, 
@@ -85,13 +85,17 @@ class GatewayTests (test.helpers.TestFixture):
                                                                 x['title']==title, 
                             new_results)
         self.assertEqual(len(new_found),1)
-        self.assertRaises(db.BadValueError,gateway.edit_point,new_point_key,dict(lon=2345,lat=3,title='invalid values'))
+        self.assertRaises(db.BadValueError,gateway.edit_point,new_point_key,dict(lon=2345,lat=3,title='invalid values'), self.sudhir_gmail)
+
+
+        
+        
   
     def test_point_deletion(self):
         result = gateway.get_points_for('sudhirurl')
         start_count = len(result)
         first_point = result[0]
-        gateway.delete_point(first_point['key'])
+        gateway.delete_point(first_point['key'], self.sudhir_gmail)
         new_result = gateway.get_points_for('sudhirurl')
         self.assertEqual(len(new_result),start_count-1)
         find = filter(lambda x, lat = first_point['lat'],

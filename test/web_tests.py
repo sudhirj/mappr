@@ -162,6 +162,22 @@ class PointOperationsTest(test.helpers.WebTestFixture):
         self.assertFalse(soup.find(text="point_that_was_changed"))
         self.assertFalse(soup.find(text="21.0"))
         self.assertFalse(soup.find(text="43.0"))
+        
+    def test_protection_against_editing_other_peoples_points(self):
+        app = self.app
+        self.login('sudhir.j@gmail.com')
+        sudhir_point_key = app.post('/_points/',{'lat':43,'lon':23, 'title':'sudhir ka new point'}).html
+        self.login('amrita@gmail.com')
+        app.post('/_points/',{'key':sudhir_point_key, 'lat':34, 'lon':11, 'title':'hijack this'}, status = 403)
+    
+    def test_protection_against_deleting_other_peoples_points(self):
+        app = self.app
+        self.login('sudhir.j@gmail.com')
+        sudhir_point_key = app.post('/_points/',{'lat':43,'lon':23, 'title':'sudhir ka new point'}).html
+        self.login('amrita@gmail.com')
+        app.post('/_points/delete',{'key':sudhir_point_key}, status = 403)
+        
+        
 
 
         
