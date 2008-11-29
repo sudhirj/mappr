@@ -7,13 +7,14 @@ from google.appengine.api import users
 
 class MainHandler(webapp.RequestHandler):
     def get(self,url=None):
+        user = users.get_current_user()
         if not url:
-            logged_in_user_url = gateway.get_current_user_url()
+            logged_in_user_url = gateway.get_current_user_url(user)
             if logged_in_user_url: self.redirect('/'+logged_in_user_url)
         
         pointset = gateway.get_points_for(url)
         info = dict(current_url = url, 
-                    user_url = gateway.get_current_user_url(), 
+                    user_url = gateway.get_current_user_url(user), 
                     user_nick = gateway.get_current_user_nick(url),
                     point_ceiling = settings.hard_point_count_ceiling,
                     empty_spot = True if pointset == None else False)

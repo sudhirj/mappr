@@ -1,6 +1,4 @@
-import models,logging
-from google.appengine.api import users
-from google.appengine.ext import db
+import models,logging, factory
 
 def get_points_for(url):
     customer = get_customer_by_url(url)
@@ -8,15 +6,15 @@ def get_points_for(url):
     return [dict(lat = point.point.lat,
                 lon = point.point.lon,
                 title = point.title,
-                key=point.key()) for point in customer.points]
+                key=str(point.key())) for point in customer.points]
 
 def set_point(customer, new_point):
     point = dict(title="Untitled",lat=0,lon=0)
     point.update(new_point)
-    created_point = models.Point(point = db.GeoPt(point['lat'],point['lon']),
-                                title=point['title'], 
-                                owner = customer, 
-                                parent = customer)
+    created_point = models.Point(point = factory.make_geo_point(point['lat'],point['lon']),
+                                    title=point['title'], 
+                                    owner = customer, 
+                                    parent = customer)
     created_point.put()
     return created_point
 
@@ -49,19 +47,22 @@ def get_customer_by_url(url):
     return customer[0] if len(customer) else None 
 
 def edit_point(key, new_point, user):
-    point = db.get(key)
-    if point.owner.user != user: raise Exception, "That's not your Pinn."
+    customer = get_customer(user)
+    if not customer: raise Exception, "No spot for this user."
+    point = customer.get_point_by_key(key)
+    if not point: raise Exception, "That isn't your pin."
     point.title = new_point['title']
-    point.point = db.GeoPt(new_point['lat'],new_point['lon'])
+    point.point = factory.make_geo_point(new_point['lat'],new_point['lon'])
     point.put()
     
 def delete_point(key, user):
-    point = db.get(key)
-    if not point.owner.user == user: raise Exception, "That's not your Pinn."
+    customer = get_customer(user)
+    if not customer: raise Exception, "No spot for this user."
+    point = customer.get_point_by_key(key)
+    if not point: raise Exception, "That isn't your pin."
     point.delete()
 
-def get_current_user_url():
-    user = users.get_current_user()
+def get_current_user_url(user):
     if not user: return None
     customer = get_customer(user) if user else None
     return None if not customer else customer.url
