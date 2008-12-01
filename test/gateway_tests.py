@@ -67,22 +67,16 @@ class GatewayTests (test.helpers.TestFixture):
         new_point_dict = dict(lat=7.0,lon=7.0,title="seven")
         new_point_key = gateway.set_point(self.sudhir,new_point_dict).key().__str__()
         result = gateway.get_points_for('sudhirurl')
+        
         self.assertEqual(len(result),start_count+1)
-        found = filter(lambda x, lat=7.0, lon = 7.0, title='seven': x['lat']==lat and 
-                                                                    x['lon'] ==lon and 
-                                                                    x['title'] == title, 
-                        result)
-        self.assertEqual(len(found),1)
-        gateway.edit_point(new_point_key,dict(lon = 7.0, lat = 8.0, title = 'seveneight'),self.sudhir_gmail)
+        self.assertTrue(self.find(result, new_point_dict))
+        
+        new_point_dict = dict(lon = 7.0, lat = 8.0, title = 'seveneight')
+        gateway.edit_point(new_point_key,new_point_dict,self.sudhir_gmail)
         new_results = gateway.get_points_for('sudhirurl')
+        
         self.assertEqual(len(new_results),start_count+1)
-        new_found = filter(lambda x, lat = 8.0, 
-                                        lon = 7.0, 
-                                        title = 'seveneight':   x['lat']==lat and 
-                                                                x['lon']==lon and 
-                                                                x['title']==title, 
-                            new_results)
-        self.assertEqual(len(new_found),1)
+        self.assertTrue(self.find(new_results, new_point_dict))
         self.assertRaises(db.BadValueError,gateway.edit_point,new_point_key,dict(lon=2345,lat=3,title='invalid values'), self.sudhir_gmail)
   
     def test_point_deletion(self):
@@ -92,13 +86,7 @@ class GatewayTests (test.helpers.TestFixture):
         gateway.delete_point(first_point['key'], self.sudhir_gmail)
         new_result = gateway.get_points_for('sudhirurl')
         self.assertEqual(len(new_result),start_count-1)
-        find = filter(lambda x, lat = first_point['lat'],
-                                lon = first_point['lon'],
-                                title = first_point['title']:   x['lat'] == lat and
-                                                                x['lon'] == lon and
-                                                                x['title'] == title,
-                    new_result)
-        self.assertFalse(find)
+        self.assertFalse(self.find(new_result, first_point))
         
     def test_get_current_user_url(self):
         url = gateway.get_current_user_url(self.sudhir_gmail)

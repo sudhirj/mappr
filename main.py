@@ -99,8 +99,8 @@ class PointJsonHandler(webapp.RequestHandler):
     def get(self,url):
         import simplejson as json
         pointset = gateway.get_points_for(url)
+        self.response.headers["Content-Type"] = "application/json"
         self.response.out.write(json.dumps(pointset))
-        self.response.headers["Content-Type"] = "text/json"
         
 ROUTES =[
             (r'/_json/points/(.*)', PointJsonHandler),
