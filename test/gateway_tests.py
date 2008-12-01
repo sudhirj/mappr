@@ -31,8 +31,6 @@ class GatewayTests (test.helpers.TestFixture):
         self.assertTrue(confirmation)
         result = gateway.get_points_for('momurl')
         self.assertEqual(len(result),1)
-        import simplejson as json
-        logging.info(json.dumps(result))
         self.assertEqual(result.count(dict(lat=34.678,lon=-44.3456,title='Untitled',key=str(confirmation.key()))),1) 
         
     def test_user_creation_and_editing(self):

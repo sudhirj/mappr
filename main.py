@@ -94,8 +94,16 @@ class PointDeleteHandler(webapp.RequestHandler):
         except Exception, e:
             self.response.out.write(e)
             self.response.set_status(403)    
-    
+
+class PointJsonHandler(webapp.RequestHandler):
+    def get(self,url):
+        import simplejson as json
+        pointset = gateway.get_points_for(url)
+        self.response.out.write(json.dumps(pointset))
+        self.response.headers["Content-Type"] = "text/json"
+        
 ROUTES =[
+            (r'/_json/points/(.*)', PointJsonHandler),
             (r'/_points/delete.*', PointDeleteHandler),
             (r'/_points/(.*)', PointHandler),
             (r'/_create/(.*)', UrlCreateHandler),
