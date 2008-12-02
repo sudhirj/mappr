@@ -16,9 +16,13 @@ strong{font-weight:bold;}
 .overlay {position:absolute;z-index:2;}
 .pointer {cursor:pointer;}
 .hidden {display:none;}
+.inline {display:inline;}
 .block{display:block;}
+.center {margin:auto;text-align:center;}
+.small_rounded {-moz-border-radius:5px;-webkit-border-radius: 5px;}
+.big_rounded {-moz-border-radius:15px;-webkit-border-radius: 15px;}
 
-input.special {padding:5px 0px;color:#823f41;font-weight:bold;font-size:1.5em;display:block;margin:10px 0px;}
+input.special {padding:5px;color:#823f41;font-weight:bold;font-size:1.5em;display:block;margin:10px 0px;}
 .white_trans {background-color: #fff;opacity:0.9;}
 .main_button, .heading{padding:10px 5px;display:block;color:#fff;background:#823f41;}
 .main_button:hover{color:#823f41;background:#fff;}
@@ -42,7 +46,7 @@ input.special {padding:5px 0px;color:#823f41;font-weight:bold;font-size:1.5em;di
 
 #points {width:100%;overflow:auto;display:block;max-height:200px;}
 #points .point {display:block;padding:5px 2px; border-bottom:1px solid #d9d6d1; color:#531012;}
-#points .point:hover {background:#823f41;color:#fff;}
+#points .point:hover {background:#a26061;color:#fff;}
 #points .point:hover .actions{color:#823f41;}
 #points .title {padding:5px;}
 #points .actions {display:none;padding:3px;margin:2px 0px 0px 5px;font-size:9px;background:#fff;}
@@ -57,16 +61,19 @@ input.special {padding:5px 0px;color:#823f41;font-weight:bold;font-size:1.5em;di
 
 /*Dialog box styles*/
 .dialogs {display:none;}
-.dialogs em{width:97%;}
+.dialogs em{width:90%;}
 .ui-resizable-handle {cursor:default !important;display:none !important;}
 .ui-dialog{border:2px solid #823f41;overflow:hidden;}
 .ui-dialog-titlebar {color:#fff;padding:10px;opacity:0.9;background:#823f41;cursor:move;font-weight:bold;font-family:"Lucida Grande",Helvetica,Verdana,Arial;position:relative;}
-.ui-dialog-content {padding:10px;opacity:0.9;background:#fff;}
+.ui-dialog-content {padding:20px 0px 0px 15px;opacity:0.9;background:#fff;}
 .ui-dialog-titlebar-close, .close_button{z-index:10;position:absolute;cursor:pointer;right:1px;top:1px;text-indent:-99999px;width:30px;height:30px;background:url('/static/images/close.png') no-repeat center center;}
 .dialogs .error {color:#f00;font-size:0.8em;margin-top:-3px;}
-.button {display:block;padding:5px;float:left;margin:5px 5px 0px 0px;}
+.button {display:block;padding:8px;float:left;margin:5px 5px 0px 0px;font-size:1.2em;}
 .button:hover {text-decoration:underline;}
 .button.ok {background:#c4f9af;border:1px solid #0f0;}
 .button.cancel{background:#fa7373;border:1px solid #f00;}
-
+.dialogs .center {padding-right:50px;}
+#dialog-create-user .url_start{font-size:2em;}
+#text-url {display:inline;}
+#dialog-create-user .button {font-size:1.6em;padding:15px;margin:0px auto;float:none;max-width:12em; text-align:center;}
 

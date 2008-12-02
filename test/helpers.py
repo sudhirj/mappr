@@ -23,6 +23,7 @@ class TestFixture (unittest.TestCase):
         self.office = models.Point(point = db.GeoPt(23.46,4.7),owner=self.sudhir, title = "sudhir_office")
         self.office.put()
         
+        self.o2dict = dict(title = 'O2', lat = 24.234456, lon = -85.34556)
         self.o2 = models.Point(title="O2",point = db.GeoPt(24.234456,-85.34556),owner = self.amrita,parent = self.amrita)
         self.o2.put()
         
@@ -42,6 +43,14 @@ class TestFixture (unittest.TestCase):
         users.get_current_user = lambda user=user : users.User(user) if user else None
     def logout(self):
         self.login(None)
+    
+    def find(self, search_in, search_for, equalizers = ['title','lat','lon']):
+        for item in search_in:
+            found = True
+            for key in equalizers:
+                if not item.has_key(key) or not item[key] == search_for[key]: found = False
+            if found: return True
+        return False
             
                 
 class WebTestFixture(TestFixture):

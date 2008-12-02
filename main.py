@@ -5,15 +5,30 @@ from helpers import utils
 from google.appengine.ext.webapp.util import login_required
 from google.appengine.api import users
 
-class MainHandler(webapp.RequestHandler):
+class CustomHandler(webapp.RequestHandler):
+    def handle_exception(self,exception, debug_mode):
+        self.response.out.write(exception)
+        self.response.set_status(403)
+    def respond(self,resp):
+        self.response.out.write(resp)
+    def respond_json(self, resp):
+        import simplejson
+        self.response.headers["Content-Type"] = "application/json"
+        self.response.out.write(simplejson.dumps(resp))
+    def render(self, template_path, data):
+        self.respond(template.render(utils.path(template_path),data))
+        
+
+class MainHandler(CustomHandler):
     def get(self,url=None):
+        user = users.get_current_user()
         if not url:
-            logged_in_user_url = gateway.get_current_user_url()
+            logged_in_user_url = gateway.get_current_user_url(user)
             if logged_in_user_url: self.redirect('/'+logged_in_user_url)
         
         pointset = gateway.get_points_for(url)
         info = dict(current_url = url, 
-                    user_url = gateway.get_current_user_url(), 
+                    user_url = gateway.get_current_user_url(user), 
                     user_nick = gateway.get_current_user_nick(url),
                     point_ceiling = settings.hard_point_count_ceiling,
                     empty_spot = True if pointset == None else False)
@@ -21,26 +36,23 @@ class MainHandler(webapp.RequestHandler):
                             'auth':utils.authdetails('/'+url), 
                             'info':info}
                             
-        self.response.out.write(template.render(utils.path('templates/index.html'),template_values))
+        self.respond(template.render(utils.path('templates/index.html'),template_values))
     
     @utils.authorize('user')
     def post(self,url=None):
         user = users.get_current_user()
         url = cgi.escape(self.request.get('url')).lower()
-        try:
-            if url == 'form': raise Exception, "You cannot use 'form'."
-            new_customer = gateway.create_customer(url,user)
-            self.response.out.write(new_customer.url) 
-        except Exception, e:
-            self.response.out.write(e)
-            self.response.set_status(403)
-            
 
-class UrlCheckHandler(webapp.RequestHandler):
+        if url == 'form': raise Exception, "You cannot use 'form'."
+        new_customer = gateway.create_customer(url,user)
+        self.respond(new_customer.url) 
+
+        
+class UrlCheckHandler(CustomHandler):
     def get(self,url=None):
-        self.response.out.write('N' if gateway.check_if_url_exists(url)[0] else 'Y')
+        self.respond('N' if gateway.check_if_url_exists(url)[0] else 'Y')
 
-class UrlCreateHandler(webapp.RequestHandler):
+class UrlCreateHandler(CustomHandler):
     @utils.authorize('user')
     def get(self,url=None):
         user = users.get_current_user()
@@ -53,7 +65,7 @@ class UrlCreateHandler(webapp.RequestHandler):
             self.redirect('/')
         
         
-class PointHandler(webapp.RequestHandler):
+class PointHandler(CustomHandler):
     @utils.authorize('user')
     def post(self,url=None):
         user = users.get_current_user()
@@ -64,37 +76,32 @@ class PointHandler(webapp.RequestHandler):
         
         point = dict(title=title, lat = lat, lon = lon)
         if not key:
-            try:
-                if title == '' or title==None: raise Exception, "You need to provide a title."
-                new_point = gateway.set_point(gateway.get_customer(user), point)
-                self.response.out.write(new_point.key())
-            except Exception, e:
-                self.response.out.write(e)
-                self.response.set_status(403)    
+            if title == '' or title==None: raise Exception, "You need to provide a title."
+            new_point = gateway.set_point(gateway.get_customer(user), point)
+            self.respond(new_point.key())
         else:
-            try:
-                gateway.edit_point(key, point, user)
-                self.response.out.write('OK')
-            except Exception, e:
-                self.response.out.write(e)
-                self.response.set_status(403)
+            gateway.edit_point(key, point, user)
+            self.respond('OK')
     
     @utils.authorize('user')
     def get(self,url=None):
         pointset = gateway.get_points_for(url)
-        self.response.out.write(template.render(utils.path('templates/pointlist.html'),{'points':pointset}))
+        self.render('templates/pointlist.html',{'points':pointset})
 
-class PointDeleteHandler(webapp.RequestHandler): 
+class PointDeleteHandler(CustomHandler): 
     @utils.authorize('user')
     def post(self):
         key = self.request.get('key')
-        try:
-            gateway.delete_point(key,users.get_current_user())
-        except Exception, e:
-            self.response.out.write(e)
-            self.response.set_status(403)    
-    
+        gateway.delete_point(key,users.get_current_user())
+       
+class PointJsonHandler(CustomHandler):
+    def get(self,url):
+        pointset = gateway.get_points_for(url)
+        self.respond_json(pointset)
+        
+        
 ROUTES =[
+            (r'/_json/points/(.*)', PointJsonHandler),
             (r'/_points/delete.*', PointDeleteHandler),
             (r'/_points/(.*)', PointHandler),
             (r'/_create/(.*)', UrlCreateHandler),

@@ -1,12 +1,13 @@
 import unittest, logging, models, test.helpers, gateway
 from google.appengine.ext import db
 from google.appengine.api import users
+import simplejson as json
 
 class GatewayTests (test.helpers.TestFixture):
     def test_getting_points_for_user(self):
         valid_result = gateway.get_points_for('sudhirurl')
         self.assertEqual(len(valid_result),2)
-        
+
         valid_result = gateway.get_points_for('suDhirurl')
         self.assertEqual(len(valid_result),2)
         
@@ -30,7 +31,7 @@ class GatewayTests (test.helpers.TestFixture):
         self.assertTrue(confirmation)
         result = gateway.get_points_for('momurl')
         self.assertEqual(len(result),1)
-        self.assertEqual(result.count(dict(lat=34.678,lon=-44.3456,title='Untitled',key=confirmation.key())),1) 
+        self.assertEqual(result.count(dict(lat=34.678,lon=-44.3456,title='Untitled',key=str(confirmation.key()))),1) 
         
     def test_user_creation_and_editing(self):
         test_user = users.User('test@gmail.com')
@@ -49,10 +50,7 @@ class GatewayTests (test.helpers.TestFixture):
         self.assertEqual(gateway.get_points_for('newtest').__len__(),1)
         self.assertTrue(gateway.set_point(renew,dict(lat = 43.345, lon = -3.23)))
         self.assertEqual(gateway.get_points_for('newtest').__len__(),2)
-        
-        
-        
-    
+            
     def test_user_existence_check(self):
         self.assertFalse(gateway.check_if_user_exists(users.User('nonexistentemail@gmail.com')))
         self.assertTrue(gateway.check_if_user_exists(users.User('sudhir.j@gmail.com')))
@@ -67,29 +65,19 @@ class GatewayTests (test.helpers.TestFixture):
         result = gateway.get_points_for('sudhirurl')
         start_count = len(result)
         new_point_dict = dict(lat=7.0,lon=7.0,title="seven")
-        new_point_key = gateway.set_point(self.sudhir,new_point_dict).key()
+        new_point_key = gateway.set_point(self.sudhir,new_point_dict).key().__str__()
         result = gateway.get_points_for('sudhirurl')
+        
         self.assertEqual(len(result),start_count+1)
-        found = filter(lambda x, lat=7.0, lon = 7.0, title='seven': x['lat']==lat and 
-                                                                    x['lon'] ==lon and 
-                                                                    x['title'] == title, 
-                        result)
-        self.assertEqual(len(found),1)
-        gateway.edit_point(new_point_key,dict(lon = 7.0, lat = 8.0, title = 'seveneight'),self.sudhir_gmail)
+        self.assertTrue(self.find(result, new_point_dict))
+        
+        new_point_dict = dict(lon = 7.0, lat = 8.0, title = 'seveneight')
+        gateway.edit_point(new_point_key,new_point_dict,self.sudhir_gmail)
         new_results = gateway.get_points_for('sudhirurl')
+        
         self.assertEqual(len(new_results),start_count+1)
-        new_found = filter(lambda x, lat = 8.0, 
-                                        lon = 7.0, 
-                                        title = 'seveneight':   x['lat']==lat and 
-                                                                x['lon']==lon and 
-                                                                x['title']==title, 
-                            new_results)
-        self.assertEqual(len(new_found),1)
+        self.assertTrue(self.find(new_results, new_point_dict))
         self.assertRaises(db.BadValueError,gateway.edit_point,new_point_key,dict(lon=2345,lat=3,title='invalid values'), self.sudhir_gmail)
-
-
-        
-        
   
     def test_point_deletion(self):
         result = gateway.get_points_for('sudhirurl')
@@ -98,31 +86,18 @@ class GatewayTests (test.helpers.TestFixture):
         gateway.delete_point(first_point['key'], self.sudhir_gmail)
         new_result = gateway.get_points_for('sudhirurl')
         self.assertEqual(len(new_result),start_count-1)
-        find = filter(lambda x, lat = first_point['lat'],
-                                lon = first_point['lon'],
-                                title = first_point['title']:   x['lat'] == lat and
-                                                                x['lon'] == lon and
-                                                                x['title'] == title,
-                    new_result)
-        self.assertFalse(find)
-        
+        self.assertFalse(self.find(new_result, first_point))
         
     def test_get_current_user_url(self):
-        self.logout()
-        url = gateway.get_current_user_url()
-        self.assertFalse(url)
-
-        self.login("sudhir.j@gmail.com")
-        url = gateway.get_current_user_url()
+        url = gateway.get_current_user_url(self.sudhir_gmail)
         self.assertEqual(url,'sudhirurl')
 
-        self.login("somebodywithoutaspot")
-        url = gateway.get_current_user_url()
+        url = gateway.get_current_user_url(users.User('lskj@lsdfj.com'))
+        self.assertFalse(url)
+        
+        url = gateway.get_current_user_url(None)
         self.assertFalse(url)
   
     def test_get_current_user_nickname(self):
         self.assertEqual(gateway.get_current_user_nick('nosuchurl'),None)
         self.assertEqual(gateway.get_current_user_nick('sudhirurl'),'sudhir.j')
-
-        
-        

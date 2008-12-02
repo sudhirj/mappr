@@ -19,6 +19,9 @@ class Customer(db.Model):
             return False
         return False
     
+    def get_point_by_key(self, key):
+        return self.points.filter("__key__ =",db.Key(key)).fetch(1)[0]
+    
 
 class Point(db.Model):
     """Store the map points"""
@@ -49,4 +52,6 @@ class Point(db.Model):
                 raise Exception, "Maximum possible number of points reached."
             self.owner.put()
             return db.Model.put(self)
+    
+        
 

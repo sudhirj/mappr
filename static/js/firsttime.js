@@ -15,7 +15,11 @@ var FirstTime = function(){
                     resizable:false,
                     close: function(){FirstTime.cancel();},
                     title: "Create a PinnSpot",
-                    height:250
+                    height:230,
+                    width: 600,
+                    modal: true,
+                    overlay: {'background':'#000',
+                              'opacity':0.5}
                 });
                 FirstTime.ready();
                 $('#text-url').keyup(function(e){
