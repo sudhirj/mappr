@@ -87,13 +87,11 @@ class PointHandler(CustomHandler):
     def get(self,url=None):
         pointset = gateway.get_points_for(url)
         self.render('templates/pointlist.html',{'points':pointset})
-
-class PointDeleteHandler(CustomHandler): 
+    
     @utils.authorize('user')
-    def post(self):
-        key = self.request.get('key')
+    def delete(self, key=None):
         gateway.delete_point(key,users.get_current_user())
-       
+
 class PointJsonHandler(CustomHandler):
     def get(self,url):
         pointset = gateway.get_points_for(url)
@@ -102,7 +100,6 @@ class PointJsonHandler(CustomHandler):
         
 ROUTES =[
             (r'/_json/points/(.*)', PointJsonHandler),
-            (r'/_points/delete.*', PointDeleteHandler),
             (r'/_points/(.*)', PointHandler),
             (r'/_create/(.*)', UrlCreateHandler),
             (r'/_check/url/(.*)', UrlCheckHandler),
