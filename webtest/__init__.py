@@ -14,15 +14,14 @@ import mimetypes
 import time
 import cgi
 import os
-#import webbrowser
-from Cookie import BaseCookie
+from Cookie import BaseCookie, CookieError
 try:
     from cStringIO import StringIO
 except ImportError:
     from StringIO import StringIO
 import re
 from webob import Response, Request
-from wsgiref.validate import validator
+from webtest import lint
 
 __all__ = ['TestApp']
 
@@ -149,7 +148,8 @@ class TestApp(object):
                                expect_errors=expect_errors)
 
     def _gen_request(self, method, url, params='', headers=None, extra_environ=None,
-             status=None, upload_files=None, expect_errors=False):
+                     status=None, upload_files=None, expect_errors=False,
+                     content_type=None):
         """
         Do a generic request.  
         """
@@ -170,6 +170,8 @@ class TestApp(object):
             url, environ['QUERY_STRING'] = url.split('?', 1)
         else:
             environ['QUERY_STRING'] = ''
+        if content_type is not None:
+            environ['CONTENT_TYPE'] = content_type
         environ['CONTENT_LENGTH'] = str(len(params))
         environ['REQUEST_METHOD'] = method
         environ['wsgi.input'] = StringIO(params)
@@ -180,7 +182,8 @@ class TestApp(object):
                                expect_errors=expect_errors)
 
     def post(self, url, params='', headers=None, extra_environ=None,
-             status=None, upload_files=None, expect_errors=False):
+             status=None, upload_files=None, expect_errors=False,
+             content_type=None):
         """
         Do a POST request.  Very like the ``.get()`` method.
         ``params`` are put in the body of the request.
@@ -195,10 +198,12 @@ class TestApp(object):
         return self._gen_request('POST', url, params=params, headers=headers,
                                  extra_environ=extra_environ,status=status,
                                  upload_files=upload_files,
-                                 expect_errors=expect_errors)
+                                 expect_errors=expect_errors, 
+                                 content_type=content_type)
 
     def put(self, url, params='', headers=None, extra_environ=None,
-             status=None, upload_files=None, expect_errors=False):
+            status=None, upload_files=None, expect_errors=False,
+            content_type=None):
         """
         Do a PUT request.  Very like the ``.get()`` method.
         ``params`` are put in the body of the request.
@@ -213,17 +218,17 @@ class TestApp(object):
         return self._gen_request('PUT', url, params=params, headers=headers,
                                  extra_environ=extra_environ,status=status,
                                  upload_files=upload_files,
-                                 expect_errors=expect_errors)
+                                 expect_errors=expect_errors,
+                                 content_type=content_type)
 
     def delete(self, url, headers=None, extra_environ=None,
                status=None, expect_errors=False):
         """
         Do a DELETE request.  Very like the ``.get()`` method.
-        ``params`` are put in the body of the request.
 
         Returns a ``webob.Response`` object.
         """
-        return self._gen_request('DELETE', url, params={}, headers=headers,
+        return self._gen_request('DELETE', url, headers=headers,
                                  extra_environ=extra_environ,status=status,
                                  upload_files=None, expect_errors=expect_errors)
 
@@ -291,7 +296,7 @@ class TestApp(object):
             req.environ['HTTP_COOKIE'] = str(c).split(': ', 1)[1]
         req.environ['paste.testing'] = True
         req.environ['paste.testing_variables'] = {}
-        app = validator(self.app)
+        app = lint.middleware(self.app)
         old_stdout = sys.stdout
         out = CaptureStdout(old_stdout)
         try:
@@ -321,7 +326,11 @@ class TestApp(object):
             self._check_errors(res)
         res.cookies_set = {}
         for header in res.headers.getall('set-cookie'):
-            c = BaseCookie(header)
+            try:
+                c = BaseCookie(header)
+            except CookieError, e:
+                raise CookieError(
+                    "Could not parse cookie header %r: %s" % (header, e))
             for key, morsel in c.items():
                 self.cookies[key] = morsel.value
                 res.cookies_set[key] = morsel.value
@@ -540,6 +549,10 @@ class TestResponse(Response):
 
         _tag_re = re.compile(r'<%s\s+(.*?)>(.*?)</%s>' % (tag, tag),
                              re.I+re.S)
+        _script_re = re.compile(r'<script.*?>.*?</script>', re.I|re.S)
+        bad_spans = []
+        for match in _script_re.finditer(self.body):
+            bad_spans.append((match.start(), match.end()))
 
         def printlog(s):
             if verbose:
@@ -548,6 +561,14 @@ class TestResponse(Response):
         found_links = []
         total_links = 0
         for match in _tag_re.finditer(self.body):
+            found_bad = False
+            for bad_start, bad_end in bad_spans:
+                if (match.start() > bad_start 
+                    and match.end() < bad_end):
+                    found_bad = True
+                    break
+            if found_bad:
+                continue
             el_html = match.group(0)
             el_attr = match.group(1)
             el_content = match.group(2)
@@ -701,7 +722,7 @@ class TestResponse(Response):
                     "Body does not contain string %r" % s)
         for no_s in no:
             if no_s in self:
-                print >> sys.stderr, "Actual response (has %r)" % s
+                print >> sys.stderr, "Actual response (has %r)" % no_s
                 print >> sys.stderr, self
                 raise IndexError(
                     "Body contains string %r" % s)
@@ -709,10 +730,18 @@ class TestResponse(Response):
     def __str__(self):
         simple_body = '\n'.join([l for l in self.body.splitlines()
                                  if l.strip()])
+        headers = [(self._normalize_header_name(n), v)
+                   for n, v in self.headerlist
+                   if n.lower() != 'content-length']
+        headers.sort()
         return 'Response: %s\n%s\n%s' % (
             self.status,
-            '\n'.join(['%s: %s' % (n, v) for n, v in self.headerlist]),
+            '\n'.join(['%s: %s' % (n, v) for n, v in headers]),
             simple_body)
+
+    def _normalize_header_name(self, name):
+        name = name.replace('-', ' ').title().replace(' ', '-')
+        return name
 
     def __repr__(self):
         # Specifically intended for doctests
@@ -724,7 +753,8 @@ class TestResponse(Response):
             br = repr(self.body)
             if len(br) > 18:
                 br = br[:10]+'...'+br[-5:]
-            body = ' body=%s/%s' % (br, len(self.body))
+                br += '/%s' % len(self.body)
+            body = ' body=%s' % br
         else:
             body = ' no body'
         if self.location:
@@ -844,6 +874,7 @@ class TestResponse(Response):
         Show this response in a browser window (for debugging purposes,
         when it's hard to read the HTML).
         """
+        import webbrowser
         fn = tempnam_no_warning(None, 'webtest-page') + '.html'
         f = open(fn, 'wb')
         f.write(self.body)
@@ -942,7 +973,10 @@ class Form(object):
             tag_type = tag
             if tag == 'input':
                 tag_type = attrs.get('type', 'text').lower()
-            FieldClass = Field.classes.get(tag_type, Field)
+            if tag_type == "select" and attrs.get("multiple"):
+                FieldClass = Field.classes.get("multiple_select", Field)
+            else:
+                FieldClass = Field.classes.get(tag_type, Field)
             field = FieldClass(self, tag, name, match.start(), **attrs)
             if tag == 'textarea':
                 assert not in_textarea, (
@@ -1071,11 +1105,17 @@ class Form(object):
             field = self.get(name, index=index)
             submit.append((field.name, field.value_if_submitted()))
         for name, fields in self.fields.items():
+            if name is None:
+                continue
             for field in fields:
                 value = field.value
                 if value is None:
                     continue
-                submit.append((name, value))
+                if isinstance(value, list):
+                    for item in value:
+                        submit.append((name, item))
+                else:
+                    submit.append((name, value))
         return submit
 
 
@@ -1139,9 +1179,6 @@ class Select(Field):
     def __init__(self, *args, **attrs):
         super(Select, self).__init__(*args, **attrs)
         self.options = []
-        self.multiple = attrs.get('multiple')
-        assert not self.multiple, (
-            "<select multiple> not yet supported")
         # Undetermined yet:
         self.selectedIndex = None
 
@@ -1173,6 +1210,49 @@ class Select(Field):
 
 Field.classes['select'] = Select
 
+class MultipleSelect(Field):
+
+    """
+    Field representing ``<select multiple="multiple">``
+    """
+
+    def __init__(self, *args, **attrs):
+        super(MultipleSelect, self).__init__(*args, **attrs)
+        self.options = []
+        # Undetermined yet:
+        self.selectedIndices = []
+
+    def value__set(self, values):
+        str_values = [str(value) for value in values]
+        self.selectedIndicies = []
+        for i, (option, checked) in enumerate(self.options):
+            if option in str_values:
+                self.selectedIndices.append(i)
+                str_values.remove(option)
+        if str_values:
+            raise ValueError(
+                "Option(s) %r not found (from %s)"
+                % (', '.join(str_values),
+                   ', '.join(
+                        [repr(o) for o, c in self.options])))
+
+    def value__get(self):
+        if self.selectedIndices:
+            return [self.options[i][0] for i in self.selectedIndices]
+        else:
+            selected_values = []
+            for option, checked in self.options:
+                if checked:
+                    selected_values.append(option)
+                
+            if self.options and (not selected_values):
+                selected_values = None
+            return selected_values
+    
+    value = property(value__get, value__set)
+
+Field.classes['multiple_select'] = MultipleSelect
+
 class Radio(Select):
 
     """
@@ -1197,8 +1277,7 @@ class Checkbox(Field):
     def value__get(self):
         if self.checked:
             if self._value is None:
-                # @@: 'on'?
-                return 'checked'
+                return 'on'
             else:
                 return self._value
         else:

@@ -1,3 +1,4 @@
 mappr.tmproj
 *.pyc
 tmtags
+static-production/*
