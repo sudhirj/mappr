@@ -176,12 +176,4 @@ class PointOperationsTest(test.helpers.WebTestFixture):
         sudhir_point_key = app.post('/_points/',{'lat':43,'lon':23, 'title':'sudhir ka new point'}).html
         self.login('amrita@gmail.com')
         app.post('/_points/delete',{'key':sudhir_point_key}, status = 403)
-        
-        
-
-
-        
-        
-        
-        
-        
+            
