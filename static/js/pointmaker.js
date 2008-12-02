@@ -9,8 +9,8 @@ var PointMaker = function(){
         close: function(){PointMaker.cancel();},
         open: function(){$('#text-title')[0].focus()},
         position: [100,50],
-        height: 230,
-        width: 350
+        height: 210,
+        width: 320
     };
     var data = null;
     return {
@@ -42,13 +42,11 @@ var PointMaker = function(){
             $('#text-title').val(title);
         },
         del: function(key){
-            var answer = confirm('Are you sure you want to delete this Pinn?');
-            if (!answer) return;
+            if (!confirm('Are you sure you want to delete this Pinn?')) return;
             if (this.isOpen) this.close();
             $.ajax({
-                url: '/_points/delete/',
-                type: 'POST',
-                data: {key: key},
+                url: '/_points/'+key,
+                type: 'DELETE',
                 success: PointList.update
             });
         },

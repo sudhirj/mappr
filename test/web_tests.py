@@ -47,7 +47,7 @@ class PostMethodsSecurityTest(test.helpers.WebTestFixture):
         self.logout()
         app.post('/',status=403)
         app.post('/_points/',status=403)
-        app.post('/_points/delete',status=403)
+        app.delete('/_points/',status=403)
 
 class UserOperationsTest(test.helpers.WebTestFixture):
     def test_user_creation(self):
@@ -157,7 +157,7 @@ class PointOperationsTest(test.helpers.WebTestFixture):
         self.assertTrue(soup.find(text="21.0"))
         self.assertTrue(soup.find(text="43.0"))
         
-        app.post('/_points/delete',{'key':returned_key})
+        app.delete('/_points/'+str(returned_key),{})
         soup = app.get('/sudhirurl').html
         self.assertFalse(soup.find(text="point_that_was_changed"))
         self.assertFalse(soup.find(text="21.0"))
@@ -175,5 +175,5 @@ class PointOperationsTest(test.helpers.WebTestFixture):
         self.login('sudhir.j@gmail.com')
         sudhir_point_key = app.post('/_points/',{'lat':43,'lon':23, 'title':'sudhir ka new point'}).html
         self.login('amrita@gmail.com')
-        app.post('/_points/delete',{'key':sudhir_point_key}, status = 403)
+        app.delete('/_points/'+str(sudhir_point_key), status = 403)
             
