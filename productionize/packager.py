@@ -17,6 +17,7 @@ for css in CSS:
     try:
         thiscss = open(HOME+CSS_DIR+css+".css",'r')
         prodcss.writelines(thiscss)
+        print "css-packed ",thiscss
     except e:
         print e         
 prodcss.close()
@@ -30,6 +31,7 @@ for js in JS:
     try:
         thisjs = open(HOME+JS_DIR+js+".js",'r')
         prodjs.writelines(thisjs)
+        print "js-packed ",thisjs
     except e:
         print e         
 prodjs.close()
