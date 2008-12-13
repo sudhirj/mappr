@@ -48,9 +48,9 @@ def get_customer_by_url(url):
 
 def edit_point(key, new_point, user):
     customer = get_customer(user)
-    if not customer: raise Exception, "No spot for this user."
+    if not customer: raise Exception, "Customer does not exist."
     point = customer.get_point_by_key(key)
-    if not point: raise Exception, "That isn't your pin."
+    if not point: raise Exception, "Point does not exist."
     point.title = new_point['title']
     point.point = factory.make_geo_point(new_point['lat'],new_point['lon'])
     point.put()
