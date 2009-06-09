@@ -35,7 +35,8 @@ var Map = function(){
       this.map.addControl(new google.maps.LargeMapControl(), new google.maps.ControlPosition(G_ANCHOR_TOP_LEFT, new google.maps.Size(20,150)));
       this.map.enableScrollWheelZoom();
       this.map.enableContinuousZoom();
-      this.map.enableGoogleBar()
+      // this.map.enableGoogleBar();
+      this.map.setUIToDefault();
 
       google.maps.Event.addListener(this.map,'click',function(overlay,  latlng,  overlaylatlng){
         if (overlay) Map.map.zoomIn(overlaylatlng, true, true);

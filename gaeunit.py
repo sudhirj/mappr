@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+
 '''
 GAEUnit: Google App Engine Unit Test Framework
 
@@ -24,7 +24,7 @@ Usage:
 Visit http://code.google.com/p/gaeunit for more information and updates.
 
 ------------------------------------------------------------------------------
-Copyright (c) 2008, George Lei and Steven R. Farley.  All rights reserved.
+Copyright (c) 2008-2009, George Lei and Steven R. Farley.  All rights reserved.
 
 Distributed under the following BSD license:
 
@@ -53,24 +53,32 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 __author__ = "George Lei and Steven R. Farley"
 __email__ = "George.Z.Lei@Gmail.com"
-__version__ = "#Revision: 1.2.2 $"[11:-2]
-__copyright__= "Copyright (c) 2008, George Lei and Steven R. Farley"
+__version__ = "#Revision: 1.2.8 $"[11:-2]
+__copyright__= "Copyright (c) 2008-2009, George Lei and Steven R. Farley"
 __license__ = "BSD"
 __url__ = "http://code.google.com/p/gaeunit"
 
 import sys
 import os
 import unittest
-import StringIO
 import time
-import re
 import logging
+import cgi
+import django.utils.simplejson
+
 from google.appengine.ext import webapp
 from google.appengine.api import apiproxy_stub_map  
 from google.appengine.api import datastore_file_stub
 from google.appengine.ext.webapp.util import run_wsgi_app
 
-_DEFAULT_TEST_DIR = 'test'
+_LOCAL_TEST_DIR = 'test'  # location of files
+_WEB_TEST_DIR = '/test'   # how you want to refer to tests on your web server
+
+# or:
+# _WEB_TEST_DIR = '/u/test'
+# then in app.yaml:
+#   - url: /u/test.*
+#     script: gaeunit.py
 
 
 ##############################################################################
@@ -96,14 +104,14 @@ class MainTestPageHandler(webapp.RequestHandler):
         elif format == "plain":
             self._render_plain()
         else:
-            error = _log_error("The format '%s' is not valid." % format)
+            error = _log_error("The format '%s' is not valid." % cgi.escape(format))
             self.error(404)
             self.response.out.write(error)
             
     def _render_html(self):
         suite, error = _create_suite(self.request)
         if not error:
-            self.response.out.write(_MAIN_PAGE_CONTENT % _test_suite_to_json(suite))
+            self.response.out.write(_MAIN_PAGE_CONTENT % (_test_suite_to_json(suite), _WEB_TEST_DIR, __version__))
         else:
             self.error(404)
             self.response.out.write(error)
@@ -133,37 +141,24 @@ class JsonTestResult(unittest.TestResult):
         self.testNumber = 0
 
     def render_to(self, stream):
-        stream.write('{')
-        stream.write('"runs":"%d", "total":"%d", "errors":"%d", "failures":"%d",' % \
-                    (self.testsRun, self.testNumber,
-                     len(self.errors), len(self.failures)))
-        stream.write('"details":')
-        self._render_errors(stream)
-        stream.write('}')
+        result = {
+            'runs': self.testsRun,
+            'total': self.testNumber,
+            'errors': self._list(self.errors),
+            'failures': self._list(self.failures),
+            }
 
-    def _render_errors(self, stream):
-        stream.write('{')
-        self._render_error_list('errors', self.errors, stream)
-        stream.write(',')
-        self._render_error_list('failures', self.failures, stream)
-        stream.write('}')
+        stream.write(django.utils.simplejson.dumps(result).replace('},', '},\n'))
 
-    def _render_error_list(self, flavour, errors, stream):
-        stream.write('"%s":[' % flavour)
-        for test, err in errors:
-            stream.write('{"desc":"%s", "detail":"%s"},' %
-                         (self._description(test), self._escape(err)))
-        if len(errors):
-            stream.seek(-1, 2)
-        stream.write("]")
-
-    def _description(self, test):
-        return test.shortDescription() or str(test)
-
-    def _escape(self, s):
-        newstr = re.sub('"', '&quot;', s)
-        newstr = re.sub('\n', '<br/>', newstr)
-        return newstr
+    def _list(self, list):
+        dict = []
+        for test, err in list:
+            d = { 
+              'desc': test.shortDescription() or str(test), 
+              'detail': err,
+            }
+            dict.append(d)
+        return dict
 
 
 class JsonTestRunner:
@@ -179,6 +174,7 @@ class JsonTestRunner:
 
 class JsonTestRunHandler(webapp.RequestHandler):
     def get(self):    
+        self.response.headers["Content-Type"] = "text/javascript"
         test_name = self.request.get("name")
         _load_default_test_modules()
         suite = unittest.defaultTestLoader.loadTestsFromName(test_name)
@@ -190,6 +186,7 @@ class JsonTestRunHandler(webapp.RequestHandler):
 # This is not used by the HTML page, but it may be useful for other client test runners.
 class JsonTestListHandler(webapp.RequestHandler):
     def get(self):
+        self.response.headers["Content-Type"] = "text/javascript"
         suite, error = _create_suite(self.request)
         if not error:
             self.response.out.write(_test_suite_to_json(suite))
@@ -210,36 +207,36 @@ def _create_suite(request):
     loader = unittest.defaultTestLoader
     suite = unittest.TestSuite()
 
-    if not package_name and not test_name:
-        modules = _load_default_test_modules()
-        for module in modules:
-            suite.addTest(loader.loadTestsFromModule(module))
-    elif test_name:
-        try:
-            _load_default_test_modules()
-            suite.addTest(loader.loadTestsFromName(test_name))
-        except:
-            pass
-    elif package_name:
-        try:
-            package = reload(__import__(package_name))
-            module_names = package.__all__
-            for module_name in module_names:
-                suite.addTest(loader.loadTestsFromName('%s.%s' % (package_name, module_name)))
-        except:
-            pass
-    if suite.countTestCases() == 0:
-        error = _log_error("'%s' is not found or does not contain any tests." %  \
-                          (test_name or package_name))
-    else:
-        error = None
+    error = None
+
+    try:
+        if not package_name and not test_name:
+                modules = _load_default_test_modules()
+                for module in modules:
+                    suite.addTest(loader.loadTestsFromModule(module))
+        elif test_name:
+                _load_default_test_modules()
+                suite.addTest(loader.loadTestsFromName(test_name))
+        elif package_name:
+                package = reload(__import__(package_name))
+                module_names = package.__all__
+                for module_name in module_names:
+                    suite.addTest(loader.loadTestsFromName('%s.%s' % (package_name, module_name)))
+    
+        if suite.countTestCases() == 0:
+            raise Exception("'%s' is not found or does not contain any tests." %  \
+                            (test_name or package_name or 'local directory: \"%s\"' % _LOCAL_TEST_DIR))
+    except Exception, e:
+        error = str(e)
+        _log_error(error)
+
     return (suite, error)
 
 
 def _load_default_test_modules():
-    if not _DEFAULT_TEST_DIR in sys.path:
-        sys.path.append(_DEFAULT_TEST_DIR)
-    module_names = [mf[0:-3] for mf in os.listdir(_DEFAULT_TEST_DIR) if mf.endswith(".py")]
+    if not _LOCAL_TEST_DIR in sys.path:
+        sys.path.append(_LOCAL_TEST_DIR)
+    module_names = [mf[0:-3] for mf in os.listdir(_LOCAL_TEST_DIR) if mf.endswith(".py")]
     return [reload(__import__(name)) for name in module_names]
 
 
@@ -275,8 +272,7 @@ def _test_suite_to_json(suite):
                 method_list = mod_dict[class_name]
                 method_list.append(method_name)
                 
-    # Python's dictionary and list string representations happen to match JSON formatting.
-    return str(test_dict)
+    return django.utils.simplejson.dumps(test_dict)
 
 
 def _run_test_suite(runner, suite):
@@ -291,7 +287,7 @@ def _run_test_suite(runner, suite):
     original_apiproxy = apiproxy_stub_map.apiproxy
     try:
        apiproxy_stub_map.apiproxy = apiproxy_stub_map.APIProxyStubMap() 
-       temp_stub = datastore_file_stub.DatastoreFileStub('GAEUnitDataStore', None, None)  
+       temp_stub = datastore_file_stub.DatastoreFileStub('GAEUnitDataStore', None, None, trusted=True)  
        apiproxy_stub_map.apiproxy.RegisterStub('datastore', temp_stub)
        # Allow the other services to be used as-is for tests.
        for name in ['user', 'urlfetch', 'mail', 'memcache', 'images']: 
@@ -321,14 +317,14 @@ _MAIN_PAGE_CONTENT = """
         #version {font-size:87%%; text-align:center;}
         #weblink {font-style:italic; text-align:center; padding-top:7px; padding-bottom:7px}
         #results {padding-top:20px; margin:0pt auto; text-align:center; font-weight:bold}
-        #testindicator {width:600px; height:16px; border-style:solid; border-width:2px 1px 1px 2px; background-color:#f8f8f8;}
+        #testindicator {width:750px; height:16px; border-style:solid; border-width:2px 1px 1px 2px; background-color:#f8f8f8;}
         #footerarea {text-align:center; font-size:83%%; padding-top:25px}
         #errorarea {padding-top:25px}
-        .error {border-color: #c3d9ff; border-style: solid; border-width: 2px 1px 2px 1px; width:600px; padding:1px; margin:0pt auto; text-align:left}
+        .error {border-color: #c3d9ff; border-style: solid; border-width: 2px 1px 2px 1px; width:750px; padding:1px; margin:0pt auto; text-align:left}
         .errtitle {background-color:#c3d9ff; font-weight:bold}
     </style>
     <script language="javascript" type="text/javascript">
-        var testsToRun = eval("(" + "%s" + ")"); // JSON-formatted (see _test_suite_to_json)
+        var testsToRun = %s;
         var totalRuns = 0;
         var totalErrors = 0;
         var totalFailures = 0;
@@ -347,7 +343,7 @@ _MAIN_PAGE_CONTENT = """
                 methodSuffix = "." + methodName;
             }
             var xmlHttp = newXmlHttp();
-            xmlHttp.open("GET", "/testrun?name=" + moduleName + "." + className + methodSuffix, true);
+            xmlHttp.open("GET", "%s/run?name=" + moduleName + "." + className + methodSuffix, true);
             xmlHttp.onreadystatechange = function() {
                 if (xmlHttp.readyState != 4) {
                     return;
@@ -355,8 +351,8 @@ _MAIN_PAGE_CONTENT = """
                 if (xmlHttp.status == 200) {
                     var result = eval("(" + xmlHttp.responseText + ")");
                     totalRuns += parseInt(result.runs);
-                    totalErrors += parseInt(result.errors);
-                    totalFailures += parseInt(result.failures);
+                    totalErrors += result.errors.length;
+                    totalFailures += result.failures.length;
                     document.getElementById("testran").innerHTML = totalRuns;
                     document.getElementById("testerror").innerHTML = totalErrors;
                     document.getElementById("testfailure").innerHTML = totalFailures;
@@ -365,8 +361,8 @@ _MAIN_PAGE_CONTENT = """
                     } else {
                         testFailed();
                     }
-                    var errors = result.details.errors;
-                    var failures = result.details.failures;
+                    var errors = result.errors;
+                    var failures = result.failures;
                     var details = "";
                     for(var i=0; i<errors.length; i++) {
                         details += '<p><div class="error"><div class="errtitle">ERROR ' +
@@ -427,7 +423,7 @@ _MAIN_PAGE_CONTENT = """
 <body onload="runTests()">
     <div id="headerarea">
         <div id="title">GAEUnit: Google App Engine Unit Test Framework</div>
-        <div id="version">Version 1.2.4</div>
+        <div id="version">Version %s</div>
     </div>
     <div id="resultarea">
         <table id="results"><tbody>
@@ -447,7 +443,7 @@ _MAIN_PAGE_CONTENT = """
             for the latest version or to report problems.
         </p>
         <p>
-            Copyright 2008 <a href="mailto:George.Z.Lei@Gmail.com">George Lei</a>
+            Copyright 2008-2009 <a href="mailto:George.Z.Lei@Gmail.com">George Lei</a>
             and <a href="mailto:srfarley@gmail.com>Steven R. Farley</a>
         </p>
         </div>
@@ -462,9 +458,9 @@ _MAIN_PAGE_CONTENT = """
 ##############################################################################
 
 
-application = webapp.WSGIApplication([('/test', MainTestPageHandler),
-                                      ('/testrun', JsonTestRunHandler),
-                                      ('/testlist', JsonTestListHandler)],
+application = webapp.WSGIApplication([('%s'      % _WEB_TEST_DIR, MainTestPageHandler),
+                                      ('%s/run'  % _WEB_TEST_DIR, JsonTestRunHandler),
+                                      ('%s/list' % _WEB_TEST_DIR, JsonTestListHandler)],
                                       debug=True)
 
 def main():

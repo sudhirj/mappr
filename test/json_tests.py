@@ -1,4 +1,4 @@
-import logging,unittest,main,test.helpers,presenter,settings,urllib
+import logging,unittest,main,test.helpers,settings,urllib
 from webtest import TestApp
 from google.appengine.ext import webapp
 from google.appengine.api import users

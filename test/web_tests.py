@@ -1,8 +1,8 @@
-import logging,unittest,main,test.helpers,presenter,settings,urllib
-from BeautifulSoup import BeautifulSoup
+import logging,unittest,main,test.helpers,settings,urllib
 from webtest import TestApp
 from google.appengine.ext import webapp
 from google.appengine.api import users
+import BeautifulSoup
 
 class MainPageTest(test.helpers.WebTestFixture):
     def test_basic_responses(self):
