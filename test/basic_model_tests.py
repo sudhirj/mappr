@@ -1,9 +1,9 @@
-import unittest
+from google.appengine.api import users
+from google.appengine.ext import db
 import logging
 import models
-from google.appengine.ext import db
-from google.appengine.api import users
 import test.helpers
+import unittest
 
 
 class BasicModelTests(test.helpers.TestFixture):

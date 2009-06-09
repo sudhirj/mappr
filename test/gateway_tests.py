@@ -1,7 +1,11 @@
-import unittest, logging, models, test.helpers, gateway
-from google.appengine.ext import db
 from google.appengine.api import users
+from google.appengine.ext import db
+import gateway
+import logging
+import models
 import simplejson as json
+import test.helpers
+import unittest
 
 class GatewayTests (test.helpers.TestFixture):
     def test_getting_points_for_user(self):

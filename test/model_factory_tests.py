@@ -1,7 +1,11 @@
-import unittest, logging, test.helpers, gateway, factory
-from google.appengine.ext import db
 from google.appengine.api import users
+from google.appengine.ext import db
+import factory
+import gateway
+import logging
 import simplejson as json
+import test.helpers
+import unittest
 
 class FactoryTests (test.helpers.TestFixture):
     def test_point_factory(self):

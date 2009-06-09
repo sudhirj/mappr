@@ -1,6 +1,10 @@
-from google.appengine.ext import db
-import unittest, logging, models, test.helpers, settings
 from google.appengine.api import users
+from google.appengine.ext import db
+import logging
+import models
+import settings
+import test.helpers
+import unittest
 
 
 class AdvancedModelTests(test.helpers.TestFixture):

@@ -1,7 +1,13 @@
-import logging,unittest,main,test.helpers,presenter,settings,urllib
-from webtest import TestApp
-from google.appengine.ext import webapp
 from google.appengine.api import users
+from google.appengine.ext import webapp
+from webtest import TestApp
+import logging
+import main
+import presenter
+import settings
+import test.helpers
+import unittest
+import urllib
 
 class JsonTests(test.helpers.WebTestFixture):
     def test_get_points(self):

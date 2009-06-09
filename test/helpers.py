@@ -1,8 +1,11 @@
-import models, unittest, main, logging, settings
-from google.appengine.ext import db
 from google.appengine.api import users
+from google.appengine.ext import db, webapp
 from webtest import TestApp
-from google.appengine.ext import webapp
+import logging
+import main
+import models
+import settings
+import unittest
 
 class TestFixture (unittest.TestCase):
     def setUp(self):
