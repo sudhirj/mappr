@@ -1,43 +1,37 @@
-//google.load("maps", "3");
-// google.load("jquery", "1.3");
-// google.load("jqueryui", "1.7");
-
 function setUpViewShifter(){
-  $(document).ready(function() {
-    $("#view_shift").toggle(function() {
-      $(this).removeClass('satellite_view').text('Map View').addClass('map_view');
-      Map.changeToHybrid();
-    }, function() {
-      $(this).removeClass('map_view').text('Satellite View').addClass('satellite_view');
-      Map.changeToNormal();
-    });
-  });  
+    $(document).ready(function() {
+        $("#view_shift").toggle(function() {
+            $(this).removeClass('satellite_view').text('Map View').addClass('map_view');
+            Map.changeToHybrid();
+        }, function() {
+            $(this).removeClass('map_view').text('Satellite View').addClass('satellite_view');
+            Map.changeToNormal();
+        });
+    });  
 }
 
-google.setOnLoadCallback(function(){    
-  $.delegate = function(rules) {
+$.delegate = function(rules) {
     return function(e) {
-      var target = $(e.target);
-      for (var selector in rules)
-      if (target.is(selector)) return rules[selector].apply(this, $.makeArray(arguments));
+        var target = $(e.target);
+        for (var selector in rules)
+        if (target.is(selector)) return rules[selector].apply(this, $.makeArray(arguments));
     }
-  };
-  $(Map).bind('mapLoaded', function(event) {
+};
+$(Map).bind('mapLoaded', function(event) {
     $('#load-message').fadeOut();
     var showWelcome = true;
     if ((INFO.url == INFO.currentUrl) && PointList.getPoints().length > 0) showWelcome = false;
     if (showWelcome) $('#welcome').fadeIn();
     if (INFO.auth && INFO.emptySpot && !INFO.url) FirstTime.initialize(INFO.currentUrl);
     setUpViewShifter();    
-  });
-  Map.initialize("map");    
-  $(document).ready(function() {
+});
+Map.initialize("map");    
+$(document).ready(function() {
     PointList.initialize();        
     $('#create_user').click(function() {FirstTime.initialize(INFO.currentUrl)});
     $('body').click(function(e){
-      if ($(e.target).hasClass('close_button')) $(e.target).parent().fadeOut();
-      if ($(e.target).hasClass('show_help')) $('#welcome').fadeIn();
-      if ($(e.target).hasClass('show_create')) FirstTime.initialize(INFO.currentUrl);      
+        if ($(e.target).hasClass('close_button')) $(e.target).parent().fadeOut();
+        if ($(e.target).hasClass('show_help')) $('#welcome').fadeIn();
+        if ($(e.target).hasClass('show_create')) FirstTime.initialize(INFO.currentUrl);      
     });
-  });
 });
