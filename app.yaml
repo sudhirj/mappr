@@ -11,7 +11,7 @@ handlers:
   static_files: static/images/favicon.ico
   upload: static/images/favicon.ico
 
-- url: /test.*
+- url: /test*
   script: gaeunit.py  
 
 - url: /.*
@@ -28,8 +28,5 @@ skip_files: |
  (.*\.py[co])|
  (.*/RCS/.*)|
  (\..*)|
- (.*_tests.py)|
  (tmtags)|
- (test/.*)|
- (webtest/.*)|
  )$

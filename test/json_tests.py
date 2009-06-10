@@ -3,7 +3,6 @@ from google.appengine.ext import webapp
 from webtest import TestApp
 import logging
 import main
-import presenter
 import settings
 import test.helpers
 import unittest

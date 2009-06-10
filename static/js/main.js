@@ -1,6 +1,6 @@
-google.load("maps", "2");
-google.load("jquery", "1.2");
-google.load("jqueryui", "1.5");
+//google.load("maps", "3");
+// google.load("jquery", "1.3");
+// google.load("jqueryui", "1.7");
 
 function setUpViewShifter(){
   $(document).ready(function() {
