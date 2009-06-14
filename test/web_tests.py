@@ -1,4 +1,4 @@
-import logging, unittest, main, test.helpers,  settings, urllib
+import logging, unittest, main, test.helpers, settings, urllib
 from BeautifulSoup import BeautifulSoup
 from webtest import TestApp
 from google.appengine.ext import webapp

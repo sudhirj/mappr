@@ -9,5 +9,5 @@ import unittest
 
 class FactoryTests (test.helpers.TestFixture):
     def test_point_factory(self):
-        self.assertEqual(factory.make_geo_point(3.0,5.6),db.GeoPt(3.0,5.6))
+        self.assertEqual(factory.make_geo_point(3.0, 5.6), db.GeoPt(3.0, 5.6))
     

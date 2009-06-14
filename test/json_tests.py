@@ -10,11 +10,11 @@ import urllib
 
 class JsonTests(test.helpers.WebTestFixture):
     def test_get_points(self):
-        app=self.app
+        app = self.app
         self.logout()
         result = app.get('/_json/points/sudhirurl').json
         self.assertTrue(self.find(result, self.homedict))
         self.assertTrue(self.find(result, self.officedict))
-        self.assertEqual(len(result),2)
+        self.assertEqual(len(result), 2)
         
         
