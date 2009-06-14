@@ -63,7 +63,7 @@ var PointMaker = function(){
             $('span.ui-dialog-title',this.dialog.parent()).text(this.data.dialogTitle);
             this.dialog.dialog("open");
             Map.clearAllMarkers();
-            this.marker = Map.addMarker({point:this.data.point,draggable:true});
+            this.marker = Map.addMarker({point:this.data.points});
             this.isOpen = true;
         },
         cancel: function(){

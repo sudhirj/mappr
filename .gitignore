@@ -3,3 +3,4 @@ mappr.tmproj
 tmtags
 static-production/*
 google_appengine
+*tmp_*
