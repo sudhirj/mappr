@@ -9,10 +9,10 @@ class Base(db.Model):
     created_at = db.DateTimeProperty(auto_now_add=True)
     updated_at = db.DateTimeProperty(auto_now=True)
     
-    def __eq__(self, other, attributes=[]):
+    def __eq__(self, other):
         if not isinstance(other, self.__class__): return False
-        if not len(attributes): return super(Base, self).__eq__(other)
-        for attr in attributes:
+        if not self.equality_attributes or not len(self.equality_attributes): return super(Base, self).__eq__(other)
+        for attr in self.equality_attributes:
             if getattr(self, attr) != getattr(other, attr): return False
         return True 
     
@@ -25,11 +25,19 @@ class Customer(Base):
     url = db.StringProperty(validator=validators.check_url)
     point_count = db.IntegerProperty(default=0)
     
-    def __eq__(self, other):
-        return super(Customer, self).__eq__(other, attributes=['user', 'url'])
+    equality_attributes = ['user', 'url']
         
     def get_point_by_key(self, key):
         return self.points.filter("__key__ =", db.Key(key)).fetch(1)[0]
+    
+    def inc_point_count(self):
+        self.point_count += 1
+        if self.point_count > settings.hard_point_count_ceiling: raise Exception, "Hard ceiling reached."
+        self.put()
+    
+    def dec_point_count(self):
+        self.point_count -= 1
+        self.put()
     
 
 class Point(Base):
@@ -38,23 +46,16 @@ class Point(Base):
     title = db.StringProperty(required=True)
     owner = db.ReferenceProperty(Customer, collection_name='points', required=True)
     
-    def __eq__(self, other):
-        if not isinstance(other, Point): return False
-        for attr in ['point', 'owner', 'title']:
-            if getattr(self, attr) != getattr(other, attr): return False
-        return True
+    equality_attributes = ['point','owner','title']
     
     def delete(self):
-        self.owner.point_count -= 1
-        self.owner.put()
+        self.owner.dec_point_count()
         return super(Point, self).delete()
     
     def put(self):
         if self.is_saved(): return db.Model.put(self)
         self.parent = self.owner
-        self.owner.point_count += 1
-        if self.owner.point_count > settings.hard_point_count_ceiling: raise Exception, "Hard ceiling reached."
-        self.owner.put()
+        self.owner.inc_point_count()
         return super(Point, self).put()
 
         
