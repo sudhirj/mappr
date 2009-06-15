@@ -5,7 +5,7 @@ body{position:relative;color:#531012;line-height:1em;}
 em{font-style:italic;}
 strong{font-weight:bold;}
 
-#logo {position:absolute;z-index:2;left:10px;top:10px;}
+#logo {position:absolute;z-index:2;left:80px;top:10px;}
 #load-message.over_map {display:block;}
 #map {height:100%;width:100%;z-index:1;position:relative;}
 

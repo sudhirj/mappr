@@ -26,9 +26,8 @@ var Map = function(){
                 mapTypeId: google.maps.MapTypeId.ROADMAP,
                 zoom: o.zoom,
                 center: Map.newPoint(o.lat, o.lon),
-                navigationControlOptions: {
-                    style: google.maps.NavigationControlStyle.DEFAULT
-                }
+                navigationControlOptions: {style: google.maps.NavigationControlStyle.DEFAULT},
+                mapTypeControl: false
             });
             google.maps.event.addListener(this.map, 'load', function(){
                 $(Map).trigger('mapLoaded');
@@ -70,10 +69,10 @@ var Map = function(){
             return marker;
         },
         changeToNormal: function(){
-            this.map.setMapType(G_NORMAL_MAP);
+            this.map.set_mapTypeId(google.maps.MapTypeId.ROADMAP);
         },
         changeToHybrid: function(){
-            this.map.setMapType(G_HYBRID_MAP);
+            this.map.set_mapTypeId(google.maps.MapTypeId.HYBRID);
         },
         removeMarker: function(marker){
             marker.set_map(null);

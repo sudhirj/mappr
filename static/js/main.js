@@ -1,10 +1,10 @@
 function setUpViewShifter(){
     $(document).ready(function() {
         $("#view_shift").toggle(function() {
-            $(this).removeClass('satellite_view').text('Map View').addClass('map_view');
+            $(this).removeClass('satellite_view').text('Change to Map View').addClass('map_view');
             Map.changeToHybrid();
         }, function() {
-            $(this).removeClass('map_view').text('Satellite View').addClass('satellite_view');
+            $(this).removeClass('map_view').text('Change to Satellite View').addClass('satellite_view');
             Map.changeToNormal();
         });
     });  

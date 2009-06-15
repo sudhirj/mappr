@@ -20,7 +20,7 @@
 	<div id ="map"></div>	
 	{% include "messages.html" %}
 
-	<div id="view_shift" class="main_button white_trans pointer overlay">Satellite View</div>
+	<div id="view_shift" class="main_button white_trans pointer overlay">Change to Satellite View</div>
 	{% ifequal auth.url info.current_url %}<div id="help_button" class="main_button white_trans pointer overlay show_help">Help ?</div>{% endifequal %}
 	<div id="auth" class="overlay nice_links" ><a class="main_button white_trans pointer" href="{{auth.link}}">{{auth.label}}</a></div>
 	
