@@ -1,6 +1,7 @@
 import factory
 import logging
 import models
+from models import Customer
 
 def get_points_for(url):
     customer = get_customer_by_url(url)
@@ -41,12 +42,10 @@ def check_if_url_exists(url):
     return (True, customer.url) if customer else (False, None)
 
 def get_customer(user):
-    customer = models.Customer.all().filter('user =', user).fetch(1)
-    return customer[0] if len(customer) else None 
+    return Customer.get_by_user(user)
      
 def get_customer_by_url(url):
-    customer = models.Customer.all().filter('url =', url.lower()).fetch(1)
-    return customer[0] if len(customer) else None 
+    return Customer.get_by_url(url)
 
 def edit_point(key, new_point, user):
     customer = get_customer(user)

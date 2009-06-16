@@ -38,7 +38,16 @@ class Customer(Base):
     def dec_point_count(self):
         self.point_count -= 1
         self.put()
+
+    @classmethod
+    def get_by_url(cls, url):
+        matches = cls.all().filter('url =', url.lower()).fetch(1)
+        return matches[0] if len(matches) else None
     
+    @classmethod
+    def get_by_user(cls, user):
+        matches = cls.all().filter('user =', user).fetch(1)
+        return matches[0] if len(matches) else None 
 
 class Point(Base):
     """Store the map points"""
