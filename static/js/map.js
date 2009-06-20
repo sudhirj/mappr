@@ -52,6 +52,15 @@ var Map = function(){
             });
             this.markerList = [];
             
+            
+            $("#view_shift").fadeIn().toggle(function() {
+                $(this).removeClass('satellite_view').text('Change to Map View').addClass('map_view');
+                Map.changeToHybrid();
+            }, function() {
+                $(this).removeClass('map_view').text('Change to Satellite View').addClass('satellite_view');
+                Map.changeToNormal();
+            });
+            
         },
         addMarker: function(o){
             var defaults = {

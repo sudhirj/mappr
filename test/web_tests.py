@@ -74,7 +74,7 @@ class UserOperationsTest(test.helpers.WebTestFixture):
         self.assertTrue(before.find('div', id="create_user"))
         
         self.login('guywhowantsform@gmail.com')
-        app.post('/', {'url':'form'}, status=403)
+        app.post('/', {'url':'form'}, status=200)
     
     def test_homespot_link(self):
         app = self.app

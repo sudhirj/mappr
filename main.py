@@ -1,3 +1,5 @@
+from google.appengine.dist import use_library
+use_library('django', '1.0')
 from google.appengine.api import users
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import template
@@ -47,8 +49,6 @@ class MainHandler(CustomHandler):
     def post(self, url=None):
         user = users.get_current_user()
         url = cgi.escape(self.request.get('url')).lower()
-
-        if url == 'form': raise Exception, "You cannot use 'form'."
         new_customer = gateway.create_customer(url, user)
         self.respond(new_customer.url) 
 
@@ -63,7 +63,6 @@ class UrlCreateHandler(CustomHandler):
         user = users.get_current_user()
         url = url.lower()
         try:
-            if url == 'form': raise Exception, "You cannot use 'form'."
             new_customer = gateway.create_customer(url, user)
             self.redirect("/" + new_customer.url)            
         except Exception, e:

@@ -5,8 +5,8 @@ body{position:relative;color:#531012;line-height:1em;}
 em{font-style:italic;}
 strong{font-weight:bold;}
 
-#logo {position:absolute;z-index:2;left:80px;top:10px;}
-#load-message.over_map {display:block;}
+#logo {position:absolute;z-index:2;left:80px;top:0;}
+#load-message.over_map {display:block;background:#fff;opacity:0.6;}
 #map {height:100%;width:100%;z-index:1;position:relative;}
 
 .green-border {border:3px solid #C4F9AF;}
@@ -22,7 +22,7 @@ strong{font-weight:bold;}
 .small_rounded {-moz-border-radius:5px;-webkit-border-radius: 5px;}
 .big_rounded {-moz-border-radius:15px;-webkit-border-radius: 15px;}
 
-input.special {padding:5px;color:#823f41;font-weight:bold;font-size:1.5em;display:block;margin:10px 0px;}
+input.special {padding:0.2em;color:#823f41;font-weight:bold;font-size:1.5em;display:block;margin:0.6em 0;width:95%;}
 .white_trans {background-color: #fff;opacity:0.9;}
 .main_button, .heading{padding:10px 5px;display:block;color:#fff;background:#823f41;}
 .main_button:hover{color:#823f41;background:#fff;}
@@ -34,9 +34,9 @@ input.special {padding:5px;color:#823f41;font-weight:bold;font-size:1.5em;displa
 .nice_links a {text-decoration:none;color:inherit;border-bottom:2px dotted #823f41;}
 .nice_links a:hover{border-bottom:2px solid #823f41;}
 
-#create_user,#homespot_link{top:48px;left:250px;}
+#create_user,#homespot_link{top:0;left:320px;}
 #auth {right:0px;top:0px;}
-#view_shift{top:0px;right:400px;}
+#view_shift{top:0px;right:400px;display:none;}
 #auth,#homespot_link{color:#fff;}
 #create_user{font-size:1.5em;}
 #help_button{right:0px;top:40px;}
@@ -65,9 +65,9 @@ input.special {padding:5px;color:#823f41;font-weight:bold;font-size:1.5em;displa
 .ui-resizable-handle {cursor:default !important;display:none !important;}
 .ui-dialog{border:2px solid #823f41;overflow:hidden;}
 .ui-dialog-titlebar {color:#fff;padding:10px;opacity:0.9;background:#823f41;cursor:move;font-weight:bold;font-family:"Lucida Grande",Helvetica,Verdana,Arial;position:relative;}
-.ui-dialog-content {padding:20px 0px 0px 15px;opacity:0.9;background:#fff;}
+.ui-dialog-content {padding:1.5em;opacity:0.9;background:#fff;}
 .ui-dialog-titlebar-close, .close_button{z-index:10;position:absolute;cursor:pointer;right:1px;top:1px;text-indent:-99999px;width:30px;height:30px;background:url('/static/images/close.png') no-repeat center center;}
-.dialogs .error {color:#f00;font-size:0.8em;margin-top:-3px;}
+.dialogs .error {color:#f00;font-size:0.8em;margin:0.2em 0;}
 .button {display:block;padding:8px;float:left;margin:5px 5px 0px 0px;font-size:1.2em;}
 .button:hover {text-decoration:underline;}
 .button.ok {background:#c4f9af;border:1px solid #0f0;}

@@ -1,15 +1,3 @@
-function setUpViewShifter(){
-    $(document).ready(function() {
-        $("#view_shift").toggle(function() {
-            $(this).removeClass('satellite_view').text('Change to Map View').addClass('map_view');
-            Map.changeToHybrid();
-        }, function() {
-            $(this).removeClass('map_view').text('Change to Satellite View').addClass('satellite_view');
-            Map.changeToNormal();
-        });
-    });  
-}
-
 $.delegate = function(rules) {
     return function(e) {
         var target = $(e.target);
@@ -19,13 +7,13 @@ $.delegate = function(rules) {
 };
 $(Map).bind('mapLoaded', function(event) {
     $('#load-message').fadeOut();
-    var showWelcome = true;
-    if ((INFO.url == INFO.currentUrl) && PointList.getPoints().length > 0) showWelcome = false;
+    var showWelcome = ((INFO.url == INFO.currentUrl) && PointList.getPoints().length > 0);
     if (showWelcome) $('#welcome').fadeIn();
     if (INFO.auth && INFO.emptySpot && !INFO.url) FirstTime.initialize(INFO.currentUrl);
-    setUpViewShifter();    
 });
+
 Map.initialize("map");    
+
 $(document).ready(function() {
     PointList.initialize();        
     $('#create_user').click(function() {FirstTime.initialize(INFO.currentUrl)});

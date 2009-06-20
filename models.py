@@ -11,7 +11,8 @@ class Base(db.Model):
     
     def __eq__(self, other):
         if not isinstance(other, self.__class__): return False
-        if not self.equality_attributes or not len(self.equality_attributes): return super(Base, self).__eq__(other)
+        if not self.equality_attributes or not len(self.equality_attributes): 
+            return super(Base, self).__eq__(other)
         for attr in self.equality_attributes:
             if getattr(self, attr) != getattr(other, attr): return False
         return True 
@@ -32,7 +33,8 @@ class Customer(Base):
     
     def inc_point_count(self):
         self.point_count += 1
-        if self.point_count > settings.hard_point_count_ceiling: raise Exception, "Hard ceiling reached."
+        if self.point_count > settings.hard_point_count_ceiling: 
+            raise Exception, "Hard ceiling reached."
         self.put()
     
     def dec_point_count(self):

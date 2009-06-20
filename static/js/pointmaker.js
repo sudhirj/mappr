@@ -8,9 +8,7 @@ var PointMaker = function(){
         resizable:false,
         close: function(){PointMaker.cancel();},
         open: function(){$('#text-title')[0].focus()},
-        position: [100,50],
-        height: 210,
-        width: 320
+        position: [100,50]
     };
     var data = null;
     return {

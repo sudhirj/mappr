@@ -25,8 +25,6 @@ class AdvancedModelTests(test.helpers.TestFixture):
 
     def test_point_owner_counter(self):
         self.assertEqual(self.sudhir.points[0], self.home)  
-        
-  
         self.assertEqual(self.sudhir.points[1], self.office)
         self.assertEqual(self.sudhir.point_count, 2)
         self.office.delete()
