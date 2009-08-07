@@ -29,9 +29,7 @@ var Map = function(){
                 navigationControlOptions: {style: google.maps.NavigationControlStyle.DEFAULT},
                 mapTypeControl: false
             });
-            google.maps.event.addListener(this.map, 'load', function(){
                 $(Map).trigger('mapLoaded');
-            });
             this.map.set_center(new google.maps.LatLng(o.lat, o.lon), o.zoom);
             
             google.maps.event.addListener(this.map, 'click', function(overlay, latlng, overlaylatlng){
