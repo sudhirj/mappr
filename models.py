@@ -50,6 +50,24 @@ class Customer(Base):
     def get_by_user(cls, user):
         matches = cls.all().filter('user =', user).fetch(1)
         return matches[0] if len(matches) else None 
+    
+    @classmethod
+    def get_points_for(cls, url):
+        customer = cls.get_by_url(url)
+        if not customer: return None
+        return [dict(lat=point.point.lat,
+                    lon=point.point.lon,
+                    title=point.title,
+                    key=str(point.key())) for point in customer.points]
+    
+    @classmethod
+    def create(cls, url, user):
+        if cls.get_by_url(url):
+            raise Exception, "URL already exists"
+        customer = cls.get_by_user(user) or Customer(url=url, user=user)
+        customer.url = url
+        customer.put()
+        return customer
 
 class Point(Base):
     """Store the map points"""
@@ -68,6 +86,35 @@ class Point(Base):
         self.parent = self.owner
         self.owner.inc_point_count()
         return super(Point, self).put()
-
+    
+    @classmethod
+    def create_point(cls, customer, new_point):
+        point = dict(title="Untitled", lat=0, lon=0)
+        point.update(new_point)
+        created_point = cls(point=db.GeoPt(point['lat'], point['lon']),
+                            title=point['title'], 
+                            owner=customer, 
+                            parent=customer)
+        created_point.put()
+        return created_point
+        
+    @classmethod
+    def edit(cls, key, new_point, user):
+        customer = Customer.get_by_user(user)
+        if not customer: raise Exception, "Customer does not exist."
+        point = customer.get_point_by_key(key)
+        if not point: raise Exception, "Point does not exist."
+        point.title = new_point['title']
+        point.point = db.GeoPt(new_point['lat'], new_point['lon'])
+        point.put()
+    
+    @classmethod
+    def delete_point(cls, key, user):
+        customer = Customer.get_by_user(user)
+        if not customer: raise Exception, "No spot for this user."
+        point = customer.get_point_by_key(key)
+        if not point: raise Exception, "That isn't your pin."
+        point.delete()
+            
         
 

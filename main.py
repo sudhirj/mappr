@@ -5,11 +5,7 @@ from google.appengine.ext import webapp
 from google.appengine.ext.webapp import template
 from google.appengine.ext.webapp.util import login_required
 from helpers import utils
-import cgi
-import gateway
-import logging
-import os
-import settings
+import cgi, gateway, logging, os, settings
 import wsgiref.handlers
 
 class CustomHandler(webapp.RequestHandler):

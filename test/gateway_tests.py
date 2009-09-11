@@ -8,35 +8,8 @@ import test.helpers
 import unittest
 
 class GatewayTests (test.helpers.TestFixture):
-    def test_getting_points_for_user(self):
-        valid_result = gateway.get_points_for('sudhirurl')
-        self.assertEqual(len(valid_result), 2)
-
-        valid_result = gateway.get_points_for('suDhirurl')
-        self.assertEqual(len(valid_result), 2)
-        
-        valid_result = gateway.get_points_for('sudhirURl')
-        self.assertEqual(len(valid_result), 2)
-        
-        non_existent_url = gateway.get_points_for('somerubbish')
-        self.assertEqual(non_existent_url, None)
-        
-        new_guy = models.Customer(user=users.User('someguy@gmail.com'), url='someguyurl')
-        new_guy.put()
-        empty_result = gateway.get_points_for('someguyurl')
-        self.assertEqual(empty_result, [])
-        empty_result = gateway.get_points_for('SomEguyurl')
-        self.assertEqual(empty_result, [])
     
-    def test_setting_points_for_user(self):
-        mom = models.Customer(user=users.User('mom@gmail.com'), url='momurl')
-        mom.put()
-        confirmation = gateway.set_point(mom, dict(lat=34.678, lon= -44.3456))
-        self.assertTrue(confirmation)
-        result = gateway.get_points_for('momurl')
-        self.assertEqual(len(result), 1)
-        self.assertEqual(result.count(dict(lat=34.678, lon= -44.3456, title='Untitled', key=str(confirmation.key()))), 1) 
-        
+     
     def test_user_creation_and_editing(self):
         test_user = users.User('test@gmail.com')
         new = gateway.create_customer(url='test', user=test_user)
