@@ -4,7 +4,7 @@ import logging
 import models, settings
 import test.helpers
 import unittest
-from models import Customer
+from models import Customer, Point
 
 class CustomerModelTests(test.helpers.TestFixture):
         
@@ -56,21 +56,53 @@ class CustomerModelTests(test.helpers.TestFixture):
         self.assertRaises(Exception, last_straw.put, None)
 
     def test_getting_points_for_user(self):
-          valid_result = Customer.get_points_for('sudhirurl')
-          self.assertEqual(len(valid_result), 2)
+        valid_result = Customer.get_points_for('sudhirurl')
+        self.assertEqual(len(valid_result), 2)
 
-          valid_result = Customer.get_points_for('suDhirurl')
-          self.assertEqual(len(valid_result), 2)
+        valid_result = Customer.get_points_for('suDhirurl')
+        self.assertEqual(len(valid_result), 2)
 
-          valid_result = Customer.get_points_for('sudhirURl')
-          self.assertEqual(len(valid_result), 2)
+        valid_result = Customer.get_points_for('sudhirURl')
+        self.assertEqual(len(valid_result), 2)
 
-          non_existent_url = Customer.get_points_for('somerubbish')
-          self.assertEqual(non_existent_url, None)
+        non_existent_url = Customer.get_points_for('somerubbish')
+        self.assertEqual(non_existent_url, None)
 
-          new_guy = models.Customer(user=users.User('someguy@gmail.com'), url='someguyurl')
-          new_guy.put()
-          empty_result = Customer.get_points_for('someguyurl')
-          self.assertEqual(empty_result, [])
-          empty_result = Customer.get_points_for('SomEguyurl')
-          self.assertEqual(empty_result, [])
+        new_guy = models.Customer(user=users.User('someguy@gmail.com'), url='someguyurl')
+        new_guy.put()
+        empty_result = Customer.get_points_for('someguyurl')
+        self.assertEqual(empty_result, [])
+        empty_result = Customer.get_points_for('SomEguyurl')
+        self.assertEqual(empty_result, [])
+
+    def test_user_creation_and_editing(self):
+        test_user = users.User('test@gmail.com')
+        new = Customer.create(url='test', user=test_user)
+        self.assertTrue(new)
+        self.assertEqual(Customer.get_points_for('test').__len__(), 0)
+        self.assertTrue(Point.create_point(new, dict(lat=63.345, lon= -4.23)))
+        self.assertEqual(Customer.get_points_for('test').__len__(), 1)
+
+        self.assertRaises(Exception, Customer.create, url='test', user=users.User('someone@gmail.com'))
+        self.assertRaises(Exception, Customer.create, url='TeSt', user=users.User('someoneelse@gmail.com'))
+        self.assertRaises(Exception, Customer.create, url='new_test', user=test_user)
+
+        renew = Customer.create(url='newtest', user=test_user)
+        self.assertTrue(renew)
+        self.assertEqual(Customer.get_points_for('newtest').__len__(), 1)
+        self.assertTrue(Point.create_point(renew, dict(lat=43.345, lon= -3.23)))
+        self.assertEqual(Customer.get_points_for('newtest').__len__(), 2)
+
+    def test_get_current_user_url(self):
+        url = Customer.get_url_by_user(self.sudhir_gmail)
+        self.assertEqual(url, 'sudhirurl')
+
+        url = Customer.get_url_by_user(users.User('lskj@lsdfj.com'))
+        self.assertFalse(url)
+        
+        url = Customer.get_url_by_user(None)
+        self.assertFalse(url)
+        
+    def test_get_current_user_nickname(self):
+        self.assertEqual(Customer.get_nick_by_url('nosuchurl'), None)
+        self.assertEqual(Customer.get_nick_by_url('sudhirurl'), 'sudhir.j')

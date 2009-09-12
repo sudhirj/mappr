@@ -1,4 +1,3 @@
-import factory
 import logging
 import models
 from models import Customer, Point
@@ -32,12 +31,9 @@ def delete_point(key, user):
     return Point.delete_point(key, user)
 
 def get_current_user_url(user):
-    if not user: return None
-    customer = get_customer(user) if user else None
-    return None if not customer else customer.url
+    return Customer.get_url_by_user(user)
 
 def get_current_user_nick(url):
-    customer = get_customer_by_url(url)
-    return None if not customer else customer.user.nickname()
+    return Customer.get_nick_by_url(url)
     
     

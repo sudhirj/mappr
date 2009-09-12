@@ -45,3 +45,35 @@ class PointModelTests(test.helpers.TestFixture):
         result = Customer.get_points_for('momurl')
         self.assertEqual(len(result), 1)
         self.assertEqual(result.count(dict(lat=34.678, lon= -44.3456, title='Untitled', key=str(confirmation.key()))), 1) 
+  
+    def test_point_editing(self):
+        result = Customer.get_points_for('sudhirurl')
+        start_count = len(result)
+        new_point_dict = dict(lat=7.0, lon=7.0, title="seven")
+        new_point_key = Point.create_point(self.sudhir, new_point_dict).key().__str__()
+        result = Customer.get_points_for('sudhirurl')
+
+        self.assertEqual(len(result), start_count + 1)
+        self.assertTrue(self.find(result, new_point_dict))
+
+        new_point_dict = dict(lon=7.0, lat=8.0, title='seveneight')
+        Point.edit(new_point_key, new_point_dict, self.sudhir_gmail)
+        new_results = Customer.get_points_for('sudhirurl')
+
+        self.assertEqual(len(new_results), start_count + 1)
+        self.assertTrue(self.find(new_results, new_point_dict))
+        self.assertRaises(db.BadValueError, Point.edit, new_point_key, dict(lon=2345, lat=3, title='invalid values'), self.sudhir_gmail)
+
+    def test_point_deletion(self):
+        result = Customer.get_points_for('sudhirurl')
+        start_count = len(result)
+        first_point = result[0]
+        Point.delete_point(first_point['key'], self.sudhir_gmail)
+        new_result = Customer.get_points_for('sudhirurl')
+        self.assertEqual(len(new_result), start_count - 1)
+        self.assertFalse(self.find(new_result, first_point))
+    
+    def test_point_deletion_security(self):
+        logging.info(self.o2.key())
+        self.assertRaises(Exception,Point.delete_point,self.o2.key, self.sudhir_gmail)
+        
