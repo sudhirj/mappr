@@ -64,7 +64,7 @@ class Customer(Base):
     def create(cls, url, user):
         if Customer.get_by_url(url):
             raise Exception, "URL already exists"
-        customer = cls.get_by_user(user) or Customer(url=url, user=user)
+        customer = Customer.get_by_user(user) or Customer(url=url, user=user)
         customer.url = url
         customer.put()
         return customer
