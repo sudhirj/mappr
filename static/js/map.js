@@ -69,7 +69,8 @@ var Map = function(){
             {});
             var marker = new google.maps.Marker({
                 map: Map.map,
-                position: o.point
+                position: o.point,
+                draggable: o.draggable
             });
             this.markerList.push(marker);
             

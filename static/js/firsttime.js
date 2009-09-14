@@ -14,16 +14,12 @@ var FirstTime = function(){
         this.dialog = $('#dialog-create-user').show().dialog({
           autoOpen:false,
           draggable:true,
-          resizable:false,
+          resizable:true,
           close: function(){FirstTime.cancel();},
           title: "Create a PinnSpot",
           height:230,
           width: 600,
-          modal: true,
-          overlay: {
-            'background':'#000',
-            'opacity':0.5
-          }
+          closeOnEscape:true
         });
         FirstTime.ready();
         urlBox.keyup(function(e){
@@ -66,8 +62,8 @@ var FirstTime = function(){
           data: {url:url},
           success: function(data){
             FirstTime.close();
-            $(FirstTime).trigger('urlCreated');
-            window.location = '/'+$.trim(data);
+            $(FirstTime).trigger(EVENTS.URL.CREATED);
+            window.location = ROUTES.MAIN.spot($.trim(data));
           },
           dataType: "text",
           error: function(response,status,error){

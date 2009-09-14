@@ -2,6 +2,16 @@ var ROUTES = {
   URL: {
     check: function (url){return '/_check/url/'+url;},
     create: function (url){return '/_create/'+url;}
+  },
+  MAIN: {
+    spot: function (spot){return '/'+spot;}
+  }
+  
+}
+
+var EVENTS = {
+  URL: {
+    CREATED: 'urlCreated'
   }
 }
 
@@ -22,11 +32,13 @@ $(document).ready(function() {
     if (INFO.auth && INFO.emptySpot && !INFO.url) FirstTime.initialize(INFO.currentUrl);
   });
   $('#create_user').click(function() {FirstTime.initialize(INFO.currentUrl)});
-  $('body').click(function(e){
-    if ($(e.target).hasClass('close_button')) $(e.target).parent().fadeOut();
-    if ($(e.target).hasClass('show_help')) $('#welcome').fadeIn();
-    if ($(e.target).hasClass('show_create')) FirstTime.initialize(INFO.currentUrl);      
-  });
+  $('body').click(
+    $.delegate({
+      '.close_button': function(e){$(e.target).parent().fadeOut();},
+      '.show_help': function(e){$('#welcome').fadeIn();},
+      '.show_create':function(e){FirstTime.initialize(INFO.currentUrl);}
+    })
+  );
   Map.initialize("map");
   PointList.initialize();        
 });
