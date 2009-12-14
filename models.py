@@ -1,57 +1,124 @@
 from google.appengine.ext import db
 from helpers import validators
-import logging, settings
+import logging
+import settings
 
 """Database models for the app."""
 
-class Customer(db.Model):
+class Base(db.Model):
+    created_at = db.DateTimeProperty(auto_now_add=True)
+    updated_at = db.DateTimeProperty(auto_now=True)
+    
+    def __eq__(self, other):
+        if not isinstance(other, self.__class__): return False
+        if not self.equality_attributes or not len(self.equality_attributes): 
+            return super(Base, self).__eq__(other)
+        for attr in self.equality_attributes:
+            if getattr(self, attr) != getattr(other, attr): return False
+        return True 
+    
+    def __ne__(self, other):
+        return not self == other
+
+class Customer(Base):
     """Stores info about the client like the ID, and the user object"""
-    timestamp = db.DateTimeProperty(auto_now_add = True)
     user = db.UserProperty(required=True)
     url = db.StringProperty(validator=validators.check_url)
     point_count = db.IntegerProperty(default=0)
     
-    def __eq__(self, other):
-        if isinstance(other,Customer):
-            if self.user == other.user and self.url == other.url:
-                return True
-        else:
-            return False
-        return False
-    
+    equality_attributes = ['user', 'url']
+        
     def get_point_by_key(self, key):
-        return self.points.filter("__key__ =",db.Key(key)).fetch(1)[0]
+        return self.points.filter("__key__ =", db.Key(key)).fetch(1)[0]
     
+    def inc_point_count(self):
+        self.point_count += 1
+        if self.point_count > settings.hard_point_count_ceiling: 
+            raise Exception, "Hard ceiling reached."
+        self.put()
+    
+    def dec_point_count(self):
+        self.point_count -= 1
+        self.put()
 
-class Point(db.Model):
-    """Store the map points"""
-    point = db.GeoPtProperty(required = True)
-    title = db.StringProperty(required = True)
-    owner = db.ReferenceProperty(Customer,collection_name='points',required=True)
+    @classmethod
+    def get_by_url(cls, url):
+        matches = cls.all().filter('url =', url.lower()).fetch(1)
+        return matches[0] if len(matches) else None
     
-    def __eq__(self, other):
-        if isinstance(other,Point):
-            if self.point == other.point and self.owner == other.owner and self.title == other.title:
-                return True
-            else:
-                return False
-            return False
+    @classmethod
+    def get_by_user(cls, user):
+        matches = cls.all().filter('user =', user).fetch(1)
+        return matches[0] if len(matches) else None 
+    
+    @classmethod
+    def get_points_for(cls, url):
+        customer = cls.get_by_url(url)
+        if not customer: return None
+        return [dict(lat=point.point.lat,
+                    lon=point.point.lon,
+                    title=point.title,
+                    key=str(point.key())) for point in customer.points]
+    
+    @classmethod
+    def create(cls, url, user):
+        if Customer.get_by_url(url):
+            raise Exception, "URL already exists"
+        customer = Customer.get_by_user(user) or Customer(url=url, user=user)
+        customer.url = url
+        customer.put()
+        return customer
+    
+    @classmethod
+    def get_url_by_user(cls, user):
+        customer = Customer.get_by_user(user) if user else None
+        return None if not customer else customer.url
+    
+    @classmethod
+    def get_nick_by_url(cls, user):
+        customer = Customer.get_by_url(user) if user else None
+        return None if not customer else customer.user.nickname()
+        
+        
+class Point(Base):
+    """Store the map points"""
+    point = db.GeoPtProperty(required=True)
+    title = db.StringProperty(required=True)
+    owner = db.ReferenceProperty(Customer, collection_name='points', required=True)
+    
+    equality_attributes = ['point','owner','title']
     
     def delete(self):
-        self.owner.point_count -=1
-        self.owner.put()
-        return db.Model.delete(self)
+        self.owner.dec_point_count()
+        return super(Point, self).delete()
     
     def put(self):
-        if self.is_saved():
-            return db.Model.put(self)
-        else:
-            self.parent = self.owner
-            self.owner.point_count +=1
-            if self.owner.point_count > settings.hard_point_count_ceiling:
-                raise Exception, "Maximum possible number of points reached."
-            self.owner.put()
-            return db.Model.put(self)
+        if self.is_saved(): return db.Model.put(self)
+        self.parent = self.owner
+        self.owner.inc_point_count()
+        return super(Point, self).put()
     
+    @classmethod
+    def create_point(cls, customer, new_point):
+        point = dict(title="Untitled", lat=0, lon=0)
+        point.update(new_point)
+        created_point = Point(point=db.GeoPt(point['lat'], point['lon']),
+                            title=point['title'], 
+                            owner=customer, 
+                            parent=customer)
+        created_point.put()
+        return created_point
+        
+    @classmethod
+    def edit(cls, key, new_point, user):
+        point = Customer.get_by_user(user).get_point_by_key(key)
+        point.title = new_point['title']
+        point.point = db.GeoPt(new_point['lat'], new_point['lon'])
+        point.put()
+    
+    @classmethod
+    def delete_point(cls, key, user):
+        Customer.get_by_user(user).get_point_by_key(key).delete()
+            
         
 

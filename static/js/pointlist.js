@@ -1,7 +1,8 @@
 var PointList = function(){
+  var pointList = $('#points');
   return {
     update: function(){
-      $('#points').load('/_points/'+INFO.currentUrl,null,PointList.addAllMarkers);    
+      pointList.load('/_points/'+INFO.currentUrl,null,PointList.addAllMarkers);    
     },
     extractData: function(point){
       point = $(point);
@@ -15,7 +16,7 @@ var PointList = function(){
       $('#add_point').click(function() {
         if (INFO.pointCeiling > PointList.getPoints().length) PointMaker.create();
       });
-      $('#points').click(
+      pointList.click(
         $.delegate({
           '.edit': function(e){
             var point = PointList.extractData($(e.target).parents('.point'));
@@ -41,15 +42,15 @@ var PointList = function(){
     },
     addAllMarkers: function(){
       Map.clearAllMarkers();
-      $('#points .point').each(function(index) {
+      pointList.find('.point').each(function(index) {
         var point = PointList.extractData($(this));
-        Map.addMarker({lat:point.lat, lon:point.lon});                
+        Map.addMarker({point: Map.newPoint(point.lat, point.lon)});                
       });
       PointList.setCount();           
     },
     getPoints: function(){
       var pointArray = [];
-      $('#points .point').each(function(index) {
+      pointList.find('.point').each(function(index) {
         var point = PointList.extractData($(this));
         pointArray[index] = point;
       });

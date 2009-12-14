@@ -1,9 +1,11 @@
-import os,logging, gateway
 from google.appengine.api import users
+import os
+import logging
+import gateway
 def path(p='/'):
-    return os.path.join(os.path.dirname(__file__), '../'+p )
+    return os.path.join(os.path.dirname(__file__), '../' + p)
     
-def authdetails(page = "/"):
+def authdetails(page="/"):
     user = users.get_current_user()
     if user: 
         customer = gateway.get_customer(user)
@@ -18,7 +20,7 @@ def authdetails(page = "/"):
         status = 0
         url = None
         at_home = 0
-    return dict(status = status,link = link,label=label,url=url, at_home = at_home)
+    return dict(status=status, link=link, label=label, url=url, at_home=at_home)
     
 def authorize(role):
     def wrapper(handler_method):

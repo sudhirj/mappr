@@ -2,3 +2,5 @@ mappr.tmproj
 *.pyc
 tmtags
 static-production/*
+google_appengine
+*tmp_*

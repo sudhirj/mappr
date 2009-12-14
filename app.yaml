@@ -11,6 +11,7 @@ handlers:
   static_files: static-production/images/favicon.ico
   upload: static-production/images/favicon.ico
 
+
 - url: /.*
   script: main.py
 
@@ -25,8 +26,5 @@ skip_files: |
  (.*\.py[co])|
  (.*/RCS/.*)|
  (\..*)|
- (.*_tests.py)|
  (tmtags)|
- (test/.*)|
- (webtest/.*)|
  )$
