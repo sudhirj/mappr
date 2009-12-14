@@ -32,7 +32,7 @@ class PointModelTests(test.helpers.TestFixture):
         startcount = models.Point.all().count()
         query = models.Point.all().filter('point =', db.GeoPt(23.46, 4.7))
         self.assertEqual(query.count(), 1)
-        db.delete(self.office)
+        self.office.delete()
         self.assertEqual(models.Point.all().count(), startcount - 1)
         query = models.Point.all().filter('lat =', 23.46)
         self.assertEqual(query.count(), 0)
@@ -74,6 +74,5 @@ class PointModelTests(test.helpers.TestFixture):
         self.assertFalse(self.find(new_result, first_point))
     
     def test_point_deletion_security(self):
-        logging.info(self.o2.key())
         self.assertRaises(Exception,Point.delete_point,self.o2.key, self.sudhir_gmail)
         

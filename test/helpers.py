@@ -5,11 +5,12 @@ import logging
 import main
 import models
 import settings
-import unittest
+import unittest, os
 
 class TestFixture (unittest.TestCase):
     def setUp(self):
-        
+        os.environ['SERVER_NAME'] = 'test'
+        os.environ['SERVER_PORT'] = '9001'
         self.sudhir_gmail = users.User('sudhir.j@gmail.com')
         self.amrita_gmail = users.User('amrita@gmail.com')
         
@@ -36,9 +37,9 @@ class TestFixture (unittest.TestCase):
             
     def tearDown(self):
         for point in models.Point.all():
-            db.delete(point) 
+            point.delete() 
         for customer in models.Customer.all():
-            db.delete(customer)
+            customer.delete()
         users.get_current_user = self.temp_gcu
             
     
